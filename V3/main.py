@@ -1,16 +1,15 @@
 from collections import namedtuple
 import pandas as pd
 import mysql.connector
+from pandas.io.parsers import count_empty_vals
 
-class server():
-    def __init__(self):
-        db = mysql.connector.connect(
-            host = "localhost",
-            user = "home",
-            passwd = "home",
-            database = "chess"
-        )
-        mycursor = db.cursor()
+db = mysql.connector.connect(
+    host = "localhost",
+    user = "home",
+    passwd = "home",
+    database = "chess"
+)
+mycursor = db.cursor()
 
 class Pieces():
     w_king = "♔"
@@ -51,20 +50,61 @@ class Movement():
         def __init__(self) -> None:
             pass
 
-        def check_queen_move(self,position):
+        def get_current_loc(self,piece,pos):
+            self.piece = piece
+            self.pos = pos
+            query = "select Loc from table where Name = %s"
+            mycursor.execute(query, self.piece)
+
+        def trace_route(self):
+            pass
+
+        def check_queen_move(self,position,count):
+            self.position = position
+            self.count = count
+            if self.position[1] in self.hor:
+                if int(self.position[2]) in self.ver:
+                    #insert check for occupied squares
+                    #insert obstacle check
+                    print("legal queen move")
+
+        def check_king_move(self,position,count):
             self.position = position
             if self.position[1] in self.hor:
                 if int(self.position[2]) in self.ver:
-                    print("legal queen move")
+                    print("legal king move")
 
-        
+        def check_bishop_move(self,position,count):
+            self.position = position
+            self.count = count
+            print(self.position,self.count)
 
+def main():
+    m = Movement()
+    pos = "Bb3"
+    global count
+    count = 0
+    count += 1
+    global which
+    which = "" #current position for the piece to be moved
+    if pos[0] == "K":
+        m.check_king_move(pos,count)
 
-m = Movement()
-pos = "Qb3"
-if pos[0] == "Q":
-    m.check_queen_move(pos)
+    elif pos[0] == "Q":
+        m.check_queen_move(pos,count)
 
+    elif pos[0] == "B":
+        m.check_bishop_move(pos,count)
 
-        
-        
+    elif pos[0] == "N":
+        which = input("enter current position of the rook to be moved : ")
+        m.check_knight_move(pos,count,which)
+
+    elif pos[0] == "p":
+        m.check_pawn_move(pos)
+
+    elif pos[0] == "R":
+        which = input("enter current position of the rook to be moved : ")
+        m.check_rook_move(pos,count,which)      
+
+main()
