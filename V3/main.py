@@ -47,64 +47,75 @@ class Board(Pieces):
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
+
         def __init__(self) -> None:
             pass
 
         def get_current_loc(self,piece,pos):
             self.piece = piece
             self.pos = pos
-            query = "select Loc from table where Name = %s"
-            mycursor.execute(query, self.piece)
+            query = "select Loc from pieces where Name = '%s';"
+            mycursor.execute(query % self.piece)
+            result = mycursor.fetchall()
+            for i in result:
+                for j in i:
+                    print(j)
+            print("at get current loc!")
+            Movement.trace_route(self)
 
         def trace_route(self):
-            pass
+            print("tracing route")
 
-        def check_queen_move(self,position,count):
-            self.position = position
+        def check_queen_move(self,move,count):
+            self.move = move
             self.count = count
-            if self.position[1] in self.hor:
-                if int(self.position[2]) in self.ver:
+            if self.move[1] in self.hor:
+                if int(self.move[2]) in self.ver:
                     #insert check for occupied squares
                     #insert obstacle check
                     print("legal queen move")
+                    self.move = self.move[1] + self.move[2]
+                    Movement.get_current_loc(self,"Queen",self.move)
 
         def check_king_move(self,position,count):
             self.position = position
             if self.position[1] in self.hor:
                 if int(self.position[2]) in self.ver:
                     print("legal king move")
-
+                    
         def check_bishop_move(self,position,count):
             self.position = position
             self.count = count
             print(self.position,self.count)
 
 def main():
+    b = Board()
+    b.create_board()
     m = Movement()
-    pos = "Bb3"
+    move = "Qb1"
     global count
     count = 0
     count += 1
     global which
     which = "" #current position for the piece to be moved
-    if pos[0] == "K":
-        m.check_king_move(pos,count)
+    if move[0] == "K":
+        m.check_king_move(move,count)
 
-    elif pos[0] == "Q":
-        m.check_queen_move(pos,count)
+    elif move[0] == "Q":
+        m.check_queen_move(move,count)
 
-    elif pos[0] == "B":
-        m.check_bishop_move(pos,count)
+    elif move[0] == "B":
+        m.check_bishop_move(move,count)
 
-    elif pos[0] == "N":
+    elif move[0] == "N":
         which = input("enter current position of the rook to be moved : ")
-        m.check_knight_move(pos,count,which)
+        m.check_knight_move(move,count,which)
 
-    elif pos[0] == "p":
-        m.check_pawn_move(pos)
+    elif move[0] == "p":
+        m.check_pawn_move(move)
 
-    elif pos[0] == "R":
+    elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")
-        m.check_rook_move(pos,count,which)      
+        m.check_rook_move(move,count,which)      
 
 main()
