@@ -2,6 +2,7 @@ from collections import namedtuple
 import pandas as pd
 import mysql.connector
 from pandas.io.parsers import count_empty_vals
+import logging
 
 db = mysql.connector.connect(
     host = "localhost",
@@ -26,8 +27,45 @@ class Pieces():
     b_pawn = "♟" 
 
 class Board(Pieces):
-    def __init__(self) -> None:
-        pass
+    def __init__(self):
+        mycursor.execute("drop table board")
+        mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5));")
+        #white pieces data entry
+        mycursor.execute("insert into board values ('d1','Queen','White');")
+        mycursor.execute("insert into board values ('e1','King','White');")
+        mycursor.execute("insert into board values ('f1','Bishop','White');")
+        mycursor.execute("insert into board values ('c1','Bishop','White');")
+        mycursor.execute("insert into board values ('g1','Knight','White');")
+        mycursor.execute("insert into board values ('b1','Knight','White');")
+        mycursor.execute("insert into board values ('h1','Rook','White');")
+        mycursor.execute("insert into board values ('a1','Rook','White');")
+        mycursor.execute("insert into board values ('a2','Pawn','White');")
+        mycursor.execute("insert into board values ('b2','Pawn','White');")
+        mycursor.execute("insert into board values ('c2','Pawn','White');")
+        mycursor.execute("insert into board values ('d2','Pawn','White');")
+        mycursor.execute("insert into board values ('e2','Pawn','White');")
+        mycursor.execute("insert into board values ('f2','Pawn','White');")
+        mycursor.execute("insert into board values ('g2','Pawn','White');")
+        mycursor.execute("insert into board values ('h2','Pawn','White');")
+        db.commit()
+        #black pieces data entry
+        mycursor.execute("insert into board values ('d8','Queen','Black');")
+        mycursor.execute("insert into board values ('e8','King','Black');")
+        mycursor.execute("insert into board values ('f8','Bishop','Black');")
+        mycursor.execute("insert into board values ('c8','Bishop','Black');")
+        mycursor.execute("insert into board values ('g8','Knight','Black');")
+        mycursor.execute("insert into board values ('b8','Knight','Black');")
+        mycursor.execute("insert into board values ('h8','Rook','Black');")
+        mycursor.execute("insert into board values ('a8','Rook','Black');")
+        mycursor.execute("insert into board values ('a7','Pawn','Black');")
+        mycursor.execute("insert into board values ('b7','Pawn','Black');")
+        mycursor.execute("insert into board values ('c7','Pawn','Black');")
+        mycursor.execute("insert into board values ('d7','Pawn','Black');")
+        mycursor.execute("insert into board values ('e7','Pawn','Black');")
+        mycursor.execute("insert into board values ('f7','Pawn','Black');")
+        mycursor.execute("insert into board values ('g7','Pawn','Black');")
+        mycursor.execute("insert into board values ('h7','Pawn','Black');")
+        db.commit()
 
     def create_board(self):
         li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
@@ -43,6 +81,8 @@ class Board(Pieces):
             print(i)
         label = ["a","b","c","d","e","f","g","h"]
         print(label)
+
+        
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
@@ -61,10 +101,15 @@ class Movement():
                 for j in i:
                     print(j)
             print("at get current loc!")
-            Movement.trace_route(self)
+            self.current_loc = j
+            Movement.trace_route(self,self.current_loc,self.piece,self.pos)
 
-        def trace_route(self):
+        def trace_route(self,current_loc,piece,future_loc):
             print("tracing route")
+            self.current_loc = current_loc
+            self.future_loc = future_loc
+            self.piece = piece
+            print(f"moving {self.piece} from {self.current_loc} to {self.future_loc}")
 
         def check_queen_move(self,move,count):
             self.move = move
@@ -92,7 +137,7 @@ def main():
     b = Board()
     b.create_board()
     m = Movement()
-    move = "Qb1"
+    move = "Qd4"
     global count
     count = 0
     count += 1
