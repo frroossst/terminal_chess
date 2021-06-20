@@ -92,19 +92,18 @@ class Board(Pieces):
         logging.debug("starting position board printed")
 
     def update_board(self,piece,prev_loc,now_loc):
-        # self.piece = piece
-        # self.prev_loc = prev_loc
-        # self.now_loc = now_loc
+        self.piece = piece
+        self.prev_loc = prev_loc
+        self.now_loc = now_loc
         if ((turn-1) % 2) != 0:
             turn_colour = "White"
         else:
             turn_colour = "Black"
         
-        query = """update board set Location = '%s' where (Piece = '%s' and Colour = '%s');"""
-        tupl = (now_loc,piece,turn_colour)
+        query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
+        tupl = (self.now_loc,self.piece,turn_colour)
         print(tupl)
-        quit()
-        mycursor.execute(query,tupl)
+        mycursor.execute(query % tupl)
         db.commit()
         
 

@@ -1,6 +1,6 @@
 1. Revert to previous state
 2. Diagonal movement
 3. En passent capture and promotion to be resolved
-4. Determine whose turn is it anyways
+4. ---Determine whose turn is it anyways---
 5. Impliment checks and checkmates
 6. 
