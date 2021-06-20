@@ -91,19 +91,22 @@ class Board(Pieces):
         print(label)
         logging.debug("starting position board printed")
 
-    def update_board(piece,prev_loc,now_loc):
+    def update_board(self,piece,prev_loc,now_loc):
         # self.piece = piece
         # self.prev_loc = prev_loc
         # self.now_loc = now_loc
-        if turn % 2 != 0:
-            turn_colour = "white"
+        if ((turn-1) % 2) != 0:
+            turn_colour = "White"
         else:
-            turn_colour = "black"
-        print(now_loc, piece, turn_colour)
-        query = """update board set Location = '%s' where Pieces = '%s' and Colour = '%s';"""
+            turn_colour = "Black"
+        
+        query = """update board set Location = '%s' where (Piece = '%s' and Colour = '%s');"""
         tupl = (now_loc,piece,turn_colour)
+        print(tupl)
+        quit()
         mycursor.execute(query,tupl)
-        # determine turn
+        db.commit()
+        
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
@@ -211,7 +214,8 @@ class Interaction(Movement):
         mycursor.execute(query % str(self.location_captured))
         db.commit()
         print(f"new turn = {self.turn}")
-        Board.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
+        B = Board()
+        B.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
 
 
 def main():
