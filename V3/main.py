@@ -1,8 +1,14 @@
+from codecs import backslashreplace_errors
 from collections import namedtuple
 import pandas as pd
 import mysql.connector
 from pandas.io.parsers import count_empty_vals
 import logging
+import time
+
+
+logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.info("--- INITIALIZED ---")
 
 db = mysql.connector.connect(
     host = "localhost",
@@ -11,6 +17,7 @@ db = mysql.connector.connect(
     database = "chess"
 )
 mycursor = db.cursor()
+logging.info("sql server connection established")
 
 class Pieces():
     w_king = "♔"
@@ -31,6 +38,7 @@ class Board(Pieces):
         mycursor.execute("drop table board")
         mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5));")
         #white pieces data entry
+        logging.debug("white pieces data entry")
         mycursor.execute("insert into board values ('d1','Queen','White');")
         mycursor.execute("insert into board values ('e1','King','White');")
         mycursor.execute("insert into board values ('f1','Bishop','White');")
@@ -49,6 +57,7 @@ class Board(Pieces):
         mycursor.execute("insert into board values ('h2','Pawn','White');")
         db.commit()
         #black pieces data entry
+        logging.debug("black pieces data entry")
         mycursor.execute("insert into board values ('d8','Queen','Black');")
         mycursor.execute("insert into board values ('e8','King','Black');")
         mycursor.execute("insert into board values ('f8','Bishop','Black');")
@@ -81,7 +90,7 @@ class Board(Pieces):
             print(i)
         label = ["a","b","c","d","e","f","g","h"]
         print(label)
-
+        logging.debug("starting position board printed")
         
 
 class Movement():
@@ -105,11 +114,27 @@ class Movement():
             Movement.trace_route(self,self.current_loc,self.piece,self.pos)
 
         def trace_route(self,current_loc,piece,future_loc):
+            long = [1,2,3,4,5,6,7,8]
+            diag = []
             print("tracing route")
             self.current_loc = current_loc
             self.future_loc = future_loc
             self.piece = piece
             print(f"moving {self.piece} from {self.current_loc} to {self.future_loc}")
+            #to check if the move is longitudnal and not diagonal
+            if str(self.future_loc[0]) == str(self.current_loc[0]):
+                print("the move is longitudnal")
+                if self.current_loc[1] > self.future_loc[1]:
+                    pass
+                elif self.current_loc[1] < self.future_loc[1]:
+                    while True:
+                        loc_num_check = int(self.current_loc[1]) + 1
+                        loc_square_check = str(self.current_loc[0]) + str(loc_num_check)
+                        print(loc_square_check)
+                        time.sleep(1)
+                        if str(loc_square_check) == str(self.future_loc):
+                            break
+                    print("path clear")
 
         def check_queen_move(self,move,count):
             self.move = move
@@ -163,4 +188,6 @@ def main():
         which = input("enter current position of the rook to be moved : ")
         m.check_rook_move(move,count,which)      
 
+
+logging.info("main()")
 main()
