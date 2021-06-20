@@ -76,6 +76,7 @@ class Board(Pieces):
         db.commit()
 
     def create_board(self):
+        global li
         li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
              [Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,"7"],
              [" "," "," "," "," "," "," "," ","6"],
@@ -84,6 +85,17 @@ class Board(Pieces):
              [" "," "," "," "," "," "," "," ","3"],
              [Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,"2"],
              [Pieces.w_rooke,Pieces.w_knight,Pieces.w_bishop,Pieces.w_queen,Pieces.w_king,Pieces.w_bishop,Pieces.w_knight,Pieces.w_rooke,"1"],
+        ]
+
+        li_ref = [
+            [(0,7),(1,7),(2,7),(3,7),(4,7),(5,7),(6,7),(7,7)],
+            [(0,6),(1,6),(2,6),(3,6),(4,6),(5,6),(6,6),(7,6)],
+            [(0,5),(1,5),(2,5),(3,5),(4,5),(5,5),(6,5),(7,5)],
+            [(0,4),(1,4),(2,4),(3,4),(4,4),(5,4),(6,4),(7,4)],
+            [(0,3),(1,3),(2,3),(3,3),(4,3),(5,3),(6,3),(7,3)],
+            [(0,2),(1,2),(2,2),(3,2),(4,2),(5,2),(6,2),(7,2)],
+            [(0,1),(1,1),(2,1),(3,1),(4,1),(5,1),(6,1),(7,1)],
+            [(0,0),(0,1),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0)],
         ]
         for i in li:
             print(i)
@@ -102,10 +114,19 @@ class Board(Pieces):
         
         query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
         tupl = (self.now_loc,self.piece,turn_colour)
-        print(tupl)
+        # print(tupl)
         mycursor.execute(query % tupl)
         db.commit()
+        B = Board()
+        B.show_updated_board()
         
+    def show_updated_board(self):
+        loc_dict_local = Movement.loc_dict
+        mycursor.execute("select * from board;")
+        result = mycursor.fetchall()
+        # create a method to query through table board and reconstruct a board as a list
+
+
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
