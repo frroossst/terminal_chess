@@ -90,11 +90,23 @@ class Board(Pieces):
         label = ["a","b","c","d","e","f","g","h"]
         print(label)
         logging.debug("starting position board printed")
+
+    def update_board(self,piece,prev_loc,now_loc):
+        pass
         
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
-        loc_dict = {"a1":(0,0)}
+        loc_dict = {
+            "a1":(0,0),"a2":(0,1),"a3":(0,2),"a4":(0,3),"a5":(0,4),"a6":(0,5),"a7":(0,6),"a8":(0,7),
+            "b1":(1,0),"b2":(1,1),"b3":(1,2),"b4":(1,3),"b5":(1,4),"b6":(1,5),"b7":(1,6),"b8":(1,7),
+            "c1":(0,0),"c2":(2,1),"c3":(2,2),"c4":(2,3),"c5":(2,4),"c6":(2,5),"c7":(2,6),"c8":(2,7),
+            "d1":(0,0),"d2":(3,1),"d3":(3,2),"d4":(3,3),"d5":(3,4),"d6":(3,5),"d7":(3,6),"d8":(3,7),
+            "e1":(0,0),"e2":(4,1),"e3":(4,2),"e4":(4,3),"e5":(4,4),"e6":(4,5),"e7":(4,6),"e8":(4,7),
+            "f1":(0,0),"f2":(5,1),"f3":(5,2),"f4":(5,3),"f5":(5,4),"f6":(5,5),"f7":(5,6),"f8":(5,7),
+            "g1":(0,0),"g2":(6,1),"g3":(6,2),"g4":(6,3),"g5":(6,4),"g6":(6,5),"g7":(6,6),"g8":(6,7),
+            "h1":(0,0),"h2":(7,1),"h3":(7,2),"h4":(7,3),"h5":(7,4),"h6":(7,5),"h7":(7,6),"h8":(7,7),
+        }
 
         def __init__(self) -> None:
             pass
@@ -138,7 +150,7 @@ class Movement():
                         if result != []:
                             print("obstacle encountered")
                             I = Interaction()
-                            I.capture(loc_square_check,self.piece)
+                            I.capture(self.current_loc,loc_square_check,self.piece)
                             # print(result)
                             break
                         else:
@@ -174,11 +186,17 @@ class Interaction(Movement):
     def __init__(self) -> None:
         pass
 
-    def capture(self,location_captured,piece_capturer):
+    def capture(self,prev_location,location_captured,piece_capturer):
+        self.prev_location = prev_location
         self.location_captured = location_captured
         self.piece_capturer = piece_capturer
         print(Movement.loc_dict)
         print(f"{self.piece_capturer} captures a piece at {self.location_captured}")
+        print(self.location_captured)
+        query = "delete from board where Location = '%s';"
+        mycursor.execute(query % str(self.location_captured))
+        db.commit()
+        #Board.update_board(self.piece_capturer,self.prev_location,self.location_captured)
 
 
 def main():
@@ -187,29 +205,29 @@ def main():
     m = Movement()
     move = "Qd7"
     global count
-    count = 0
-    count += 1
+    turn = 0
+    turn += 1
     global which
     which = "" #current position for the piece to be moved
     if move[0] == "K":
-        m.check_king_move(move,count)
+        m.check_king_move(move,turn)
 
     elif move[0] == "Q":
-        m.check_queen_move(move,count)
+        m.check_queen_move(move,turn)
 
     elif move[0] == "B":
-        m.check_bishop_move(move,count)
+        m.check_bishop_move(move,turn)
 
     elif move[0] == "N":
         which = input("enter current position of the rook to be moved : ")
-        m.check_knight_move(move,count,which)
+        m.check_knight_move(move,turn,which)
 
     elif move[0] == "p":
         m.check_pawn_move(move)
 
     elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")
-        m.check_rook_move(move,count,which)      
+        m.check_rook_move(move,turn,which)      
 
 logging.info("main()")
 main()
