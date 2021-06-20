@@ -91,9 +91,20 @@ class Board(Pieces):
         print(label)
         logging.debug("starting position board printed")
 
-    def update_board(self,piece,prev_loc,now_loc):
-        pass
-        
+    def update_board(piece,prev_loc,now_loc):
+        # self.piece = piece
+        # self.prev_loc = prev_loc
+        # self.now_loc = now_loc
+        if turn % 2 != 0:
+            turn_colour = "white"
+        else:
+            turn_colour = "black"
+        print(now_loc, piece, turn_colour)
+        query = """update board set Location = '%s' where Pieces = '%s' and Colour = '%s';"""
+        tupl = (now_loc,piece,turn_colour)
+        mycursor.execute(query,tupl)
+        # determine turn
+
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
@@ -111,9 +122,10 @@ class Movement():
         def __init__(self) -> None:
             pass
 
-        def get_current_loc(self,piece,pos):
+        def get_current_loc(self,piece,pos,turn):
             self.piece = piece
             self.pos = pos
+            self.turn = turn
             query = "select Loc from pieces where Name = '%s';"
             mycursor.execute(query % self.piece)
             result = mycursor.fetchall()
@@ -122,14 +134,15 @@ class Movement():
                     print(j)
             print("at get current loc!")
             self.current_loc = j
-            Movement.trace_route(self,self.current_loc,self.piece,self.pos)
+            Movement.trace_route(self,self.current_loc,self.piece,self.pos,self.turn)
 
-        def trace_route(self,current_loc,piece,future_loc):
+        def trace_route(self,current_loc,piece,future_loc,turn):
             long = [1,2,3,4,5,6,7,8]
             diag = []
             count = int(self.current_loc[1])
             print("tracing route")
             self.current_loc = current_loc
+            self.turn = turn
             self.future_loc = future_loc
             self.piece = piece
             print(f"moving {self.piece} from {self.current_loc} to {self.future_loc}")
@@ -150,7 +163,7 @@ class Movement():
                         if result != []:
                             print("obstacle encountered")
                             I = Interaction()
-                            I.capture(self.current_loc,loc_square_check,self.piece)
+                            I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
                             # print(result)
                             break
                         else:
@@ -160,16 +173,16 @@ class Movement():
                                 break
                 # print("path clear")
 
-        def check_queen_move(self,move,count):
+        def check_queen_move(self,move,turn):
             self.move = move
-            self.count = count
+            self.turn = turn
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
                     #insert check for occupied squares
                     #insert obstacle check
                     print("legal queen move")
                     self.move = self.move[1] + self.move[2]
-                    Movement.get_current_loc(self,"Queen",self.move)
+                    Movement.get_current_loc(self,"Queen",self.move,self.turn)
 
         def check_king_move(self,position,count):
             self.position = position
@@ -186,17 +199,19 @@ class Interaction(Movement):
     def __init__(self) -> None:
         pass
 
-    def capture(self,prev_location,location_captured,piece_capturer):
+    def capture(self,prev_location,location_captured,piece_capturer,turn):
         self.prev_location = prev_location
         self.location_captured = location_captured
         self.piece_capturer = piece_capturer
-        print(Movement.loc_dict)
+        self.turn = turn
+        # print(Movement.loc_dict)
         print(f"{self.piece_capturer} captures a piece at {self.location_captured}")
         print(self.location_captured)
         query = "delete from board where Location = '%s';"
         mycursor.execute(query % str(self.location_captured))
         db.commit()
-        #Board.update_board(self.piece_capturer,self.prev_location,self.location_captured)
+        print(f"new turn = {self.turn}")
+        Board.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
 
 
 def main():
@@ -204,8 +219,9 @@ def main():
     b.create_board()
     m = Movement()
     move = "Qd7"
-    global count
-    turn = 0
+    global turn
+    turn = 1
+    print(f"turn = {turn}")
     turn += 1
     global which
     which = "" #current position for the piece to be moved
