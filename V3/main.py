@@ -6,7 +6,6 @@ from pandas.io.parsers import count_empty_vals
 import logging
 import time
 
-
 logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
@@ -50,7 +49,7 @@ class Board(Pieces):
         mycursor.execute("insert into board values ('a2','Pawn','White');")
         mycursor.execute("insert into board values ('b2','Pawn','White');")
         mycursor.execute("insert into board values ('c2','Pawn','White');")
-        mycursor.execute("insert into board values ('d2','Pawn','White');")
+        # mycursor.execute("insert into board values ('d2','Pawn','White');")
         mycursor.execute("insert into board values ('e2','Pawn','White');")
         mycursor.execute("insert into board values ('f2','Pawn','White');")
         mycursor.execute("insert into board values ('g2','Pawn','White');")
@@ -92,10 +91,10 @@ class Board(Pieces):
         print(label)
         logging.debug("starting position board printed")
         
-
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
+        loc_dict = {"a1":(0,0)}
 
         def __init__(self) -> None:
             pass
@@ -116,6 +115,7 @@ class Movement():
         def trace_route(self,current_loc,piece,future_loc):
             long = [1,2,3,4,5,6,7,8]
             diag = []
+            count = int(self.current_loc[1])
             print("tracing route")
             self.current_loc = current_loc
             self.future_loc = future_loc
@@ -128,13 +128,25 @@ class Movement():
                     pass
                 elif self.current_loc[1] < self.future_loc[1]:
                     while True:
-                        loc_num_check = int(self.current_loc[1]) + 1
+                        loc_num_check = int(self.current_loc[1]) + count
                         loc_square_check = str(self.current_loc[0]) + str(loc_num_check)
                         print(loc_square_check)
-                        time.sleep(1)
-                        if str(loc_square_check) == str(self.future_loc):
+                        query = ("select Piece from board where Location = '%s';")
+                        mycursor.execute(query % loc_square_check)
+                        # print("1.",loc_square_check)
+                        result = mycursor.fetchall()
+                        if result != []:
+                            print("obstacle encountered")
+                            I = Interaction()
+                            I.capture(loc_square_check,self.piece)
+                            # print(result)
                             break
-                    print("path clear")
+                        else:
+                            # print("free square")
+                            count+=1
+                            if str(loc_square_check) == str(self.future_loc):
+                                break
+                # print("path clear")
 
         def check_queen_move(self,move,count):
             self.move = move
@@ -158,11 +170,22 @@ class Movement():
             self.count = count
             print(self.position,self.count)
 
+class Interaction(Movement):
+    def __init__(self) -> None:
+        pass
+
+    def capture(self,location_captured,piece_capturer):
+        self.location_captured = location_captured
+        self.piece_capturer = piece_capturer
+        print(Movement.loc_dict)
+        print(f"{self.piece_capturer} captures a piece at {self.location_captured}")
+
+
 def main():
     b = Board()
     b.create_board()
     m = Movement()
-    move = "Qd4"
+    move = "Qd7"
     global count
     count = 0
     count += 1
@@ -187,7 +210,6 @@ def main():
     elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")
         m.check_rook_move(move,count,which)      
-
 
 logging.info("main()")
 main()
