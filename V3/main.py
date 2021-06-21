@@ -130,15 +130,25 @@ class Board(Pieces):
         result = mycursor.fetchall()
         # create a method to query through table board and reconstruct a board as a list
 
-    def check_game_over(self,li):
-        if Pieces.w_king not in self.li:
-            print("White King has been captured!")
+    def check_game_over(self):
+        w_king_status = False
+        b_king_status = False
+        self.li = Board.li
+        for i in self.li:
+            if Pieces.w_king in i:
+                print(f"White King has been found at {i}")
+                w_king_status = True
+            elif Pieces.b_king in i:
+                print(f"Black King has been found at {i}")    
+                b_king_status = True
+            else:    
+                pass
+        if w_king_status != True:
+            print("White King has been captured")
             print("Black Wins!")
-        elif Pieces.b_king not in self.li:
-            print("Black King has been captured!")                
-            print("White Wins!")
-        else:
-            raise Exception ("ERROR_KING_NOT_FOUND_EITHER")
+        elif b_king_status != True:
+            print("Black King has been captured")        
+            print("White")
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
@@ -283,3 +293,4 @@ def main():
 
 logging.info("main()")
 main()
+
