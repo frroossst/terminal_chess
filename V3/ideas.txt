@@ -6,3 +6,4 @@
 6. Add cool winning ASCII animations
 7. Error Manual
 8. Rule book
+9. Insert a method to not capture own pieces

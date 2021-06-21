@@ -34,7 +34,7 @@ class Pieces():
 
 class Board(Pieces):
 
-    li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
+    li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,'Pieces.b_king',Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
              [Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,"7"],
              [" "," "," "," "," "," "," "," ","6"],
              [" "," "," "," "," "," "," "," ","5"],   
@@ -129,10 +129,28 @@ class Board(Pieces):
         mycursor.execute("select * from board;")
         result = mycursor.fetchall()
         # create a method to query through table board and reconstruct a board as a list
+        B = Board()
+        B.check_game_over()
 
     def check_game_over(self):
         w_king_status = False
         b_king_status = False
+        b_win_msg = """
+         ____  _            _     __        ___             _ 
+        | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
+        |  _ \| |/ _` |/ __| |/ /  \ \ /\ / /| | '_ \/ __| | |
+        | |_) | | (_| | (__|   <    \ V  V / | | | | \__ \ |_|
+        |____/|_|\__,_|\___|_|\_\    \_/\_/  |_|_| |_|___/ (_)
+
+        """
+        w_win_msg = """
+        __        ___     _ _        __        ___             _ 
+        \ \      / / |__ (_) |_ ___  \ \      / (_)_ __  ___  | |
+         \ \ /\ / /| '_ \| | __/ _ \  \ \ /\ / /| | '_ \/ __| | |
+          \ V  V / | | | | | ||  __/   \ V  V / | | | | \__ \ |_|
+           \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
+
+        """
         self.li = Board.li
         for i in self.li:
             if Pieces.w_king in i:
@@ -145,10 +163,10 @@ class Board(Pieces):
                 pass
         if w_king_status != True:
             print("White King has been captured")
-            print("Black Wins!")
+            print(b_win_msg)
         elif b_king_status != True:
             print("Black King has been captured")        
-            print("White")
+            print(w_win_msg)
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
@@ -196,6 +214,7 @@ class Movement():
                 print("the move is longitudnal")
                 if self.current_loc[1] > self.future_loc[1]:
                     pass
+                #insert code here
                 elif self.current_loc[1] < self.future_loc[1]:
                     while True:
                         loc_num_check = int(self.current_loc[1]) + count
