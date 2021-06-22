@@ -19,22 +19,22 @@ mycursor = db.cursor()
 logging.info("sql server connection established")
 
 class Pieces():
-    w_king = "♔"
-    b_king = "♚"
-    w_queen = "♕"
-    b_queen = "♛"
-    w_bishop = "♗"
-    b_bishop = "♝"
-    w_knight = "♘" 
-    b_knight = "♞" 
-    w_rooke = "♖" 
-    b_rooke = "♜"
-    w_pawn = "♙"
-    b_pawn = "♟" 
+    b_king = "♔"
+    w_king = "♚"
+    b_queen = "♕"
+    w_queen = "♛"
+    b_bishop = "♗"
+    w_bishop = "♝"
+    b_knight = "♘" 
+    w_knight = "♞" 
+    b_rooke = "♖" 
+    w_rooke = "♜"
+    b_pawn = "♙"
+    w_pawn = "♟" 
 
 class Board(Pieces):
 
-    li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,'Pieces.b_king',Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
+    li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
              [Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,"7"],
              [" "," "," "," "," "," "," "," ","6"],
              [" "," "," "," "," "," "," "," ","5"],   
@@ -44,16 +44,16 @@ class Board(Pieces):
              [Pieces.w_rooke,Pieces.w_knight,Pieces.w_bishop,Pieces.w_queen,Pieces.w_king,Pieces.w_bishop,Pieces.w_knight,Pieces.w_rooke,"1"],
         ]
 
-    li_ref = [
-            [(0,7),(1,7),(2,7),(3,7),(4,7),(5,7),(6,7),(7,7)],
-            [(0,6),(1,6),(2,6),(3,6),(4,6),(5,6),(6,6),(7,6)],
-            [(0,5),(1,5),(2,5),(3,5),(4,5),(5,5),(6,5),(7,5)],
-            [(0,4),(1,4),(2,4),(3,4),(4,4),(5,4),(6,4),(7,4)],
-            [(0,3),(1,3),(2,3),(3,3),(4,3),(5,3),(6,3),(7,3)],
-            [(0,2),(1,2),(2,2),(3,2),(4,2),(5,2),(6,2),(7,2)],
-            [(0,1),(1,1),(2,1),(3,1),(4,1),(5,1),(6,1),(7,1)],
-            [(0,0),(0,1),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0)],
-        ]
+    li_ref_dict =  {
+            "a1":(0,0),"a2":(0,1),"a3":(0,2),"a4":(0,3),"a5":(0,4),"a6":(0,5),"a7":(0,6),"a8":(0,7),
+            "b1":(1,0),"b2":(1,1),"b3":(1,2),"b4":(1,3),"b5":(1,4),"b6":(1,5),"b7":(1,6),"b8":(1,7),
+            "c1":(2,0),"c2":(2,1),"c3":(2,2),"c4":(2,3),"c5":(2,4),"c6":(2,5),"c7":(2,6),"c8":(2,7),
+            "d1":(3,0),"d2":(3,1),"d3":(3,2),"d4":(3,3),"d5":(3,4),"d6":(3,5),"d7":(3,6),"d8":(3,7),
+            "e1":(4,0),"e2":(4,1),"e3":(4,2),"e4":(4,3),"e5":(4,4),"e6":(4,5),"e7":(4,6),"e8":(4,7),
+            "f1":(5,0),"f2":(5,1),"f3":(5,2),"f4":(5,3),"f5":(5,4),"f6":(5,5),"f7":(5,6),"f8":(5,7),
+            "g1":(6,0),"g2":(6,1),"g3":(6,2),"g4":(6,3),"g5":(6,4),"g6":(6,5),"g7":(6,6),"g8":(6,7),
+            "h1":(7,0),"h2":(7,1),"h3":(7,2),"h4":(7,3),"h5":(7,4),"h6":(7,5),"h7":(7,6),"h8":(7,7),
+        }
 
     def __init__(self):
         mycursor.execute("drop table board")
@@ -97,9 +97,7 @@ class Board(Pieces):
         mycursor.execute("insert into board values ('h7','Pawn','Black');")
         db.commit()
 
-    def create_board(self):
-        
-        
+    def create_board(self):     
         for i in Board.li:
             print(i)
         label = ["a","b","c","d","e","f","g","h"]
@@ -120,6 +118,9 @@ class Board(Pieces):
         # print(tupl)
         mycursor.execute(query % tupl)
         db.commit()
+
+#code to modify sql database to update board positions
+
         B = Board()
         B.show_updated_board()
         
@@ -128,7 +129,9 @@ class Board(Pieces):
         loc_dict_local = Movement.loc_dict
         mycursor.execute("select * from board;")
         result = mycursor.fetchall()
-        # create a method to query through table board and reconstruct a board as a list
+
+# create a method to query through table board and reconstruct a board as a list
+
         B = Board()
         B.check_game_over()
 
@@ -168,18 +171,25 @@ class Board(Pieces):
             print("Black King has been captured")        
             print(w_win_msg)
 
+    def chess_move_co(self):
+        self.dict = Board.li_ref_dict
+        input_move = input("enter chess square : ")
+        for c_move, co_or in self.dict.items():
+            if str(c_move) == str(input_move):
+                print(f"Key = {c_move} Value = {co_or}")
+
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
         loc_dict = {
             "a1":(0,0),"a2":(0,1),"a3":(0,2),"a4":(0,3),"a5":(0,4),"a6":(0,5),"a7":(0,6),"a8":(0,7),
             "b1":(1,0),"b2":(1,1),"b3":(1,2),"b4":(1,3),"b5":(1,4),"b6":(1,5),"b7":(1,6),"b8":(1,7),
-            "c1":(0,0),"c2":(2,1),"c3":(2,2),"c4":(2,3),"c5":(2,4),"c6":(2,5),"c7":(2,6),"c8":(2,7),
-            "d1":(0,0),"d2":(3,1),"d3":(3,2),"d4":(3,3),"d5":(3,4),"d6":(3,5),"d7":(3,6),"d8":(3,7),
-            "e1":(0,0),"e2":(4,1),"e3":(4,2),"e4":(4,3),"e5":(4,4),"e6":(4,5),"e7":(4,6),"e8":(4,7),
-            "f1":(0,0),"f2":(5,1),"f3":(5,2),"f4":(5,3),"f5":(5,4),"f6":(5,5),"f7":(5,6),"f8":(5,7),
-            "g1":(0,0),"g2":(6,1),"g3":(6,2),"g4":(6,3),"g5":(6,4),"g6":(6,5),"g7":(6,6),"g8":(6,7),
-            "h1":(0,0),"h2":(7,1),"h3":(7,2),"h4":(7,3),"h5":(7,4),"h6":(7,5),"h7":(7,6),"h8":(7,7),
+            "c1":(2,0),"c2":(2,1),"c3":(2,2),"c4":(2,3),"c5":(2,4),"c6":(2,5),"c7":(2,6),"c8":(2,7),
+            "d1":(3,0),"d2":(3,1),"d3":(3,2),"d4":(3,3),"d5":(3,4),"d6":(3,5),"d7":(3,6),"d8":(3,7),
+            "e1":(4,0),"e2":(4,1),"e3":(4,2),"e4":(4,3),"e5":(4,4),"e6":(4,5),"e7":(4,6),"e8":(4,7),
+            "f1":(5,0),"f2":(5,1),"f3":(5,2),"f4":(5,3),"f5":(5,4),"f6":(5,5),"f7":(5,6),"f8":(5,7),
+            "g1":(6,0),"g2":(6,1),"g3":(6,2),"g4":(6,3),"g5":(6,4),"g6":(6,5),"g7":(6,6),"g8":(6,7),
+            "h1":(7,0),"h2":(7,1),"h3":(7,2),"h4":(7,3),"h5":(7,4),"h6":(7,5),"h7":(7,6),"h8":(7,7),
         }
 
         def __init__(self) -> None:
@@ -311,5 +321,6 @@ def main():
         m.check_rook_move(move,turn,which)      
 
 logging.info("main()")
-main()
-
+# main()
+B = Board()
+B.chess_move_co()
