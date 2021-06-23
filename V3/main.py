@@ -128,13 +128,14 @@ class Board(Pieces):
             turn_colour = "White"
         else:
             turn_colour = "Black"
-        
         query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
         tupl = (self.now_loc,self.piece,turn_colour)
         # print(tupl)
         mycursor.execute(query % tupl)
         db.commit()
-
+        # query = "delete from board set Location = '%s';"
+        # mycursor.execute(query % str(self.prev_loc))
+        # db.commit()
 #code to modify sql database to update board positions
 
         B = Board()
@@ -156,12 +157,35 @@ class Board(Pieces):
                     tupl = co_or
                     if piece_colour == "White":
                         if piece_name == "Queen":
-                            Board.li[tupl[0]][tupl[1]] = Pieces.w_queen
-
-
-        for i in Board.li:
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_queen
+                        elif piece_name == "King":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_king
+                        elif piece_name == "Bishop":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_bishop
+                        elif piece_name == "Rook":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_rooke
+                        elif piece_name == "Knight":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_knight
+                        elif piece_name == "Pawn":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_pawn
+                    elif piece_colour == "Black":
+                        if piece_name == "Queen":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_queen
+                        elif piece_name == "King":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_king
+                        elif piece_name == "Bishop":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_bishop
+                        elif piece_name == "Rook":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_rooke
+                        elif piece_name == "Knight":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_knight
+                        elif piece_name == "Pawn":
+                            Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_pawn
+                    else:
+                        raise Exception ("Unexpected Colour Encountered")
+        for i in Board.li_ref_empty:
             print(i)
-        print(Board.label )
+        print(Board.label)
 # create a method to query through table board and reconstruct a board as a list
 
 
