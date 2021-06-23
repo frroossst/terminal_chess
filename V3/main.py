@@ -1,4 +1,3 @@
-from codecs import backslashreplace_errors
 from collections import namedtuple
 from types import coroutine
 import pandas as pd
@@ -153,7 +152,7 @@ class Board(Pieces):
             self.input_move = piece_loc
             for c_move, co_or in self.dict.items():
                 if str(c_move) == str(self.input_move):
-                    print(f"Key = {c_move} Value = {co_or}")
+                    # print(f"Key = {c_move} Value = {co_or}")
                     tupl = co_or
                     if piece_colour == "White":
                         if piece_name == "Queen":
@@ -187,7 +186,10 @@ class Board(Pieces):
             print(i)
         print(Board.label)
         Board.li = Board.li_ref_empty
+        B = Board()  
+        B.check_game_over()
 
+    # @staticmethod
     def check_game_over(self):
         w_king_status = False
         b_king_status = False
@@ -255,8 +257,12 @@ class Movement():
             self.piece = piece
             self.pos = pos
             self.turn = turn
-            query = "select Loc from pieces where Name = '%s';"
-            mycursor.execute(query % self.piece)
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+            query = "select Location from board where Piece = '%s' and Colour = '%s';"
+            mycursor.execute(query % (self.piece,turn_colour))
             result = mycursor.fetchall()
             for i in result:
                 for j in i:
@@ -277,7 +283,7 @@ class Movement():
             print(f"moving {self.piece} from {self.current_loc} to {self.future_loc}")
             #to check if the move is longitudnal and not diagonal
             if str(self.future_loc[0]) == str(self.current_loc[0]):
-                print("the move is longitudnal")
+                print("the move is vertical")
                 if self.current_loc[1] > self.future_loc[1]:
                     pass
                 #insert code here
@@ -300,12 +306,29 @@ class Movement():
                             # print("free square")
                             count+=1
                             if str(loc_square_check) == str(self.future_loc):
+                                print(f"reached at {self.future_loc}")
+                                B = Board()
+                                B.update_board(self.piece,self.current_loc,self.future_loc)
                                 break
                 # print("path clear")
 
         def check_queen_move(self,move,turn):
             self.move = move
             self.turn = turn
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+            query = "select * from board where Piece = 'Queen' and Colour = '%s';"
+            mycursor.execute(query % (turn_colour))
+            result = mycursor.fetchall()
+            for i in result:
+                tupl = i
+            move_manip = str(self.move[1]) + str(self.move[2])
+            if str(tupl[0]) == str(move_manip):
+                print("cannot move to the same location")
+                quit()
+            print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
                     #insert check for occupied squares
@@ -346,10 +369,10 @@ class Interaction(Movement):
 
 
 def main():
-    b = Board()
-    b.create_board()
-    m = Movement()
-    move = "Qd7"
+    B = Board()
+    B.create_board()
+    M = Movement()
+    move = "Qd5"
     global turn
     turn = 1
     print(f"turn = {turn}")
@@ -357,24 +380,24 @@ def main():
     global which
     which = "" #current position for the piece to be moved
     if move[0] == "K":
-        m.check_king_move(move,turn)
+        M.check_king_move(move,turn)
 
     elif move[0] == "Q":
-        m.check_queen_move(move,turn)
+        M.check_queen_move(move,turn)
 
     elif move[0] == "B":
-        m.check_bishop_move(move,turn)
+        M.check_bishop_move(move,turn)
 
     elif move[0] == "N":
         which = input("enter current position of the rook to be moved : ")
-        m.check_knight_move(move,turn,which)
+        M.check_knight_move(move,turn,which)
 
     elif move[0] == "p":
-        m.check_pawn_move(move)
+        M.check_pawn_move(move)
 
     elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")
-        m.check_rook_move(move,turn,which)      
+        M.check_rook_move(move,turn,which)      
 
 logging.info("main()")
 main()
