@@ -186,8 +186,7 @@ class Board(Pieces):
         for i in Board.li_ref_empty:
             print(i)
         print(Board.label)
-# create a method to query through table board and reconstruct a board as a list
-
+        Board.li = Board.li_ref_empty
 
     def check_game_over(self):
         w_king_status = False
