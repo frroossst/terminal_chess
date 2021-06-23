@@ -19,6 +19,47 @@ db = mysql.connector.connect(
 mycursor = db.cursor()
 logging.info("sql server connection established")
 
+mycursor.execute("drop table board")
+mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5));")
+#white pieces data entry
+logging.debug("white pieces data entry")
+mycursor.execute("insert into board values ('d1','Queen','White');")
+mycursor.execute("insert into board values ('e1','King','White');")
+mycursor.execute("insert into board values ('f1','Bishop','White');")
+mycursor.execute("insert into board values ('c1','Bishop','White');")
+mycursor.execute("insert into board values ('g1','Knight','White');")
+mycursor.execute("insert into board values ('b1','Knight','White');")
+mycursor.execute("insert into board values ('h1','Rook','White');")
+mycursor.execute("insert into board values ('a1','Rook','White');")
+mycursor.execute("insert into board values ('a2','Pawn','White');")
+mycursor.execute("insert into board values ('b2','Pawn','White');")
+mycursor.execute("insert into board values ('c2','Pawn','White');")
+# mycursor.execute("insert into board values ('d2','Pawn','White');")
+mycursor.execute("insert into board values ('e2','Pawn','White');")
+mycursor.execute("insert into board values ('f2','Pawn','White');")
+mycursor.execute("insert into board values ('g2','Pawn','White');")
+mycursor.execute("insert into board values ('h2','Pawn','White');")
+db.commit()
+#black pieces data entry
+logging.debug("black pieces data entry")
+mycursor.execute("insert into board values ('d8','Queen','Black');")
+mycursor.execute("insert into board values ('e8','King','Black');")
+mycursor.execute("insert into board values ('f8','Bishop','Black');")
+mycursor.execute("insert into board values ('c8','Bishop','Black');")
+mycursor.execute("insert into board values ('g8','Knight','Black');")
+mycursor.execute("insert into board values ('b8','Knight','Black');")
+mycursor.execute("insert into board values ('h8','Rook','Black');")
+mycursor.execute("insert into board values ('a8','Rook','Black');")
+mycursor.execute("insert into board values ('a7','Pawn','Black');")
+mycursor.execute("insert into board values ('b7','Pawn','Black');")
+mycursor.execute("insert into board values ('c7','Pawn','Black');")
+mycursor.execute("insert into board values ('d7','Pawn','Black');")
+mycursor.execute("insert into board values ('e7','Pawn','Black');")
+mycursor.execute("insert into board values ('f7','Pawn','Black');")
+mycursor.execute("insert into board values ('g7','Pawn','Black');")
+mycursor.execute("insert into board values ('h7','Pawn','Black');")
+db.commit()
+
 class Pieces():
     b_king = "♔"
     w_king = "♚"
@@ -45,6 +86,19 @@ class Board(Pieces):
              [Pieces.w_rooke,Pieces.w_knight,Pieces.w_bishop,Pieces.w_queen,Pieces.w_king,Pieces.w_bishop,Pieces.w_knight,Pieces.w_rooke,"1"],
         ]
 
+    label = ["a","b","c","d","e","f","g","h"]
+
+    li_ref_empty = [
+        [" "," "," "," "," "," "," "," ","8"],        
+        [" "," "," "," "," "," "," "," ","7"],
+        [" "," "," "," "," "," "," "," ","6"],
+        [" "," "," "," "," "," "," "," ","5"],
+        [" "," "," "," "," "," "," "," ","4"],
+        [" "," "," "," "," "," "," "," ","3"],
+        [" "," "," "," "," "," "," "," ","2"],
+        [" "," "," "," "," "," "," "," ","1"],        
+    ]
+
     li_ref_dict =  {
             "a1":(7,0),"a2":(6,0),"a3":(5,0),"a4":(4,0),"a5":(3,0),"a6":(2,0),"a7":(1,0),"a8":(0,0),
             "b1":(7,1),"b2":(6,1),"b3":(5,1),"b4":(4,1),"b5":(3,1),"b6":(2,1),"b7":(1,1),"b8":(0,1),
@@ -57,46 +111,7 @@ class Board(Pieces):
         }
 
     def __init__(self):
-        mycursor.execute("drop table board")
-        mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5));")
-        #white pieces data entry
-        logging.debug("white pieces data entry")
-        mycursor.execute("insert into board values ('d1','Queen','White');")
-        mycursor.execute("insert into board values ('e1','King','White');")
-        mycursor.execute("insert into board values ('f1','Bishop','White');")
-        mycursor.execute("insert into board values ('c1','Bishop','White');")
-        mycursor.execute("insert into board values ('g1','Knight','White');")
-        mycursor.execute("insert into board values ('b1','Knight','White');")
-        mycursor.execute("insert into board values ('h1','Rook','White');")
-        mycursor.execute("insert into board values ('a1','Rook','White');")
-        mycursor.execute("insert into board values ('a2','Pawn','White');")
-        mycursor.execute("insert into board values ('b2','Pawn','White');")
-        mycursor.execute("insert into board values ('c2','Pawn','White');")
-        # mycursor.execute("insert into board values ('d2','Pawn','White');")
-        mycursor.execute("insert into board values ('e2','Pawn','White');")
-        mycursor.execute("insert into board values ('f2','Pawn','White');")
-        mycursor.execute("insert into board values ('g2','Pawn','White');")
-        mycursor.execute("insert into board values ('h2','Pawn','White');")
-        db.commit()
-        #black pieces data entry
-        logging.debug("black pieces data entry")
-        mycursor.execute("insert into board values ('d8','Queen','Black');")
-        mycursor.execute("insert into board values ('e8','King','Black');")
-        mycursor.execute("insert into board values ('f8','Bishop','Black');")
-        mycursor.execute("insert into board values ('c8','Bishop','Black');")
-        mycursor.execute("insert into board values ('g8','Knight','Black');")
-        mycursor.execute("insert into board values ('b8','Knight','Black');")
-        mycursor.execute("insert into board values ('h8','Rook','Black');")
-        mycursor.execute("insert into board values ('a8','Rook','Black');")
-        mycursor.execute("insert into board values ('a7','Pawn','Black');")
-        mycursor.execute("insert into board values ('b7','Pawn','Black');")
-        mycursor.execute("insert into board values ('c7','Pawn','Black');")
-        mycursor.execute("insert into board values ('d7','Pawn','Black');")
-        mycursor.execute("insert into board values ('e7','Pawn','Black');")
-        mycursor.execute("insert into board values ('f7','Pawn','Black');")
-        mycursor.execute("insert into board values ('g7','Pawn','Black');")
-        mycursor.execute("insert into board values ('h7','Pawn','Black');")
-        db.commit()
+        pass
 
     def create_board(self):     
         for i in Board.li:
@@ -127,14 +142,28 @@ class Board(Pieces):
         
     def show_updated_board(self):
         self.li = Board.li
-        loc_dict_local = Movement.loc_dict
         mycursor.execute("select * from board;")
         result = mycursor.fetchall()
+        for i in result:
+            piece_loc = i[0]  
+            piece_name = i[1]  
+            piece_colour = i[2] 
+            self.dict = Board.li_ref_dict
+            self.input_move = piece_loc
+            for c_move, co_or in self.dict.items():
+                if str(c_move) == str(self.input_move):
+                    print(f"Key = {c_move} Value = {co_or}")
+                    tupl = co_or
+                    if piece_colour == "White":
+                        if piece_name == "Queen":
+                            Board.li[tupl[0]][tupl[1]] = Pieces.w_queen
 
+
+        for i in Board.li:
+            print(i)
+        print(Board.label )
 # create a method to query through table board and reconstruct a board as a list
 
-        B = Board()
-        B.check_game_over()
 
     def check_game_over(self):
         w_king_status = False
@@ -172,9 +201,10 @@ class Board(Pieces):
             print("Black King has been captured")        
             print(w_win_msg)
 
-    def get_move_co(self):
+    def get_move_co(self,input_move,piece):
         self.dict = Board.li_ref_dict
-        input_move = input("enter chess square : ")
+        self.piece = piece
+        self.input_move = input_move
         for c_move, co_or in self.dict.items():
             if str(c_move) == str(input_move):
                 print(f"Key = {c_move} Value = {co_or}")
@@ -208,7 +238,7 @@ class Movement():
             for i in result:
                 for j in i:
                     print(j)
-            print("at get current loc!")
+            # print("at get current loc!")
             self.current_loc = j
             Movement.trace_route(self,self.current_loc,self.piece,self.pos,self.turn)
 
@@ -283,11 +313,11 @@ class Interaction(Movement):
         self.turn = turn
         # print(Movement.loc_dict)
         print(f"{self.piece_capturer} captures a piece at {self.location_captured}")
-        print(self.location_captured)
+        # print(self.location_captured)
         query = "delete from board where Location = '%s';"
         mycursor.execute(query % str(self.location_captured))
         db.commit()
-        print(f"new turn = {self.turn}")
+        # print(f"new turn = {self.turn}")
         B = Board()
         B.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
 
@@ -324,6 +354,4 @@ def main():
         m.check_rook_move(move,turn,which)      
 
 logging.info("main()")
-# main()
-B = Board()
-B.get_move_co()
+main()

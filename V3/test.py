@@ -33,20 +33,24 @@ li_ref = [
     ]
 
 
-print("OLD LIST")
-for i in li:
-    print(i)
+# print("OLD LIST")
+# for i in li:
+#     print(i)
     
-print()
-print("NEW LIST")
-li_len = len(li)
-count = 7
-while True:
-    print(li[count])
-    count -= 1
-    if count < 0:
-        break
+# print()
+# print("NEW LIST")
+# li_len = len(li)
+# count = 7
+# while True:
+#     print(li[count])
+#     count -= 1
+#     if count < 0:
+#         break
 
 
-print()
-print("ADJUSTED NEW LIST")
+# print()
+# print("ADJUSTED NEW LIST")
+
+li_ref[0][0] = "origin"
+for i in li_ref:
+    print(i)
