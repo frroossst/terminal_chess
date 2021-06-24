@@ -6,6 +6,9 @@ from pandas.io.parsers import count_empty_vals
 import logging
 import time
 
+global turn
+turn = 1
+
 logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
@@ -275,7 +278,7 @@ class Movement():
         def trace_route(self,current_loc,piece,future_loc,turn):
             long = [1,2,3,4,5,6,7,8]
             diag = []
-            count = int(self.current_loc[1])
+            count = 1
             print("tracing route")
             self.current_loc = current_loc
             self.turn = turn
@@ -286,8 +289,27 @@ class Movement():
             if str(self.future_loc[0]) == str(self.current_loc[0]):
                 print("the move is vertical")
                 if self.current_loc[1] > self.future_loc[1]:
-                    pass
-                #insert code here
+                    while True:
+                        loc_num_check = int(self.current_loc[1]) - count
+                        loc_square_check = str(self.current_loc[0]) + str(loc_num_check)
+                        print(loc_square_check)
+                        query = ("select Piece from board where Location = '%s';")
+                        mycursor.execute(query % loc_square_check)
+                        result = mycursor.fetchall()
+                        if result != []:
+                            print("obstacle encountered")
+                            I = Interaction()
+                            I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
+                            # print(result)
+                            break
+                        else:
+                            # print("free square")
+                            count+=1
+                            if str(loc_square_check) == str(self.future_loc):
+                                print(f"reached at {self.future_loc}")
+                                B = Board()
+                                B.update_board(self.piece,self.current_loc,self.future_loc)
+                                break
                 elif self.current_loc[1] < self.future_loc[1]:
                     while True:
                         loc_num_check = int(self.current_loc[1]) + count
@@ -373,9 +395,8 @@ def main():
     B = Board()
     B.create_board()
     M = Movement()
-    move = input("enter move : ")
     global turn
-    turn = 1
+    move = input("enter move : ")
     print(f"turn = {turn}")
     turn += 1
     global which
