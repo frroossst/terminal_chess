@@ -1,5 +1,3 @@
-from collections import namedtuple
-from types import coroutine
 import pandas as pd
 import mysql.connector
 from pandas.io.parsers import count_empty_vals
@@ -141,12 +139,12 @@ class Board(Pieces):
 #code to modify sql database to update board positions
 
 
-### [FATAL] RESUME WORK HERE TO REMOVE PREVIOUS MOVE STATE FOR BLACK QUEEN
+### [FATAL] RESUME WORK HERE TO REMOVE PREVIOUS MOVE GHOSTING FOR BLACK QUEEN
         for c_move, co_or in Board.li_ref_dict.items():
             if str(c_move) == str(self.prev_loc):
-                print(c_move,co_or)
-                print(Board.li_ref_empty[co_or[0]][co_or[1]]) #This piece shouldn't be there
-                print(f"index one : {co_or[0]} index two : {co_or[1]}")
+                # print(c_move,co_or)
+                # print(Board.li_ref_empty[co_or[0]][co_or[1]]) #This piece shouldn't be there
+                # print(f"index one : {co_or[0]} index two : {co_or[1]}")
                 # print(type(co_or))
                 # print(type(co_or[0]))
                 cleanup = Board.li_ref_empty
@@ -378,8 +376,22 @@ class Movement():
                     self.move = self.move[1] + self.move[2]
                     Movement.get_current_loc(self,"Queen",self.move,self.turn)
 
-        def check_king_move(self,position,count):
+        def check_king_move(self,position,turn):
             self.position = position
+            self.turn = turn
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+            query = "select * from board where Piece = 'Queen' and Colour = '%s';"
+            mycursor.execute(query % (turn_colour))
+            result = mycursor.fetchall()
+            for i in result:
+                tupl = i
+            move_manip = str(self.move[1]) + str(self.move[2])
+            if str(tupl[0]) == str(move_manip):
+                print("cannot move to the same location")
+                quit()
             if self.position[1] in self.hor:
                 if int(self.position[2]) in self.ver:
                     print("legal king move")
@@ -408,6 +420,14 @@ class Interaction(Movement):
         B = Board()
         B.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
 
+    def promote(self,piece,loc):
+        self.piece = piece
+        self.loc = loc
+        if self.piece == "Pawn":
+            self.loc
+            #iterate through loc_dict to get co-ordinates and replace pawn with Queen
+            #change relevant attributes in the database
+
 
 def main():
     B = Board()
@@ -415,7 +435,7 @@ def main():
     M = Movement()
     global turn
     move = input("enter move : ")
-    print(f"turn = {turn}")
+    # print(f"turn = {turn}")
     turn += 1
     global which
     which = "" #current position for the piece to be moved
@@ -438,6 +458,10 @@ def main():
     elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")
         M.check_rook_move(move,turn,which)      
+    elif move == "O-O":
+        pass
+    elif move == "O-O-O":
+        pass
 
 logging.info("main()")
 main()

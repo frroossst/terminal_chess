@@ -1,0 +1,7 @@
+1. King Move
+2. Pawn Move
+3. Promotion (Auto Queen)
+4. Rooke Move
+5. Bishop Move (check Queen diagonal move)
+6. Knight Move
+7. Castling (in check fix : allow opponent to raise an objection and rever to previous state?)

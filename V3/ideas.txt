@@ -7,3 +7,5 @@
 7. Error Manual
 8. Rule book
 9. Insert a method to not capture own pieces
+10. Castling
+11. Auto-promotion to a queen
