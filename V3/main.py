@@ -225,6 +225,7 @@ class Board(Pieces):
         elif b_king_status != True:
             print("Black King has been captured")        
             print(w_win_msg)
+        main()
 
     def get_move_co(self,input_move,piece):
         self.dict = Board.li_ref_dict
@@ -372,7 +373,7 @@ def main():
     B = Board()
     B.create_board()
     M = Movement()
-    move = "Qd5"
+    move = input("enter move : ")
     global turn
     turn = 1
     print(f"turn = {turn}")
