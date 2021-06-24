@@ -141,12 +141,20 @@ class Board(Pieces):
 #code to modify sql database to update board positions
 
 
-#RESUME WORK HERE TO REMOVE PREVIOUS MOVE STATE FOR BLACK QUEEN
+### [FATAL] RESUME WORK HERE TO REMOVE PREVIOUS MOVE STATE FOR BLACK QUEEN
         for c_move, co_or in Board.li_ref_dict.items():
             if str(c_move) == str(self.prev_loc):
                 print(c_move,co_or)
-                Board.li_ref_empty.remove([co_or[0]][co_or[1]])
-                Board.li_ref_empty.insert([co_or[0]][co_or[1]]," ")
+                print(Board.li_ref_empty[co_or[0]][co_or[1]]) #This piece shouldn't be there
+                print(f"index one : {co_or[0]} index two : {co_or[1]}")
+                # print(type(co_or))
+                # print(type(co_or[0]))
+                cleanup = Board.li_ref_empty
+                int0 = int(co_or[0])
+                int1 = int(co_or[1])
+                # print(type(int0))
+                cleanup[int0].pop(int1)
+                cleanup[int0].insert(int1," ")
 
         B = Board()
         B.show_updated_board()
