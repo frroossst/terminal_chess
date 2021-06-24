@@ -135,10 +135,18 @@ class Board(Pieces):
         # print(tupl)
         mycursor.execute(query % tupl)
         db.commit()
-        # query = "delete from board set Location = '%s';"
+        # query = "delete from board where Location = '%s';"
         # mycursor.execute(query % str(self.prev_loc))
         # db.commit()
 #code to modify sql database to update board positions
+
+
+#RESUME WORK HERE TO REMOVE PREVIOUS MOVE STATE FOR BLACK QUEEN
+        for c_move, co_or in Board.li_ref_dict.items():
+            if str(c_move) == str(self.prev_loc):
+                print(c_move,co_or)
+                Board.li_ref_empty.remove([co_or[0]][co_or[1]])
+                Board.li_ref_empty.insert([co_or[0]][co_or[1]]," ")
 
         B = Board()
         B.show_updated_board()
@@ -172,6 +180,7 @@ class Board(Pieces):
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_pawn
                     elif piece_colour == "Black":
                         if piece_name == "Queen":
+                            # print("yes!")
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_queen
                         elif piece_name == "King":
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_king
@@ -189,6 +198,7 @@ class Board(Pieces):
             print(i)
         print(Board.label)
         Board.li = Board.li_ref_empty
+        
         B = Board()  
         B.check_game_over()
 
