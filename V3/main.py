@@ -1,3 +1,4 @@
+from codecs import backslashreplace_errors
 import pandas as pd
 import mysql.connector
 from pandas.io.parsers import count_empty_vals
@@ -34,7 +35,7 @@ mycursor.execute("insert into board values ('a1','Rook','White');")
 mycursor.execute("insert into board values ('a2','Pawn','White');")
 mycursor.execute("insert into board values ('b2','Pawn','White');")
 mycursor.execute("insert into board values ('c2','Pawn','White');")
-# mycursor.execute("insert into board values ('d2','Pawn','White');")
+mycursor.execute("insert into board values ('d2','Pawn','White');")
 mycursor.execute("insert into board values ('e2','Pawn','White');")
 mycursor.execute("insert into board values ('f2','Pawn','White');")
 mycursor.execute("insert into board values ('g2','Pawn','White');")
@@ -352,6 +353,49 @@ class Movement():
                 # print("path clear")
             elif (self.future_loc[1]) == (self.current_loc[1]):
                 print("the move is horizontal")
+                hor_li = ["a","b","c","d","e","f","g","h"]
+                while True:
+                    if self.current_loc[0] < self.future_loc[0]:
+                        print("the move is towards east")
+                        lindex = hor_li.index(str(self.current_loc[0]))
+                        while True:
+                            lindex += 1
+                            check_loc_coor = str(hor_li[lindex]) + str(self.current_loc[1])
+                            query = """select * from board where Location = '%s';"""
+                            mycursor.execute(query % check_loc_coor)
+                            result = mycursor.fetchall()
+                            if result != []:
+                                print("obstacle encountered")
+                                I = Interaction()
+                                I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
+                                break
+                            else:
+                                if str(check_loc_coor) == str(self.future_loc):
+                                    print(f"reached at {self.future_loc}")
+                                    B = Board()
+                                    B.update_board(self.piece,check_loc_coor,self.future_loc)
+                                    break
+
+                    elif self.current_loc[0] > self.future_loc[0]:
+                        print("the move is towards west")
+                        lindex = hor_li.index(str(self.current_loc[0]))
+                        while True:
+                            lindex -= 1
+                            check_loc_coor = str(hor_li[lindex]) + str(self.current_loc[1])
+                            query = """select * from board where Location = '%s';"""
+                            mycursor.execute(query % check_loc_coor)
+                            result = mycursor.fetchall()
+                            if result != []:
+                                print("obstacle encountered")
+                                I = Interaction()
+                                I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
+                                break
+                            else:
+                                if str(check_loc_coor) == str(self.future_loc):
+                                    print(f"reached at {self.future_loc}")
+                                    B = Board()
+                                    B.update_board(self.piece,check_loc_coor,self.future_loc)
+                                    break
 
 
         def check_queen_move(self,move,turn):
