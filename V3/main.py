@@ -1,4 +1,4 @@
-from codecs import backslashreplace_errors
+import copy
 import pandas as pd
 import mysql.connector
 from pandas.io.parsers import count_empty_vals
@@ -7,6 +7,9 @@ import time
 
 global turn
 turn = 1
+
+global move_stck
+move_stck = []
 
 logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
@@ -100,6 +103,17 @@ class Board(Pieces):
         [" "," "," "," "," "," "," "," ","1"],        
     ]
 
+    li_anti_ghosting = [
+        [" "," "," "," "," "," "," "," ","8"],        
+        [" "," "," "," "," "," "," "," ","7"],
+        [" "," "," "," "," "," "," "," ","6"],
+        [" "," "," "," "," "," "," "," ","5"],
+        [" "," "," "," "," "," "," "," ","4"],
+        [" "," "," "," "," "," "," "," ","3"],
+        [" "," "," "," "," "," "," "," ","2"],
+        [" "," "," "," "," "," "," "," ","1"],        
+    ]
+
     li_ref_dict =  {
             "a1":(7,0),"a2":(6,0),"a3":(5,0),"a4":(4,0),"a5":(3,0),"a6":(2,0),"a7":(1,0),"a8":(0,0),
             "b1":(7,1),"b2":(6,1),"b3":(5,1),"b4":(4,1),"b5":(3,1),"b6":(2,1),"b7":(1,1),"b8":(0,1),
@@ -113,6 +127,13 @@ class Board(Pieces):
 
     def __init__(self):
         pass
+
+    @classmethod
+    def cleanup(self):
+        move = move_stck[-1]
+        for move in Board.li_ref_dict:
+            coordinates = Board.li_ref_dict[move]
+            Board.li[coordinates[0]][coordinates[1]] = " "
 
     def create_board(self):     
         for i in Board.li:
@@ -137,10 +158,10 @@ class Board(Pieces):
         # query = "delete from board where Location = '%s';"
         # mycursor.execute(query % str(self.prev_loc))
         # db.commit()
-#code to modify sql database to update board positions
 
 
-### [FATAL] RESUME WORK HERE TO REMOVE PREVIOUS MOVE GHOSTING FOR BLACK QUEEN
+
+### [FATAL] RESUME WORK HERE TO REMOVE VERTICAL MOVE GHOSTING FOR BLACK QUEEN
         for c_move, co_or in Board.li_ref_dict.items():
             if str(c_move) == str(self.prev_loc):
                 # print(c_move,co_or)
@@ -148,12 +169,14 @@ class Board(Pieces):
                 # print(f"index one : {co_or[0]} index two : {co_or[1]}")
                 # print(type(co_or))
                 # print(type(co_or[0]))
-                cleanup = Board.li_ref_empty
+                cleanup = Board.li
                 int0 = int(co_or[0])
                 int1 = int(co_or[1])
                 # print(type(int0))
                 cleanup[int0].pop(int1)
                 cleanup[int0].insert(int1," ")
+
+        Board.cleanup()
 
         B = Board()
         B.show_updated_board()
@@ -200,17 +223,20 @@ class Board(Pieces):
                         elif piece_name == "Pawn":
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_pawn
                     else:
-                        raise Exception ("Unexpected Colour Encountered")
-        for i in Board.li_ref_empty:
+                        raise Exception ("Unexpected_Colour_Encountered")
+
+        Board.li = Board.li_ref_empty
+        for i in Board.li:
             print(i)
         print(Board.label)
         Board.li = Board.li_ref_empty
-        
+
         B = Board()  
         B.check_game_over()
 
     # @staticmethod
     def check_game_over(self):
+        print(move_stck)
         w_king_status = False
         b_king_status = False
         b_win_msg = """
@@ -242,9 +268,11 @@ class Board(Pieces):
         if w_king_status != True:
             print("White King has been captured")
             print(b_win_msg)
+            quit()
         elif b_king_status != True:
             print("Black King has been captured")        
             print(w_win_msg)
+            quit()
         main()
 
     def get_move_co(self,input_move,piece):
@@ -421,6 +449,7 @@ class Movement():
                     #insert obstacle check
                     print("legal queen move")
                     self.move = self.move[1] + self.move[2]
+                    move_stck.append(self.move)
                     Movement.get_current_loc(self,"Queen",self.move,self.turn)
 
         def check_king_move(self,move,turn):
@@ -443,6 +472,7 @@ class Movement():
                 if int(self.move[2]) in self.ver:
                     print("legal king move")
                     self.move = self.move[1] + self.move[2]
+                    move_stck.append(self.move)
                     Movement.get_current_loc(self,"King",self.move,self.turn)
                     
         def check_bishop_move(self,position,count):
