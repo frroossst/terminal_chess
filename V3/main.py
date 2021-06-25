@@ -350,6 +350,9 @@ class Movement():
                                 B.update_board(self.piece,self.current_loc,self.future_loc)
                                 break
                 # print("path clear")
+            elif (self.future_loc[1]) == (self.current_loc[1]):
+                print("the move is horizontal")
+
 
         def check_queen_move(self,move,turn):
             self.move = move
@@ -376,14 +379,14 @@ class Movement():
                     self.move = self.move[1] + self.move[2]
                     Movement.get_current_loc(self,"Queen",self.move,self.turn)
 
-        def check_king_move(self,position,turn):
-            self.position = position
+        def check_king_move(self,move,turn):
+            self.move = move
             self.turn = turn
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
-            query = "select * from board where Piece = 'Queen' and Colour = '%s';"
+            query = "select * from board where Piece = 'King' and Colour = '%s';"
             mycursor.execute(query % (turn_colour))
             result = mycursor.fetchall()
             for i in result:
@@ -392,9 +395,11 @@ class Movement():
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
                 quit()
-            if self.position[1] in self.hor:
-                if int(self.position[2]) in self.ver:
+            if self.move[1] in self.hor:
+                if int(self.move[2]) in self.ver:
                     print("legal king move")
+                    self.move = self.move[1] + self.move[2]
+                    Movement.get_current_loc(self,"King",self.move,self.turn)
                     
         def check_bishop_move(self,position,count):
             self.position = position
@@ -463,5 +468,7 @@ def main():
     elif move == "O-O-O":
         pass
 
+
 logging.info("main()")
+
 main()
