@@ -151,14 +151,18 @@ class Board(Pieces):
             turn_colour = "White"
         else:
             turn_colour = "Black"
-        query = """update board set Location = '%s' where Piece = '%s'and Location = '%s';"""
-        tupl = (self.now_loc,self.piece,which)
-        # print(tupl)
-        mycursor.execute(query % tupl)
-        db.commit()
-        # query = "delete from board where Location = '%s';"
-        # mycursor.execute(query % str(self.prev_loc))
-        # db.commit()
+        if self.piece in which_pieces:
+            query = "update board set Location = '%s' where Location = '%s';"
+            mycursor.execute(query % (self.now_loc,which))
+            db.commit()
+        elif self.piece not in which_pieces:
+            query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
+            tupl = (self.now_loc,self.piece,turn_colour)
+            # print(tupl)
+            mycursor.execute(query % tupl)
+            db.commit()
+        else:
+            raise Exception ("Unknown_Piece_Encountered")
 
 
 
