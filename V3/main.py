@@ -1,5 +1,4 @@
-from re import I
-from types import coroutine
+import time
 import mysql.connector
 import logging
 
@@ -456,6 +455,107 @@ class Movement():
                             else:
                                 move_direction = move_direction + "west"
                         print(f" the direction of the move is {move_direction}")
+                        if move_direction == "northeast":
+                            while True:
+                                num0 -= 1
+                                num1 += 1
+                                next_co_or = tuple([num0,num1])
+                                print(f"tupleISED {next_co_or}")
+                                for i,j in Movement.loc_dict.items():
+                                    if next_co_or == j:
+                                        print("match found")
+                                        print(i,j)
+                                        check_loc_coor = i
+                                        query = """select * from board where Location = '%s';"""
+                                        mycursor.execute(query % check_loc_coor)
+                                        result = mycursor.fetchall()
+                                        if result != []:
+                                            print("obstacle encountered")
+                                            I = Interaction()
+                                            I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
+                                            break
+                                        else:
+                                            if str(check_loc_coor) == str(self.future_loc):
+                                                print(f"reached at {self.future_loc}")
+                                                B = Board()
+                                                B.update_board(self.piece,check_loc_coor,self.future_loc)
+                                                break
+                        elif move_direction == "northwest":
+                            while True:
+                                num0 -= 1
+                                num1 -= 1
+                                next_co_or = tuple([num0,num1])
+                                print(f"tupleISED {next_co_or}")
+                                time.sleep(1)
+                                for i,j in Movement.loc_dict.items():
+                                    if next_co_or == j:
+                                        print("match found")
+                                        print(i,j)
+                                        check_loc_coor = i
+                                        query = """select * from board where Location = '%s';"""
+                                        mycursor.execute(query % check_loc_coor)
+                                        result = mycursor.fetchall()
+                                        if result != []:
+                                            print("obstacle encountered")
+                                            I = Interaction()
+                                            I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
+                                            break
+                                        else:
+                                            if str(check_loc_coor) == str(self.future_loc):
+                                                print(f"reached at {self.future_loc}")
+                                                B = Board()
+                                                B.update_board(self.piece,check_loc_coor,self.future_loc)
+                                                break    
+                        elif move_direction == "southeast":
+                            while True:
+                                num0 += 1
+                                num1 += 1
+                                next_co_or = tuple([num0,num1])
+                                print(f"tupleISED {next_co_or}")
+                                for i,j in Movement.loc_dict.items():
+                                    if next_co_or == j:
+                                        print("match found")
+                                        print(i,j)
+                                        check_loc_coor = i
+                                        query = """select * from board where Location = '%s';"""
+                                        mycursor.execute(query % check_loc_coor)
+                                        result = mycursor.fetchall()
+                                        if result != []:
+                                            print("obstacle encountered")
+                                            I = Interaction()
+                                            I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
+                                            break
+                                        else:
+                                            if str(check_loc_coor) == str(self.future_loc):
+                                                print(f"reached at {self.future_loc}")
+                                                B = Board()
+                                                B.update_board(self.piece,check_loc_coor,self.future_loc)
+                                                break                
+                        elif move_direction == "southwest":
+                            while True:
+                                num0 += 1
+                                num1 -= 1
+                                next_co_or = tuple([num0,num1])
+                                print(f"tupleISED {next_co_or}")
+                                for i,j in Movement.loc_dict.items():
+                                    if next_co_or == j:
+                                        print("match found")
+                                        print(i,j)
+                                        check_loc_coor = i
+                                        query = """select * from board where Location = '%s';"""
+                                        mycursor.execute(query % check_loc_coor)
+                                        result = mycursor.fetchall()
+                                        if result != []:
+                                            print("obstacle encountered")
+                                            I = Interaction()
+                                            I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
+                                            break
+                                        else:
+                                            if str(check_loc_coor) == str(self.future_loc):
+                                                print(f"reached at {self.future_loc}")
+                                                B = Board()
+                                                B.update_board(self.piece,check_loc_coor,self.future_loc)
+                                                break                                
 
         def check_queen_move(self,move,turn):
             self.move = move
