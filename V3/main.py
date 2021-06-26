@@ -447,7 +447,7 @@ class Movement():
                             if self.current_loc[0] < self.future_loc[0]:
                                 move_direction = move_direction + "east"
                             else:
-                                move_direction = move_direction + "east"
+                                move_direction = move_direction + "west"
                         elif self.current_loc[1] > self.future_loc[1]:
                             move_direction = move_direction + "south"
                             if self.current_loc[0] < self.future_loc[0]:
@@ -485,8 +485,8 @@ class Movement():
                                 num0 -= 1
                                 num1 -= 1
                                 next_co_or = tuple([num0,num1])
+                                print(next_co_or)
                                 print(f"tupleISED {next_co_or}")
-                                time.sleep(1)
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
                                         print("match found")
