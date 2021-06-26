@@ -8,6 +8,9 @@ turn = 1
 global move_stck
 move_stck = []
 
+global which_stck
+which_stck = []
+
 logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
@@ -315,7 +318,7 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
-            which_pieces = ["Rook","Knight"]
+            which_pieces = ["Rook","Knight","Bishop"]
             if self.piece not in which_pieces:
                 query = "select Location from board where Piece = '%s' and Colour = '%s';"
                 mycursor.execute(query % (self.piece,turn_colour))
@@ -656,12 +659,36 @@ class Movement():
             print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
-                    #insert check for occupied squares
-                    #insert obstacle check
                     print("legal rook move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"Rook",self.move,self.turn)
+
+        def check_bishop_move(self,move,turn,which):
+            self.move = move
+            self.turn = turn
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+            query = "select * from board where Piece = 'Bishop' and Colour = '%s';"
+            mycursor.execute(query % (turn_colour))
+            result = mycursor.fetchall()
+            for i in result:
+                tupl = i
+            move_manip = str(self.move[1]) + str(self.move[2])
+            if str(tupl[0]) == str(move_manip):
+                print("cannot move to the same location")
+                quit()
+            print(self.move, tupl[0])
+            if self.move[1] in self.hor:
+                if int(self.move[2]) in self.ver:
+                    #insert check for occupied squares
+                    #insert obstacle check
+                    print("legal bishop move")
+                    self.move = self.move[1] + self.move[2]
+                    move_stck.append(self.move)
+                    Movement.get_current_loc(self,"Bishop",self.move,self.turn)
 
 class Interaction(Movement):
     def __init__(self) -> None:
@@ -714,10 +741,13 @@ def main():
         M.check_queen_move(move,turn)
 
     elif move[0] == "B":
-        M.check_bishop_move(move,turn)
+        which = input("enter current position of the rook to be moved : ")
+        which_stck.append(which)
+        M.check_bishop_move(move,turn,which)
 
     elif move[0] == "N":
         which = input("enter current position of the rook to be moved : ")
+        which_stck.append(which)
         M.check_knight_move(move,turn,which)
 
     elif move[0] == "p":
@@ -725,6 +755,7 @@ def main():
 
     elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")
+        which_stck.append(which)
         M.check_rook_move(move,turn,which)      
     elif move == "O-O":
         pass
