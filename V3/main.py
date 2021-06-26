@@ -1,3 +1,5 @@
+from re import I
+from types import coroutine
 import mysql.connector
 import logging
 
@@ -286,6 +288,9 @@ class Board(Pieces):
                 tupl = co_or
         print(Board.li[tupl[0]][tupl[1]])
 
+    def incheck(self):
+        pass
+
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
@@ -430,7 +435,27 @@ class Movement():
                                     B = Board()
                                     B.update_board(self.piece,check_loc_coor,self.future_loc)
                                     break
-
+            elif self.piece == "Queen" or self.piece == "Bishop" or self.piece == "King":
+                move_direction = ""
+                for i in Movement.loc_dict:
+                    if i == self.current_loc:
+                        co_or_num = Movement.loc_dict[i]
+                        print(f"co-ordinate of {self.current_loc} is {co_or_num}")
+                        num0 = int(co_or_num[0])
+                        num1 = int(co_or_num[1])
+                        if self.current_loc[1] < self.future_loc[1]:
+                            move_direction = move_direction + "north"
+                            if self.current_loc[0] < self.future_loc[0]:
+                                move_direction = move_direction + "east"
+                            else:
+                                move_direction = move_direction + "east"
+                        elif self.current_loc[1] > self.future_loc[1]:
+                            move_direction = move_direction + "south"
+                            if self.current_loc[0] < self.future_loc[0]:
+                                move_direction = move_direction + "east"
+                            else:
+                                move_direction = move_direction + "west"
+                        print(f" the direction of the move is {move_direction}")
 
         def check_queen_move(self,move,turn):
             self.move = move
@@ -461,6 +486,8 @@ class Movement():
         def check_king_move(self,move,turn):
             self.move = move
             self.turn = turn
+            hor_li = ["a","b","c","d","e","f","g","h"]
+            ver_li = [1,2,3,4,5,6,7,8]
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
@@ -474,6 +501,35 @@ class Movement():
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
                 quit()
+            if self.move[1] == "a":
+                if tupl[0][1] == "b":
+                    pass
+            elif self.move[1] == "b":
+                if tupl[0][1] == "a" or tupl[0][1] == "c":
+                    pass
+            elif self.move[1] == "c":
+                if tupl[0][1] == "b" or tupl[0][1] == "d":
+                    pass        
+            elif self.move[1] == "d":
+                if tupl[0][1] == "c" or tupl[0][1] == "e":
+                    pass
+            elif self.move[1] == "e":
+                if tupl[0][1] == "d" or tupl[0][1] == "f":
+                    pass
+            elif self.move[1] == "f":
+                if tupl[0][1] == "e" or tupl[0][1] == "g":
+                    pass
+            elif self.move[1] == "g":
+                if tupl[0][1] == "f" or tupl[0][1] == "h":
+                    pass
+            elif self.move[1] == "h":
+                if tupl[0][1] == "g":
+                    pass
+            else:
+                print("King can only move one pace(s) horizontally")
+                quit()
+#add code for vertical checking for king move            
+
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
                     print("legal king move")
