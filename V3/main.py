@@ -1,9 +1,5 @@
-import copy
-import pandas as pd
 import mysql.connector
-from pandas.io.parsers import count_empty_vals
 import logging
-import time
 
 global turn
 turn = 1
@@ -544,6 +540,12 @@ def main():
     B.create_board()
     M = Movement()
     global turn
+    if ((turn) % 2) != 0:
+        turn_colour = "WHITE"
+    else:
+        turn_colour = "BLACK"
+    print()
+    print(f"[{turn_colour}] to move")
     move = input("enter move : ")
     # print(f"turn = {turn}")
     turn += 1
@@ -572,7 +574,6 @@ def main():
         pass
     elif move == "O-O-O":
         pass
-
 
 logging.info("main()")
 

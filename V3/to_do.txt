@@ -1,7 +1,9 @@
-1. King Move 1/2
-2. Pawn Move
-3. Promotion (Auto Queen)
-4. Rooke Move 1/2
-5. Bishop Move (check Queen diagonal move)
-6. Knight Move
-7. Castling (in check fix : allow opponent to raise an objection and rever to previous state?)
+1. Diagonal Movement
+2. Pawn Moves
+3. En passant capture
+4. Castling (Simulate King open squares)
+5. Knight Move
+6. Prettify() board output using "_" and "|" 
+7. Revert to previous state in cases of illegal moves
+8. Add more logging
+9. Remove debugging print statements
