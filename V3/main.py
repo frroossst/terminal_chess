@@ -310,15 +310,20 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
-            query = "select Location from board where Piece = '%s' and Colour = '%s';"
-            mycursor.execute(query % (self.piece,turn_colour))
-            result = mycursor.fetchall()
-            for i in result:
-                for j in i:
-                    print(j)
-            # print("at get current loc!")
-            self.current_loc = j
-            Movement.trace_route(self,self.current_loc,self.piece,self.pos,self.turn)
+            which_pieces = ["Rook","Knight"]
+            if self.piece not in which_pieces:
+                query = "select Location from board where Piece = '%s' and Colour = '%s';"
+                mycursor.execute(query % (self.piece,turn_colour))
+                result = mycursor.fetchall()
+                for i in result:
+                    for j in i:
+                        print(j)
+                # print("at get current loc!")
+                self.current_loc = j
+                Movement.trace_route(self,self.current_loc,self.piece,self.pos,self.turn)
+            else:
+                print(f"which {which}")
+                Movement.trace_route(self,which,self.piece,self.pos,self.turn)
 
         def trace_route(self,current_loc,piece,future_loc,turn):
             long = [1,2,3,4,5,6,7,8]
@@ -475,10 +480,31 @@ class Movement():
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"King",self.move,self.turn)
                     
-        def check_bishop_move(self,position,count):
-            self.position = position
-            self.count = count
-            print(self.position,self.count)
+        def check_rook_move(self,move,turn,which):
+            self.move = move
+            self.turn = turn
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+            query = "select * from board where Piece = 'Rook' and Colour = '%s';"
+            mycursor.execute(query % (turn_colour))
+            result = mycursor.fetchall()
+            for i in result:
+                tupl = i
+            move_manip = str(self.move[1]) + str(self.move[2])
+            if str(tupl[0]) == str(move_manip):
+                print("cannot move to the same location")
+                quit()
+            print(self.move, tupl[0])
+            if self.move[1] in self.hor:
+                if int(self.move[2]) in self.ver:
+                    #insert check for occupied squares
+                    #insert obstacle check
+                    print("legal rook move")
+                    self.move = self.move[1] + self.move[2]
+                    move_stck.append(self.move)
+                    Movement.get_current_loc(self,"Rook",self.move,self.turn)
 
 class Interaction(Movement):
     def __init__(self) -> None:
@@ -516,8 +542,7 @@ def main():
     move = input("enter move : ")
     # print(f"turn = {turn}")
     turn += 1
-    global which
-    which = "" #current position for the piece to be moved
+    global which #current position for the piece to be moved
     if move[0] == "K":
         M.check_king_move(move,turn)
 
