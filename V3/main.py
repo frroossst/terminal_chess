@@ -149,7 +149,7 @@ class Board(Pieces):
         self.piece = piece
         self.prev_loc = prev_loc
         self.now_loc = now_loc
-        which_pieces = ["Rook","Knight"]
+        which_pieces = ["Rook","Knight","Pawn"]
         if ((turn-1) % 2) != 0:
             turn_colour = "White"
         else:
