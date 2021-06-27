@@ -11,6 +11,9 @@ move_stck = []
 global which_stck
 which_stck = []
 
+global restore_stck
+restore_stck = []
+
 # logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
@@ -35,14 +38,14 @@ mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
 mycursor.execute("insert into board values ('a1','Rook','White','a1');")
-mycursor.execute("insert into board values ('a2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('b2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('c2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('d2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('e2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('f2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('g2','Pawn','White',NULL);")
-mycursor.execute("insert into board values ('h2','Pawn','White',NULL);")
+mycursor.execute("insert into board values ('a2','Pawn','White','a2');")
+mycursor.execute("insert into board values ('b2','Pawn','White','b2');")
+mycursor.execute("insert into board values ('c2','Pawn','White','c2');")
+mycursor.execute("insert into board values ('d2','Pawn','White','d2');")
+mycursor.execute("insert into board values ('e2','Pawn','White','e2');")
+mycursor.execute("insert into board values ('f2','Pawn','White','f2');")
+mycursor.execute("insert into board values ('g2','Pawn','White','g2');")
+mycursor.execute("insert into board values ('h2','Pawn','White','h2');")
 db.commit()
 #black pieces data entry
 logging.debug("black pieces data entry")
@@ -54,14 +57,14 @@ mycursor.execute("insert into board values ('g8','Knight','Black','g8');")
 mycursor.execute("insert into board values ('b8','Knight','Black','b8');")
 mycursor.execute("insert into board values ('h8','Rook','Black','h8');")
 mycursor.execute("insert into board values ('a8','Rook','Black','a8');")
-mycursor.execute("insert into board values ('a7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('b7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('c7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('d7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('e7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('f7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('g7','Pawn','Black',NULL);")
-mycursor.execute("insert into board values ('h7','Pawn','Black',NULL);")
+mycursor.execute("insert into board values ('a7','Pawn','Black','a7');")
+mycursor.execute("insert into board values ('b7','Pawn','Black','b7');")
+mycursor.execute("insert into board values ('c7','Pawn','Black','c7');")
+mycursor.execute("insert into board values ('d7','Pawn','Black','d7');")
+mycursor.execute("insert into board values ('e7','Pawn','Black','e7');")
+mycursor.execute("insert into board values ('f7','Pawn','Black','f7');")
+mycursor.execute("insert into board values ('g7','Pawn','Black','g7');")
+mycursor.execute("insert into board values ('h7','Pawn','Black','h7');")
 db.commit()
 
 class Pieces():
@@ -290,8 +293,14 @@ class Board(Pieces):
                 tupl = co_or
         print(Board.li[tupl[0]][tupl[1]])
 
+    def restore_pawn_status(self):
+        print("pawn cannot capture vartically")
+        query = """update board set Location = '%s' where Piece = 'Pawn', """
+        Board.show_updated_board()
+
     def incheck(self):
         pass
+        #to check whether castling is allowed or not
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
@@ -354,7 +363,7 @@ class Movement():
                         query = ("select Piece from board where Location = '%s';")
                         mycursor.execute(query % loc_square_check)
                         result = mycursor.fetchall()
-                        if result != [] and self.piece != "Pawn":
+                        if result != []:
                             print("obstacle encountered")
                             I = Interaction()
                             I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
@@ -368,6 +377,7 @@ class Movement():
                                 B = Board()
                                 B.update_board(self.piece,self.current_loc,self.future_loc)
                                 break
+                            
                 elif self.current_loc[1] < self.future_loc[1]:
                     while True:
                         loc_num_check = int(self.current_loc[1]) + count
@@ -377,12 +387,16 @@ class Movement():
                         mycursor.execute(query % loc_square_check)
                         # print("1.",loc_square_check)
                         result = mycursor.fetchall()
-                        if result != [] and self.piece != "Pawn":
-                            print("obstacle encountered")
-                            I = Interaction()
-                            I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
-                            # print(result)
-                            break
+                        if result != []:
+                            if self.piece == "Pawn":
+                                B = Board()
+                                B.restore_pawn_status()
+                            else:
+                                print("obstacle encountered")
+                                I = Interaction()
+                                I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
+                                # print(result)
+                                break
                         else:
                             # print("free square")
                             count+=1
@@ -405,7 +419,7 @@ class Movement():
                             query = """select * from board where Location = '%s';"""
                             mycursor.execute(query % check_loc_coor)
                             result = mycursor.fetchall()
-                            if result != [] and self.piece != "Pawn":
+                            if result != []:
                                 print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
@@ -426,7 +440,7 @@ class Movement():
                             query = """select * from board where Location = '%s';"""
                             mycursor.execute(query % check_loc_coor)
                             result = mycursor.fetchall()
-                            if result != [] and self.piece != "Pawn":
+                            if result != []:
                                 print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
@@ -718,13 +732,6 @@ class Movement():
                         print("the pawn can only move straight")
                         quit()
 
-
-
-
-
-                
-
-
 class Interaction(Movement):
     def __init__(self) -> None:
         pass
@@ -788,6 +795,7 @@ def main():
     elif move[0] == "p" or move[0] == "x":
         which = input("enter current position of the pawn to be moved : ")
         which_stck.append(which)
+        restore_stck.append(move)
         M.check_pawn_move(move,turn,which)
 
     elif move[0] == "R":
