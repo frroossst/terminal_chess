@@ -730,9 +730,8 @@ class Movement():
                         if self.move[0] == "p":
                             Movement.get_current_loc(self,"Pawn",mod_move,self.turn)
                     elif self.move[0] == "x":
-                        #RESUME
                         I = Interaction()
-                        I.capture(self.which,self.move,"Pawn",self.turn)
+                        I.capture(self.which,mod_move,"Pawn",self.turn)
                     else:
                         print("the pawn can only move straight")
                         quit()
