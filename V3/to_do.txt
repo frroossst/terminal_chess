@@ -1,4 +1,4 @@
-Promotion
+Pawn movements
 En passant capture
 Castling (Simulate King open squares, check empty spaces, check rook moves and king moves in global stack)
 Knight Move

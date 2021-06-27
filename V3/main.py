@@ -184,6 +184,7 @@ class Board(Pieces):
                 cleanup[int0].pop(int1)
                 cleanup[int0].insert(int1," ")
 
+        Interaction.promote(self)
         Board.cleanup()
 
         B = Board()
@@ -716,6 +717,24 @@ class Movement():
             if str(which_stck[-1]) == str(mod_move):
                 print("cannot move to the same location")
                 quit()
+            query = "select * from board where Piece = 'Pawn';"
+            mycursor.execute(query)
+            result = mycursor.fetchall()
+            if turn_colour == "White":
+                for i in result:
+                    if i[0] == 2 and mod_move[1] == 4:
+                        print("the pawn can move two paces on it's first turn")
+                    else:
+                        quit()  
+            elif turn_colour == "Black":
+                for i in result:
+                    if i[0] == 7 and mod_move[1] == 5:
+                        print("the pawn can move two paces on it's first turn")
+                    else:
+                        quit()
+
+
+
             which_stck_mod = which_stck
             which_stck_mod.pop()
 #[FATAL] check after multiple pawn moves wheather the program allows for the pawn to move two paces
@@ -742,6 +761,11 @@ class Movement():
                     else:
                         print("the pawn can only move straight")
                         quit()
+        
+        def check_knight_move(self,move,turn,which):
+            self.move = move
+            self.turn = turn
+            self.which = which
 
 
 class Interaction(Movement):
@@ -763,14 +787,49 @@ class Interaction(Movement):
         B = Board()
         B.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
 
-    def promote(self,piece,loc):
-        self.piece = piece
-        self.loc = loc
-        if self.piece == "Pawn":
-            self.loc
-            #iterate through loc_dict to get co-ordinates and replace pawn with Queen
-            #change relevant attributes in the database
+    def promote(self):
+        white_promote_squares = ["a8","b8","c8","d8","e8","f8","g8","h8"]
+        black_promote_sqaures = ["a1","b1","c1","d1","e1","f1","g1","h1"]
+        w_q_present = False
+        b_q_present = False
 
+        if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+        else:
+            turn_colour = "Black"
+
+        for i in Board.li:
+            for j in i:
+                if j == Pieces.w_queen:
+                    w_q_present = True
+                if j == Pieces.b_queen:
+                    b_q_present = True
+
+        while True:
+            query = "select * from board where Piece = 'Pawn' and Colour = '%s';" 
+            mycursor.execute(query % (turn_colour))
+            result = mycursor.fetchall()
+            for i in result:
+                tupl = i
+                if w_q_present != True:
+                    if tupl[2] == "White":
+                        if tupl[0] in white_promote_squares:
+                            query = "update board set Piece = 'Queen' where Colour = 'White' and Location ='%s';"
+                            mycursor.execute(query % tupl[0])
+                            db.commit()
+                            break
+                elif b_q_present != True:
+                    if tupl[2] == "Black":
+                        if tupl[0] in black_promote_sqaures:
+                            query = "update board set Piece = 'Queen' where Colour = 'Black' and Location ='%s';"
+                            mycursor.execute(query % tupl[0])
+                            db.commit()
+                            break
+            break
+def manual():
+    with open("manual.txt","r") as fobj:
+        content = fobj.read()
+        print(content)
 
 def main():
     B = Board()
@@ -814,11 +873,42 @@ def main():
         which = input("enter current position of the rook to be moved : ")
         which_stck.append(which)
         M.check_rook_move(move,turn,which)      
+
     elif move == "O-O":
         pass
     elif move == "O-O-O":
         pass
 
+
 logging.info("main()")
 
-main()
+splash_screen_0 = """
+ _                      _             _                  
+| |_ ___ _ __ _ __ ___ (_)_ __   __ _| |  
+| __/ _ \ '__| '_ ` _ \| | '_ \ / _` | |  
+| ||  __/ |  | | | | | | | | | | (_| | |  
+ \__\___|_|  |_| |_| |_|_|_| |_|\__,_|_|                                     
+"""
+splash_screen_1 = """
+      _
+  ___| |__   ___  ___ ___ 
+ / __| '_ \ / _ \/ __/ __|
+| (__| | | |  __/\__ \__ \ 
+ \___|_| |_|\___||___/___/
+"""
+
+print(splash_screen_0)
+print(splash_screen_1)
+time.sleep(2)
+print("1. /play - to play terminal chess")
+print("2. /manual - to open the manual")
+print("3. /quit - to quit")
+choice = int(input("enter choice : "))
+if choice == 1:
+    main()
+elif choice == 2:
+    manual()
+elif choice == 3:
+    quit()
+else:
+    main()
