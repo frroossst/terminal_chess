@@ -730,8 +730,15 @@ class Movement():
                         if self.move[0] == "p":
                             Movement.get_current_loc(self,"Pawn",mod_move,self.turn)
                     elif self.move[0] == "x":
-                        I = Interaction()
-                        I.capture(self.which,mod_move,"Pawn",self.turn)
+                        move_stck.append(mod_move)
+                        query = "select * from board where Location = '%s';"
+                        mycursor.execute(query % (mod_move))
+                        result = mycursor.fetchall()
+                        if result != []:
+                            I = Interaction()
+                            I.capture(self.which,mod_move,"Pawn",self.turn)
+                        else:
+                            raise Exception("cannot capture a blank square")
                     else:
                         print("the pawn can only move straight")
                         quit()

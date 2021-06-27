@@ -1,9 +1,9 @@
-1. Pawn Moves
-2. En passant capture
-3. Castling (Simulate King open squares, check empty spaces, check rook moves and king moves in global stack)
-4. Knight Move
-5. Prettify() board output using "_" and "|" 
-6. Revert to previous state in cases of illegal moves (NOTE : take care of global stacks and turn counter when reverting)
-7. Add more logging
-8. Remove debugging print statements
-9. Add a replay feature to allow for a list of moves to be inputted and moves be replayed on the board
+Promotion
+En passant capture
+Castling (Simulate King open squares, check empty spaces, check rook moves and king moves in global stack)
+Knight Move
+Prettify() board output using "_" and "|" 
+Revert to previous state in cases of illegal moves (NOTE : take care of global stacks and turn counter when reverting)
+Add more logging
+Remove debugging print statements
+Add a replay feature to allow for a list of moves to be inputted and moves be replayed on the board
