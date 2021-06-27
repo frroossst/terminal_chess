@@ -714,27 +714,27 @@ class Movement():
             else:
                 turn_colour = "Black"
             mod_move = self.move[1] + self.move[2]
-            if str(which_stck[-1]) == str(mod_move):
-                print("cannot move to the same location")
+            
+            print(self.move[2])
+            print(self.which[1])
+            print(int(self.move[2]) -1)
+            if self.move[2] > self.which[1]:
+                if (int(self.move[2]) - 2 == 2) or (int(self.move[2]) - 2 == 5):
+                    print("pawns are allowed to move two paces on the first step") 
+                else:
+                    print("pawns can only move one step when not at home position")
+                    quit()
+                if (int(self.move[2]) -1 == self.which[1]) or (int(self.move[2]) + 1 == self.which[1]):
+                    print("all other pawns can move one step")
+                else:
+                    print("pawns can not move more than one step when not at home position")
+                    quit()
+                if str(which_stck[-1]) == str(mod_move):
+                    print("cannot move to the same location")
+                    quit()
+            else:
+                print("pawns cannot go backwards")
                 quit()
-            query = "select * from board where Piece = 'Pawn';"
-            mycursor.execute(query)
-            result = mycursor.fetchall()
-            if turn_colour == "White":
-                for i in result:
-                    if i[0] == 2 and mod_move[1] == 4:
-                        print("the pawn can move two paces on it's first turn")
-                    else:
-                        quit()  
-            elif turn_colour == "Black":
-                for i in result:
-                    if i[0] == 7 and mod_move[1] == 5:
-                        print("the pawn can move two paces on it's first turn")
-                    else:
-                        quit()
-
-
-
             which_stck_mod = which_stck
             which_stck_mod.pop()
 #[FATAL] check after multiple pawn moves wheather the program allows for the pawn to move two paces
