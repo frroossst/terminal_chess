@@ -720,17 +720,23 @@ class Movement():
             which_stck_mod.pop()
 #[FATAL] check after multiple pawn moves wheather the program allows for the pawn to move two paces
             if self.which in which_stck_mod:
-                print("can the pawn can only move one step")
+                print("the pawn can only move one step")
             else:
                 print("on the first move the pawn can move two steps")
-                if self.move[0] == "p":
+                if self.move[0] == "p" or self.move[0] == "x":
                     if self.move[1] == self.which[0]:
                         move_stck.append(mod_move)
                         print("legal pawn move")
-                        Movement.get_current_loc(self,"Pawn",mod_move,self.turn)
+                        if self.move[0] == "p":
+                            Movement.get_current_loc(self,"Pawn",mod_move,self.turn)
+                    elif self.move[0] == "x":
+                        #RESUME
+                        I = Interaction()
+                        I.capture(self.which,self.move,"Pawn",self.turn)
                     else:
                         print("the pawn can only move straight")
                         quit()
+
 
 class Interaction(Movement):
     def __init__(self) -> None:
