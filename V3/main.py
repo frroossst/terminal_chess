@@ -11,7 +11,7 @@ move_stck = []
 global which_stck
 which_stck = []
 
-logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
+# logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
 db = mysql.connector.connect(
@@ -318,7 +318,7 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
-            which_pieces = ["Rook","Knight","Bishop"]
+            which_pieces = ["Rook","Knight","Bishop","Pawn"]
             if self.piece not in which_pieces:
                 query = "select Location from board where Piece = '%s' and Colour = '%s';"
                 mycursor.execute(query % (self.piece,turn_colour))
@@ -354,7 +354,7 @@ class Movement():
                         query = ("select Piece from board where Location = '%s';")
                         mycursor.execute(query % loc_square_check)
                         result = mycursor.fetchall()
-                        if result != []:
+                        if result != [] and self.piece != "Pawn":
                             print("obstacle encountered")
                             I = Interaction()
                             I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
@@ -377,7 +377,7 @@ class Movement():
                         mycursor.execute(query % loc_square_check)
                         # print("1.",loc_square_check)
                         result = mycursor.fetchall()
-                        if result != []:
+                        if result != [] and self.piece != "Pawn":
                             print("obstacle encountered")
                             I = Interaction()
                             I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
@@ -405,7 +405,7 @@ class Movement():
                             query = """select * from board where Location = '%s';"""
                             mycursor.execute(query % check_loc_coor)
                             result = mycursor.fetchall()
-                            if result != []:
+                            if result != [] and self.piece != "Pawn":
                                 print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
@@ -426,7 +426,7 @@ class Movement():
                             query = """select * from board where Location = '%s';"""
                             mycursor.execute(query % check_loc_coor)
                             result = mycursor.fetchall()
-                            if result != []:
+                            if result != [] and self.piece != "Pawn":
                                 print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
@@ -690,6 +690,41 @@ class Movement():
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"Bishop",self.move,self.turn)
 
+        def check_pawn_move(self,move,turn,which):
+            self.move = move
+            self.turn = turn
+            self.which = which
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+            mod_move = self.move[1] + self.move[2]
+            if str(which_stck[-1]) == str(mod_move):
+                print("cannot move to the same location")
+                quit()
+            which_stck_mod = which_stck
+            which_stck_mod.pop()
+#[FATAL] check after multiple pawn moves wheather the program allows for the pawn to move two paces
+            if self.which in which_stck_mod:
+                print("can the pawn can only move one step")
+            else:
+                print("on the first move the pawn can move two steps")
+                if self.move[0] == "p":
+                    if self.move[1] == self.which[0]:
+                        move_stck.append(mod_move)
+                        print("legal pawn move")
+                        Movement.get_current_loc(self,"Pawn",mod_move,self.turn)
+                    else:
+                        print("the pawn can only move straight")
+                        quit()
+
+
+
+
+
+                
+
+
 class Interaction(Movement):
     def __init__(self) -> None:
         pass
@@ -741,17 +776,19 @@ def main():
         M.check_queen_move(move,turn)
 
     elif move[0] == "B":
-        which = input("enter current position of the rook to be moved : ")
+        which = input("enter current position of the bishop to be moved : ")
         which_stck.append(which)
         M.check_bishop_move(move,turn,which)
 
     elif move[0] == "N":
-        which = input("enter current position of the rook to be moved : ")
+        which = input("enter current position of the knight to be moved : ")
         which_stck.append(which)
         M.check_knight_move(move,turn,which)
 
-    elif move[0] == "p":
-        M.check_pawn_move(move)
+    elif move[0] == "p" or move[0] == "x":
+        which = input("enter current position of the pawn to be moved : ")
+        which_stck.append(which)
+        M.check_pawn_move(move,turn,which)
 
     elif move[0] == "R":
         which = input("enter current position of the rook to be moved : ")

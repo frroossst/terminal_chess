@@ -6,3 +6,4 @@
 6. Revert to previous state in cases of illegal moves (NOTE : take care of global stacks and turn counter when reverting)
 7. Add more logging
 8. Remove debugging print statements
+9. Add a replay feature to allow for a list of moves to be inputted and moves be replayed on the board
