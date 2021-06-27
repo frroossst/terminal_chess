@@ -706,6 +706,7 @@ class Movement():
                     Movement.get_current_loc(self,"Bishop",self.move,self.turn)
 
         def check_pawn_move(self,move,turn,which):
+            pwn_move_legality = False
             self.move = move
             self.turn = turn
             self.which = which
@@ -714,34 +715,30 @@ class Movement():
             else:
                 turn_colour = "Black"
             mod_move = self.move[1] + self.move[2]
-            
-            print(self.move[2])
-            print(self.which[1])
-            print(int(self.move[2]) -1)
-            if self.move[2] > self.which[1]:
+            # print(self.move[2])
+            # print(self.which[1])
+            if (self.move[2] > self.which[1] and turn_colour == "White") or (self.move[2] < self.which[1] and turn_colour == "Black"):
                 if (int(self.move[2]) - 2 == 2) or (int(self.move[2]) - 2 == 5):
+                    pwn_move_legality = True
                     print("pawns are allowed to move two paces on the first step") 
-                else:
-                    print("pawns can only move one step when not at home position")
-                    quit()
-                if (int(self.move[2]) -1 == self.which[1]) or (int(self.move[2]) + 1 == self.which[1]):
+                elif (int(self.move[2]) -1 == int(self.which[1])) or (int(self.move[2]) + 1 == int(self.which[1])):
+                    pwn_move_legality = True
                     print("all other pawns can move one step")
                 else:
-                    print("pawns can not move more than one step when not at home position")
+                    pwn_move_legality = False
                     quit()
                 if str(which_stck[-1]) == str(mod_move):
                     print("cannot move to the same location")
+                    pwn_move_legality = False
                     quit()
             else:
                 print("pawns cannot go backwards")
+                pwn_move_legality = False
                 quit()
             which_stck_mod = which_stck
             which_stck_mod.pop()
 #[FATAL] check after multiple pawn moves wheather the program allows for the pawn to move two paces
-            if self.which in which_stck_mod:
-                print("the pawn can only move one step")
-            else:
-                print("on the first move the pawn can move two steps")
+            if pwn_move_legality == True:
                 if self.move[0] == "p" or self.move[0] == "x":
                     if self.move[1] == self.which[0]:
                         move_stck.append(mod_move)
