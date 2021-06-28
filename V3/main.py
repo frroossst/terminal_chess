@@ -1,3 +1,4 @@
+from re import T
 import time
 import mysql.connector
 import logging
@@ -241,7 +242,7 @@ class Board(Pieces):
         Board.li = Board.li_ref_empty
 
         B = Board()  
-        B.check_game_over()
+        B.incheck()
 
     # @staticmethod
     def check_game_over(self):
@@ -277,10 +278,12 @@ class Board(Pieces):
         if w_king_status != True:
             print("White King has been captured")
             print(b_win_msg)
+            print(move_stck)
             quit()
         elif b_king_status != True:
             print("Black King has been captured")        
             print(w_win_msg)
+            print(move_stck)
             quit()
         main()
 
@@ -300,8 +303,60 @@ class Board(Pieces):
         Board.show_updated_board()
 
     def incheck(self):
-        pass
+        incheck_status = False
+        north_check = True
+        south_check = True
+        east_check = True
+        west_check = True
+        northeast_check = True
+        northwest_check = True
+        southwest_check = True
+        southeast_check = True
+        northsouth_pieces = ["Queen","Rook"]
+        diagonal_pieces = ["Queen","Pawn","Bishop"]
+        if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+        else:
+            turn_colour = "Black"
+        if turn_colour == "White":
+            mod_colour = "WHITE"
+        elif turn_colour == "Black":
+            mod_colour = "BLACK"
+        query = "select * from board where Piece = 'King' and Colour = '%s';"
+        mycursor.execute(query % turn_colour)
+        result = mycursor.fetchall()
+        for i in result:
+            print(i)
+        tupl = i
+        current_loc = tupl[0]
+        print(current_loc)
+        for a in Board.li_ref_dict:
+            if str(a) == str(current_loc):
+                current_loc_coor = Board.li_ref_dict[a]
+        # print(current_loc,a)
+        print(current_loc_coor)
+        num0 = int(current_loc_coor[0])
+        num1 = int(current_loc_coor[1])
+    # check north       
+
+    # check south
+    
+    # check west
+    
+    # check east
+    
+    # check northeast
+    
+    # check northwest
+    
+    # check southeast
+    
+    # check southwest
+        if incheck_status:
+            print(f"[{mod_colour}]'s king is in check")
         #to check whether castling is allowed or not
+        B = Board()
+        B.check_game_over()
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
@@ -894,8 +949,7 @@ splash_screen_1 = """
  \___|_| |_|\___||___/___/
 """
 
-print(splash_screen_0)
-print(splash_screen_1)
+print(splash_screen_0,splash_screen_1)
 time.sleep(2)
 print("1. /play - to play terminal chess")
 print("2. /manual - to open the manual")
