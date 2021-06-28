@@ -1,3 +1,4 @@
+from codecs import BufferedIncrementalDecoder
 import time
 import mysql.connector
 import logging
@@ -334,8 +335,37 @@ class Board(Pieces):
             use_colour = "White"
 
 ### [IDEA] use Board.li for iteration. 
+        query = "select * from board where Piece = 'King' and Colour = '%s';"
+        mycursor.execute(query % (use_colour))
+        result = mycursor.fetchall()
+        print(f"use colour = {use_colour}")
+        for i in result:
+            tupl = i 
+        current_loc = str(tupl[0])
+        count = 1
+        loopy = True
     # check north                           
-        
+        while loopy:
+            current_loc_square_check = current_loc[0] + str(int(current_loc[1]) + count)
+            query = ("select Piece, Colour from board where Location = '%s';")
+            mycursor.execute(query % current_loc_square_check)
+            # print(current_loc_square_check)
+            result = mycursor.fetchall()
+            if result!=[]:
+                for i in result:
+                    tupl = i
+                    if tupl[1] == use_colour:
+                        loopy = False
+                    else:
+                        if tupl[0] in northsouth_pieces:
+                            incheck_status = True
+                            loopy = False
+            else:
+                if int(current_loc_square_check[1]) > 8:
+                    loopy = False
+                count += 1
+                
+    
     # check south
     
     # check west
@@ -350,7 +380,7 @@ class Board(Pieces):
     
     # check southwest
         if incheck_status:
-            print(f"[{turn_colour}]'s king is in check")
+            print(f"[{use_colour}]'s king is in check")
         #to check whether castling is allowed or not
         B = Board()
         B.check_game_over()

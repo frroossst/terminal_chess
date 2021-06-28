@@ -1,0 +1,13 @@
+Basic Idea : Assign each square on the chess board a value with corrosponds to every piece. Each piece has an assigned value determining how valuable it is.
+
+Pawns : It is preferred that they occupy the center
+
+Bishop : Fianchetto
+
+Knight : idk
+
+Rook/Queen : Prefer open files
+
+King : at the backranks
+
+
