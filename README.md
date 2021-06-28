@@ -1,13 +1,13 @@
 # terminal_chess
 TLDR; A terminal based chess game.
 
-Languages used : Python, mySQL
+Languages used : Python, mySQL </br>
 OS : Linux Mint </br>
 AIM : Create a functional chess game for two players that can be played on the linux terminal.
 
 The current work is being done on version V3, previous versions were V1 and V2 which were my failed attempts at making a chess game. 
 
-If you have any suggestions or ideas feel free to reach out at : adhyanpatel@protonmail.com (Email)
+If you have any suggestions or ideas feel free to reach out at : adhyanpatel@protonmail.com 
 
 ## Requirements
 * Python 3.x
@@ -20,7 +20,7 @@ If you have any suggestions or ideas feel free to reach out at : adhyanpatel@pro
 2. Open and run on your terminal main.py
 3. Ensure main.py and/or setup.py is executable
   
-## Known Bugs
+## Known Bugs/ Quirks
 * Have to manually modify main.py </br>
 ```python db = mysql.connector.connect(
     host = "localhost",
@@ -35,6 +35,8 @@ As of now you will need to manual change the following attributes : user, passwd
 * No castling
 * Making an illegal move quits the game 
 * Sometimes you can capture your own piece(s)
+* There is no stalemate only draw by insufficient material
+* There is no checkmate the game ends when either one of the King is captured
 
 ## Future goals : 
   1. Prettify the output to the terminal
