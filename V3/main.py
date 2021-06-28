@@ -277,8 +277,9 @@ class Board(Pieces):
         mycursor.execute(query)
         result = mycursor.fetchall()
         for i in result:
-            print(i)
-        if i[0] == 2:
+            j = i
+            #print(i)
+        if j[0] == 2:
             print(draw_msg)
             quit()
         # print(type(i[0]))
@@ -321,41 +322,21 @@ class Board(Pieces):
 
     def incheck(self):
         incheck_status = False
-        north_check = True
-        south_check = True
-        east_check = True
-        west_check = True
-        northeast_check = True
-        northwest_check = True
-        southwest_check = True
-        southeast_check = True
         northsouth_pieces = ["Queen","Rook"]
         diagonal_pieces = ["Queen","Pawn","Bishop"]
-        if ((turn-1) % 2) != 0:
-                turn_colour = "White"
+        
+        if ((turn) % 2) != 0:
+            turn_colour = "White"
+            mod_colour = "WHITE"
+            use_colour = "Black"
         else:
             turn_colour = "Black"
-        if turn_colour == "White":
-            mod_colour = "WHITE"
-        elif turn_colour == "Black":
             mod_colour = "BLACK"
-        query = "select * from board where Piece = 'King' and Colour = '%s';"
-        mycursor.execute(query % turn_colour)
-        result = mycursor.fetchall()
-        for i in result:
-            print(i)
-        tupl = i
-        current_loc = tupl[0]
-        print(current_loc)
-        for a in Board.li_ref_dict:
-            if str(a) == str(current_loc):
-                current_loc_coor = Board.li_ref_dict[a]
-        # print(current_loc,a)
-        print(current_loc_coor)
-        num0 = int(current_loc_coor[0])
-        num1 = int(current_loc_coor[1])
-    # check north       
+            use_colour = "White"
 
+### [IDEA] use Board.li for iteration. 
+    # check north                           
+        
     # check south
     
     # check west
@@ -370,7 +351,7 @@ class Board(Pieces):
     
     # check southwest
         if incheck_status:
-            print(f"[{mod_colour}]'s king is in check")
+            print(f"[{turn_colour}]'s king is in check")
         #to check whether castling is allowed or not
         B = Board()
         B.check_game_over()
