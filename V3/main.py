@@ -84,15 +84,14 @@ class Pieces():
 
 class Board(Pieces):
 
-    li= [    
-            [Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
-            [Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,"7"],
-            [" "," "," "," "," "," "," "," ","6"],
-            [" "," "," "," "," "," "," "," ","5"],   
-            [" "," "," "," "," "," "," "," ","4"],
-            [" "," "," "," "," "," "," "," ","3"],
-            [Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,"2"],
-            [Pieces.w_rooke,Pieces.w_knight,Pieces.w_bishop,Pieces.w_queen,Pieces.w_king,Pieces.w_bishop,Pieces.w_knight,Pieces.w_rooke,"1"],
+    li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
+             [Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,"7"],
+             [" "," "," "," "," "," "," "," ","6"],
+             [" "," "," "," "," "," "," "," ","5"],   
+             [" "," "," "," "," "," "," "," ","4"],
+             [" "," "," "," "," "," "," "," ","3"],
+             [Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,Pieces.w_pawn,"2"],
+             [Pieces.w_rooke,Pieces.w_knight,Pieces.w_bishop,Pieces.w_queen,Pieces.w_king,Pieces.w_bishop,Pieces.w_knight,Pieces.w_rooke,"1"],
         ]
 
     label = ["a","b","c","d","e","f","g","h"]
@@ -247,62 +246,46 @@ class Board(Pieces):
 
     # @staticmethod
     def check_game_over(self):
-        # print(move_stck)
-        draw_msg = """
-         _                    
-      __| |_ __ __ ___      __
-     / _` | '__/ _` \ \ /\ / /
-    | (_| | | | (_| |\ V  V / 
-     \__,_|_|  \__,_| \_/\_/  
-"""
-        condition = True
-        if condition:
-            query = "select * from board where Piece = 'Queen';"
-            mycursor.execute(query)
-            result = mycursor.fetchall()
-            if result == []:
-                print("no queen")
-                condition = False
-        else:
-            w_king_status = False
-            b_king_status = False
-            b_win_msg = """
-             ____  _            _     __        ___             _ 
-            | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
-            |  _ \| |/ _` |/ __| |/ /  \ \ /\ / /| | '_ \/ __| | |
-            | |_) | | (_| | (__|   <    \ V  V / | | | | \__ \ |_|
-            |____/|_|\__,_|\___|_|\_\    \_/\_/  |_|_| |_|___/ (_)
+        print(move_stck)
+        w_king_status = False
+        b_king_status = False
+        b_win_msg = """
+         ____  _            _     __        ___             _ 
+        | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
+        |  _ \| |/ _` |/ __| |/ /  \ \ /\ / /| | '_ \/ __| | |
+        | |_) | | (_| | (__|   <    \ V  V / | | | | \__ \ |_|
+        |____/|_|\__,_|\___|_|\_\    \_/\_/  |_|_| |_|___/ (_)
 
-            """
-            w_win_msg = """
-            __        ___     _ _        __        ___             _ 
-            \ \      / / |__ (_) |_ ___  \ \      / (_)_ __  ___  | |
-             \ \ /\ / /| '_ \| | __/ _ \  \ \ /\ / /| | '_ \/ __| | |
-              \ V  V / | | | | | ||  __/   \ V  V / | | | | \__ \ |_|
-               \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
+        """
+        w_win_msg = """
+        __        ___     _ _        __        ___             _ 
+        \ \      / / |__ (_) |_ ___  \ \      / (_)_ __  ___  | |
+         \ \ /\ / /| '_ \| | __/ _ \  \ \ /\ / /| | '_ \/ __| | |
+          \ V  V / | | | | | ||  __/   \ V  V / | | | | \__ \ |_|
+           \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
 
-            """
-            self.li = Board.li
-            for i in self.li:
-                if Pieces.w_king in i:
-                    print(f"White King has been found at {i}")
-                    w_king_status = True
-                elif Pieces.b_king in i:
-                    print(f"Black King has been found at {i}")    
-                    b_king_status = True
-                else:    
-                    pass
-            if w_king_status != True:
-                print("White King has been captured")
-                print(b_win_msg)
-                print(move_stck)
-                quit()
-            elif b_king_status != True:
-                print("Black King has been captured")        
-                print(w_win_msg)
-                print(move_stck)
-                quit()
-            main()
+        """
+        self.li = Board.li
+        for i in self.li:
+            if Pieces.w_king in i:
+                print(f"White King has been found at {i}")
+                w_king_status = True
+            elif Pieces.b_king in i:
+                print(f"Black King has been found at {i}")    
+                b_king_status = True
+            else:    
+                pass
+        if w_king_status != True:
+            print("White King has been captured")
+            print(b_win_msg)
+            print(move_stck)
+            quit()
+        elif b_king_status != True:
+            print("Black King has been captured")        
+            print(w_win_msg)
+            print(move_stck)
+            quit()
+        main()
 
     def get_move_co(self,input_move,piece):
         self.dict = Board.li_ref_dict
@@ -320,60 +303,60 @@ class Board(Pieces):
         Board.show_updated_board()
 
     def incheck(self):
+        incheck_status = False
+        north_check = True
+        south_check = True
+        east_check = True
+        west_check = True
+        northeast_check = True
+        northwest_check = True
+        southwest_check = True
+        southeast_check = True
+        northsouth_pieces = ["Queen","Rook"]
+        diagonal_pieces = ["Queen","Pawn","Bishop"]
+        if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+        else:
+            turn_colour = "Black"
+        if turn_colour == "White":
+            mod_colour = "WHITE"
+        elif turn_colour == "Black":
+            mod_colour = "BLACK"
+        query = "select * from board where Piece = 'King' and Colour = '%s';"
+        mycursor.execute(query % turn_colour)
+        result = mycursor.fetchall()
+        for i in result:
+            print(i)
+        tupl = i
+        current_loc = tupl[0]
+        print(current_loc)
+        for a in Board.li_ref_dict:
+            if str(a) == str(current_loc):
+                current_loc_coor = Board.li_ref_dict[a]
+        # print(current_loc,a)
+        print(current_loc_coor)
+        num0 = int(current_loc_coor[0])
+        num1 = int(current_loc_coor[1])
+    # check north       
+
+    # check south
+    
+    # check west
+    
+    # check east
+    
+    # check northeast
+    
+    # check northwest
+    
+    # check southeast
+    
+    # check southwest
+        if incheck_status:
+            print(f"[{mod_colour}]'s king is in check")
+        #to check whether castling is allowed or not
         B = Board()
         B.check_game_over()
-    #     incheck_status = False
-    #     north_check = True
-    #     south_check = True
-    #     east_check = True
-    #     west_check = True
-    #     northeast_check = True
-    #     northwest_check = True
-    #     southwest_check = True
-    #     southeast_check = True
-    #     northsouth_pieces = ["Queen","Rook"]
-    #     diagonal_pieces = ["Queen","Pawn","Bishop"]
-    #     if ((turn-1) % 2) != 0:
-    #             turn_colour = "White"
-    #     else:
-    #         turn_colour = "Black"
-    #     if turn_colour == "White":
-    #         mod_colour = "WHITE"
-    #     elif turn_colour == "Black":
-    #         mod_colour = "BLACK"
-    #     query = "select * from board where Piece = 'King' and Colour = '%s';"
-    #     mycursor.execute(query % turn_colour)
-    #     result = mycursor.fetchall()
-    #     for i in result:
-    #         print(i)
-    #     tupl = i
-    #     current_loc = tupl[0]
-    #     print(current_loc)
-    #     for a in Board.li_ref_dict:
-    #         if str(a) == str(current_loc):
-    #             current_loc_coor = Board.li_ref_dict[a]
-    #     # print(current_loc,a)
-    #     print(current_loc_coor)
-    #     num0 = int(current_loc_coor[0])
-    #     num1 = int(current_loc_coor[1])
-    # # check north       
-
-    # # check south
-    
-    # # check west
-    
-    # # check east
-    
-    # # check northeast
-    
-    # # check northwest
-    
-    # # check southeast
-    
-    # # check southwest
-    #     if incheck_status:
-    #         print(f"[{mod_colour}]'s king is in check")
-    #     #to check whether castling is allowed or not
 
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
