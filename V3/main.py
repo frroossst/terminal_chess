@@ -385,6 +385,58 @@ class Board(Pieces):
         B = Board()
         B.check_game_over()
 
+    def draw_game(self,turn):
+        self.turn = turn
+        if ((self.turn-1) % 2) != 0:
+            turn_colour = "White"
+        else:
+            turn_colour = "Black"
+        print(f"[{turn_colour}] offers a draw")
+        draw_in = input("do you accept? y/n ")
+        if draw_in.lower() == "y":
+            draw_msg = """
+             _                    
+          __| |_ __ __ ___      __
+         / _` | '__/ _` \ \ /\ / /
+        | (_| | | | (_| |\ V  V / 
+         \__,_|_|  \__,_| \_/\_/                        
+        """
+            print(draw_msg)
+            quit()
+        else:
+            turn = turn - 2
+            main()    
+    
+    def forfeit(self,turn):
+        self.turn = turn
+        if ((self.turn-1) % 2) != 0:
+            turn_colour = "White"
+        else:
+            turn_colour = "Black"
+        print(f"[{turn_colour}] forfeits")
+        b_win_msg = """
+         ____  _            _     __        ___             _ 
+        | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
+        |  _ \| |/ _` |/ __| |/ /  \ \ /\ / /| | '_ \/ __| | |
+        | |_) | | (_| | (__|   <    \ V  V / | | | | \__ \ |_|
+        |____/|_|\__,_|\___|_|\_\    \_/\_/  |_|_| |_|___/ (_)
+
+        """
+        w_win_msg = """
+        __        ___     _ _        __        ___             _ 
+        \ \      / / |__ (_) |_ ___  \ \      / (_)_ __  ___  | |
+         \ \ /\ / /| '_ \| | __/ _ \  \ \ /\ / /| | '_ \/ __| | |
+          \ V  V / | | | | | ||  __/   \ V  V / | | | | \__ \ |_|
+           \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
+
+        """
+        if turn_colour == "White":
+            print(b_win_msg)
+        elif turn_colour == "Black":
+            print(w_win_msg)
+
+
+
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
@@ -957,6 +1009,10 @@ def main():
         pass
     elif move == "O-O-O":
         pass
+    elif move == "/draw":
+        B.draw_game(turn)
+    elif move == "/forfeit":
+        B.forfeit(turn)
 
 
 logging.info("main()")
