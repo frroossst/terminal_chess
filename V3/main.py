@@ -50,7 +50,7 @@ mycursor.execute("insert into board values ('h2','Pawn','White','h2');")
 db.commit()
 #black pieces data entry
 logging.debug("black pieces data entry")
-mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
+# mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
 mycursor.execute("insert into board values ('e8','King','Black',NULL);")
 mycursor.execute("insert into board values ('f8','Bishop','Black',NULL);")
 mycursor.execute("insert into board values ('c8','Bishop','Black',NULL);")
@@ -280,6 +280,7 @@ class Board(Pieces):
             j = i
             #print(i)
         if j[0] == 2:
+            draw = True
             print(draw_msg)
             quit()
         # print(type(i[0]))
@@ -293,6 +294,28 @@ class Board(Pieces):
                 b_king_status = True
             else:    
                 pass
+
+        var0 = [("Bishop",),("King",),("King",)]
+        var1 = [("King",),("King",),("Knight",)]
+        compare_li = []
+
+        query = "select count(*) from board;"
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        for i in result:
+            num = i
+        num = str(num)
+        num = num[1]
+        if int(num) == 3:
+            query = "select Piece from board;"
+            mycursor.execute(query)
+            result = mycursor.fetchall()
+            for i in result:
+                compare_li.append(i)
+            compare_li.sort()
+            if compare_li == var0 or compare_li == var1:
+                draw = True
+        
         if w_king_status != True:
             print("White King has been captured")
             print(b_win_msg)
@@ -302,6 +325,9 @@ class Board(Pieces):
             print("Black King has been captured")        
             print(w_win_msg)
             print(move_stck)
+            quit()
+        elif draw == True:
+            print(draw_msg)
             quit()
         main()
 
