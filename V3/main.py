@@ -1,4 +1,3 @@
-from re import T
 import time
 import mysql.connector
 import logging
