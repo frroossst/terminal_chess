@@ -246,9 +246,17 @@ class Board(Pieces):
 
     # @staticmethod
     def check_game_over(self):
-        print(move_stck)
+        # print(move_stck)
+        draw = False
         w_king_status = False
         b_king_status = False
+        draw_msg = """
+             _                    
+          __| |_ __ __ ___      __
+         / _` | '__/ _` \ \ /\ / /
+        | (_| | | | (_| |\ V  V / 
+         \__,_|_|  \__,_| \_/\_/                        
+        """
         b_win_msg = """
          ____  _            _     __        ___             _ 
         | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
@@ -265,6 +273,15 @@ class Board(Pieces):
            \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
 
         """
+        query = "select count(*) from board;"
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        for i in result:
+            print(i)
+        if i[0] == 2:
+            print(draw_msg)
+            quit()
+        # print(type(i[0]))
         self.li = Board.li
         for i in self.li:
             if Pieces.w_king in i:
