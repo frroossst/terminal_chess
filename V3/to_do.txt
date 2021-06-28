@@ -1,4 +1,5 @@
-Knight Move
+Implement draws
+Knight Move Algo
 Castling (Simulate King open squares, check empty spaces, check rook moves and king moves in global stack)
 En passant capture
 Prettify() board output using "_" and "|" 

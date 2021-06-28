@@ -246,46 +246,56 @@ class Board(Pieces):
 
     # @staticmethod
     def check_game_over(self):
-        print(move_stck)
-        w_king_status = False
-        b_king_status = False
-        b_win_msg = """
-         ____  _            _     __        ___             _ 
-        | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
-        |  _ \| |/ _` |/ __| |/ /  \ \ /\ / /| | '_ \/ __| | |
-        | |_) | | (_| | (__|   <    \ V  V / | | | | \__ \ |_|
-        |____/|_|\__,_|\___|_|\_\    \_/\_/  |_|_| |_|___/ (_)
-
+        # print(move_stck)
+        draw_msg = """
+         _                    
+      __| |_ __ __ ___      __
+     / _` | '__/ _` \ \ /\ / /
+    | (_| | | | (_| |\ V  V / 
+     \__,_|_|  \__,_| \_/\_/  
         """
-        w_win_msg = """
-        __        ___     _ _        __        ___             _ 
-        \ \      / / |__ (_) |_ ___  \ \      / (_)_ __  ___  | |
-         \ \ /\ / /| '_ \| | __/ _ \  \ \ /\ / /| | '_ \/ __| | |
-          \ V  V / | | | | | ||  __/   \ V  V / | | | | \__ \ |_|
-           \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
+        if ((Pieces.b_queen and Pieces.b_bishop and Pieces.b_knight and Pieces.b_pawn and Pieces.b_rooke) not in Board.li) and ((Pieces.w_queen and Pieces.w_bishop and Pieces.w_knight and Pieces.w_pawn and Pieces.w_rooke) not in Board.li):
+            print(draw_msg)
+        else:
+            w_king_status = False
+            b_king_status = False
+            b_win_msg = """
+             ____  _            _     __        ___             _ 
+            | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
+            |  _ \| |/ _` |/ __| |/ /  \ \ /\ / /| | '_ \/ __| | |
+            | |_) | | (_| | (__|   <    \ V  V / | | | | \__ \ |_|
+            |____/|_|\__,_|\___|_|\_\    \_/\_/  |_|_| |_|___/ (_)
 
-        """
-        self.li = Board.li
-        for i in self.li:
-            if Pieces.w_king in i:
-                print(f"White King has been found at {i}")
-                w_king_status = True
-            elif Pieces.b_king in i:
-                print(f"Black King has been found at {i}")    
-                b_king_status = True
-            else:    
-                pass
-        if w_king_status != True:
-            print("White King has been captured")
-            print(b_win_msg)
-            print(move_stck)
-            quit()
-        elif b_king_status != True:
-            print("Black King has been captured")        
-            print(w_win_msg)
-            print(move_stck)
-            quit()
-        main()
+            """
+            w_win_msg = """
+            __        ___     _ _        __        ___             _ 
+            \ \      / / |__ (_) |_ ___  \ \      / (_)_ __  ___  | |
+             \ \ /\ / /| '_ \| | __/ _ \  \ \ /\ / /| | '_ \/ __| | |
+              \ V  V / | | | | | ||  __/   \ V  V / | | | | \__ \ |_|
+               \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
+
+            """
+            self.li = Board.li
+            for i in self.li:
+                if Pieces.w_king in i:
+                    print(f"White King has been found at {i}")
+                    w_king_status = True
+                elif Pieces.b_king in i:
+                    print(f"Black King has been found at {i}")    
+                    b_king_status = True
+                else:    
+                    pass
+            if w_king_status != True:
+                print("White King has been captured")
+                print(b_win_msg)
+                print(move_stck)
+                quit()
+            elif b_king_status != True:
+                print("Black King has been captured")        
+                print(w_win_msg)
+                print(move_stck)
+                quit()
+            main()
 
     def get_move_co(self,input_move,piece):
         self.dict = Board.li_ref_dict
