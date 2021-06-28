@@ -43,3 +43,9 @@ As of now you will need to manual change the following attributes : user, passwd
   2. Create a GUI
   3. Add ability to play against bot(s)/engine(s)
   4. Potentional online multiplayer ability
+
+## License :
+Not for commercial use</br>
+
+Author : Adhyan H. (github.com/frroossst)</br>
+Email : adhyanpatel@protonmail.com

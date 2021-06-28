@@ -9,3 +9,6 @@ Add more logging
 Remove debugging print statements
 Add a replay feature to allow for a list of moves to be inputted and moves be replayed on the board
 Use setup.py password in main.py for SQL connectivity
+Error Manual
+Rule Book
+Add a timer function()
