@@ -29,7 +29,8 @@ If you have any suggestions or ideas feel free to reach out at : adhyanpatel@pro
     database = "chess"
 ```
 </br>
-As of now you will need to manual change the following attributes : user, passwd, if running on localhost.
+As of now you will need to manual change the following attributes : user, passwd, if running on localhost.</br>
+* mySQL password(s) are saved as plain texts. [⚠️ Potential Security Threat!!!]
 
 * No en passant rule
 * No castling
