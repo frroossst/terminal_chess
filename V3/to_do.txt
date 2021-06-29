@@ -1,4 +1,3 @@
-[FATA]Use setup.py password in main.py for SQL connectivity
 [FEATURE]Ischeck()
 [FEATURE]Knight Move
 [FEATURE]Castling (Simulate King open squares, check empty spaces, check rook moves and king moves in global stack)

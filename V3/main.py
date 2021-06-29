@@ -23,10 +23,16 @@ restore_stck = []
 # logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
+with open("sql.txt","r") as fobj:
+    content = fobj.readlines()
+    x = content[0].strip()
+    y = content[1].strip()
+    z = content[2].strip()
+
 db = mysql.connector.connect(
-    host = "localhost",
-    user = "home",
-    passwd = "home",
+    host = z,
+    user = x,
+    passwd = y,
     database = "chess"
 )
 mycursor = db.cursor()
@@ -470,8 +476,6 @@ class Board(Pieces):
     def revert_board_status(self):
         self.turn = turn_stck
         self.which = which_stck
-
-
 
 
 class Movement():
@@ -1018,9 +1022,11 @@ def main():
         global which
         which = "" #current position for the piece to be moved
         if move[0] == "K":
+            which_stck.append(" ")
             M.check_king_move(move,turn)
 
         elif move[0] == "Q":
+            which_stck.append(" ")
             M.check_queen_move(move,turn)
 
         elif move[0] == "B":
@@ -1045,17 +1051,18 @@ def main():
             M.check_rook_move(move,turn,which)      
 
         elif move == "O-O":
+            which_stck.append(" ")
             pass
         elif move == "O-O-O":
+            which_stck.append(" ")
             pass
         elif move == "/draw":
             B.draw_game(turn)
         elif move == "/forfeit":
             B.forfeit(turn)
     elif revert_status == True:
-        pass
-
-
+        B = Board()
+        B.revert_board_status()
 
 logging.info("main()")
 
