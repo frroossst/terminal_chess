@@ -253,7 +253,7 @@ class Board(Pieces):
         Board.li = Board.li_ref_empty
 
         B = Board()  
-        B.incheck()
+        B.check_game_over()
 
     # @staticmethod
     def check_game_over(self):
@@ -357,12 +357,14 @@ class Board(Pieces):
         query = """update board set Location = '%s' where Piece = 'Pawn', """
         Board.show_updated_board()
 
+###[FATAL] global is updated after one turn
     def incheck(self):
+        global incheck_status
         incheck_status = False
         northsouth_pieces = ["Queen","Rook"]
         diagonal_pieces = ["Queen","Pawn","Bishop"]
         
-        if ((turn) % 2) != 0:
+        if ((turn -1) % 2) != 0:
             turn_colour = "White"
             mod_colour = "WHITE"
             use_colour = "Black"
@@ -375,7 +377,7 @@ class Board(Pieces):
         query = "select * from board where Piece = 'King' and Colour = '%s';"
         mycursor.execute(query % (use_colour))
         result = mycursor.fetchall()
-        print(f"use colour = {use_colour}")
+        # print(f"use colour = {use_colour}")
         for i in result:
             tupl = i 
         current_loc = str(tupl[0])
@@ -419,8 +421,10 @@ class Board(Pieces):
         if incheck_status:
             print(f"[{use_colour}]'s king is in check")
         #to check whether castling is allowed or not
-        B = Board()
-        B.check_game_over()
+        
+        
+        # B = Board()
+        # B.check_game_over()
 
     def draw_game(self,turn):
         self.turn = turn
@@ -1014,6 +1018,7 @@ def main():
         else:
             turn_colour = "BLACK"
         print()
+        B.incheck()
         print(f"[{turn_colour}] to move")
         move = input("enter move : ")
         turn_stck.append(move)
