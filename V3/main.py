@@ -373,7 +373,6 @@ class Board(Pieces):
             mod_colour = "BLACK"
             use_colour = "White"
 
-### [IDEA] use Board.li for iteration. 
         query = "select * from board where Piece = 'King' and Colour = '%s';"
         mycursor.execute(query % (use_colour))
         result = mycursor.fetchall()
@@ -382,9 +381,9 @@ class Board(Pieces):
             tupl = i 
         current_loc = str(tupl[0])
         count = 1
-        loopy = True
+        loopy_north = True
     # check north                           
-        while loopy:
+        while loopy_north:
             current_loc_square_check = current_loc[0] + str(int(current_loc[1]) + count)
             query = ("select Piece, Colour from board where Location = '%s';")
             mycursor.execute(query % current_loc_square_check)
@@ -394,19 +393,38 @@ class Board(Pieces):
                 for i in result:
                     tupl = i
                     if tupl[1] == use_colour:
-                        loopy = False
+                        loopy_north = False
                     else:
                         if tupl[0] in northsouth_pieces:
                             incheck_status = True
-                            loopy = False
+                            loopy_north = False
             else:
                 if int(current_loc_square_check[1]) > 8:
-                    loopy = False
+                    loopy_north = False
                 count += 1
-                
     
     # check south
-    
+        count = 1
+        loopy_south = True
+        while loopy_south:
+            current_loc_square_check = current_loc[0] + str((int(current_loc[1]) - count))
+            query = ("select Piece, Colour from board where Location = '%s';")
+            mycursor.execute(query % current_loc_square_check)
+            # print(current_loc_square_check)
+            result = mycursor.fetchall()
+            if result!=[]:
+                for i in result:
+                    tupl = i
+                    if tupl[1] == use_colour:
+                        loopy_south = False
+                    else:
+                        if tupl[0] in northsouth_pieces:
+                            incheck_status = True
+                            loopy_south = False
+            else:
+                if int(current_loc_square_check[1]) > 8:
+                    loopy_south = False
+                count -= 1
     # check west
     
     # check east
