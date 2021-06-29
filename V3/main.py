@@ -1,4 +1,3 @@
-from codecs import BufferedIncrementalDecoder
 import time
 import mysql.connector
 import logging
@@ -6,6 +5,12 @@ import logging
 global turn
 turn = 1
 
+global revert_status
+revert_status = False
+
+global turn_stck
+turn_stck = [] #human inputted stack of instructions : like pc3 as compared to c3 in move_stck
+ 
 global move_stck
 move_stck = []
 
@@ -50,7 +55,7 @@ mycursor.execute("insert into board values ('h2','Pawn','White','h2');")
 db.commit()
 #black pieces data entry
 logging.debug("black pieces data entry")
-# mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
+mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
 mycursor.execute("insert into board values ('e8','King','Black',NULL);")
 mycursor.execute("insert into board values ('f8','Bishop','Black',NULL);")
 mycursor.execute("insert into board values ('c8','Bishop','Black',NULL);")
@@ -460,6 +465,12 @@ class Board(Pieces):
             print(b_win_msg)
         elif turn_colour == "Black":
             print(w_win_msg)
+
+###[FATAL] Revert_board_status to undo illegal moves.
+    def revert_board_status(self):
+        self.turn = turn_stck
+        self.which = which_stck
+
 
 
 
@@ -989,56 +1000,61 @@ def manual():
         print(content)
 
 def main():
-    B = Board()
-    B.create_board()
-    M = Movement()
-    global turn
-    if ((turn) % 2) != 0:
-        turn_colour = "WHITE"
-    else:
-        turn_colour = "BLACK"
-    print()
-    print(f"[{turn_colour}] to move")
-    move = input("enter move : ")
-    # print(f"turn = {turn}")
-    turn += 1
-    global which
-    which = "" #current position for the piece to be moved
-    if move[0] == "K":
-        M.check_king_move(move,turn)
+    if revert_status == False:
+        B = Board()
+        B.create_board()
+        M = Movement()
+        global turn
+        if ((turn) % 2) != 0:
+            turn_colour = "WHITE"
+        else:
+            turn_colour = "BLACK"
+        print()
+        print(f"[{turn_colour}] to move")
+        move = input("enter move : ")
+        turn_stck.append(move)
+        # print(f"turn = {turn}")
+        turn += 1
+        global which
+        which = "" #current position for the piece to be moved
+        if move[0] == "K":
+            M.check_king_move(move,turn)
 
-    elif move[0] == "Q":
-        M.check_queen_move(move,turn)
+        elif move[0] == "Q":
+            M.check_queen_move(move,turn)
 
-    elif move[0] == "B":
-        which = input("enter current position of the bishop to be moved : ")
-        which_stck.append(which)
-        M.check_bishop_move(move,turn,which)
+        elif move[0] == "B":
+            which = input("enter current position of the bishop to be moved : ")
+            which_stck.append(which)
+            M.check_bishop_move(move,turn,which)
 
-    elif move[0] == "N":
-        which = input("enter current position of the knight to be moved : ")
-        which_stck.append(which)
-        M.check_knight_move(move,turn,which)
+        elif move[0] == "N":
+            which = input("enter current position of the knight to be moved : ")
+            which_stck.append(which)
+            M.check_knight_move(move,turn,which)
 
-    elif move[0] == "p" or move[0] == "x":
-        which = input("enter current position of the pawn to be moved : ")
-        which_stck.append(which)
-        restore_stck.append(move)
-        M.check_pawn_move(move,turn,which)
+        elif move[0] == "p" or move[0] == "x":
+            which = input("enter current position of the pawn to be moved : ")
+            which_stck.append(which)
+            restore_stck.append(move)
+            M.check_pawn_move(move,turn,which)
 
-    elif move[0] == "R":
-        which = input("enter current position of the rook to be moved : ")
-        which_stck.append(which)
-        M.check_rook_move(move,turn,which)      
+        elif move[0] == "R":
+            which = input("enter current position of the rook to be moved : ")
+            which_stck.append(which)
+            M.check_rook_move(move,turn,which)      
 
-    elif move == "O-O":
+        elif move == "O-O":
+            pass
+        elif move == "O-O-O":
+            pass
+        elif move == "/draw":
+            B.draw_game(turn)
+        elif move == "/forfeit":
+            B.forfeit(turn)
+    elif revert_status == True:
         pass
-    elif move == "O-O-O":
-        pass
-    elif move == "/draw":
-        B.draw_game(turn)
-    elif move == "/forfeit":
-        B.forfeit(turn)
+
 
 
 logging.info("main()")
