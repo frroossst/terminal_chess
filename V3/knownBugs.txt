@@ -1,0 +1,4 @@
+Ke2, Qd7 => infinite loop
+Qd2, Qd7 => infinite loop
+ph3, Qd7 => infinite loop
+NOTES : In short, Qd7 seems to break the code. Also, when Black queen captures her own pieces.

@@ -8,6 +8,12 @@ turn = 1
 global revert_status
 revert_status = False
 
+global w_inCheck
+w_inCheck = False
+
+global b_inCheck
+b_inCheck = False
+
 global turn_stck
 turn_stck = [] #human inputted stack of instructions : like pc3 as compared to c3 in move_stck
  
@@ -355,7 +361,8 @@ class Board(Pieces):
     def restore_pawn_status(self):
         print("pawn cannot capture vartically")
         query = """update board set Location = '%s' where Piece = 'Pawn', """
-        Board.show_updated_board()
+        B = Board()
+        B.show_updated_board()
 
 ###[FATAL] global is updated after one turn
     def incheck(self):
@@ -376,7 +383,7 @@ class Board(Pieces):
         query = "select * from board where Piece = 'King' and Colour = '%s';"
         mycursor.execute(query % (use_colour))
         result = mycursor.fetchall()
-        # print(f"use colour = {use_colour}")
+
         for i in result:
             tupl = i 
         current_loc = str(tupl[0])
@@ -387,7 +394,6 @@ class Board(Pieces):
             current_loc_square_check = current_loc[0] + str(int(current_loc[1]) + count)
             query = ("select Piece, Colour from board where Location = '%s';")
             mycursor.execute(query % current_loc_square_check)
-            # print(current_loc_square_check)
             result = mycursor.fetchall()
             if result!=[]:
                 for i in result:
@@ -410,7 +416,6 @@ class Board(Pieces):
             current_loc_square_check = current_loc[0] + str((int(current_loc[1]) - count))
             query = ("select Piece, Colour from board where Location = '%s';")
             mycursor.execute(query % current_loc_square_check)
-            # print(current_loc_square_check)
             result = mycursor.fetchall()
             if result!=[]:
                 for i in result:
@@ -425,10 +430,55 @@ class Board(Pieces):
                 if int(current_loc_square_check[1]) > 8:
                     loopy_south = False
                 count -= 1
-    # check west
     
     # check east
-    
+        hor_li = ["a","b","c","d","e","f","g","h"]
+        loopy_east = True
+        while loopy_east:
+            lindex = hor_li.index(current_loc[0])
+            lindex += 1
+            current_loc_square_check = str(hor_li[lindex]) + str(current_loc[1]) 
+            query = ("select Piece, Colour from board where Location = '%s';")
+            mycursor.execute(query % current_loc_square_check)
+            result = mycursor.fetchall()
+            if result != []:
+                for i in result:
+                    tupl = i
+                    if tupl[1] == use_colour:
+                        loopy_east = False
+                    else:
+                        if tupl[0] in northsouth_pieces:
+                            incheck_status = True
+                            loopy_east = False
+            else:
+                if lindex > len(hor_li):
+                    loopy_east = False
+                    break
+
+    # check west
+        loopy_west = True
+        while loopy_west:
+            lindex = hor_li.index(current_loc[0])
+            lindex -= 1
+            current_loc_square_check = str(hor_li[lindex]) + str(current_loc[1]) 
+            query = ("select Piece, Colour from board where Location = '%s';")
+            mycursor.execute(query % current_loc_square_check)
+            result = mycursor.fetchall()
+            if result != []:
+                for i in result:
+                    tupl = i
+                    if tupl[1] == use_colour:
+                        loopy_west = False
+                    else:
+                        if tupl[0] in northsouth_pieces:
+                            incheck_status = True
+                            loopy_west = False
+            else:
+                if lindex > len(hor_li):
+                    loopy_west = False
+                    break
+
+
     # check northeast
     
     # check northwest
@@ -438,6 +488,10 @@ class Board(Pieces):
     # check southwest
         if incheck_status:
             print(f"[{use_colour}]'s king is in check")
+            if use_colour == "White":
+                w_inCheck = True
+            elif use_colour == "Black":
+                b_inCheck = True
         #to check whether castling is allowed or not
         
         
