@@ -400,13 +400,16 @@ class Board(Pieces):
                     tupl = i
                     if tupl[1] == use_colour:
                         loopy_north = False
+                        break
                     else:
                         if tupl[0] in northsouth_pieces:
                             incheck_status = True
                             loopy_north = False
+                            break
             else:
                 if int(current_loc_square_check[1]) > 8:
                     loopy_north = False
+                    break
                 count += 1
     
     # check south
@@ -422,20 +425,23 @@ class Board(Pieces):
                     tupl = i
                     if tupl[1] == use_colour:
                         loopy_south = False
+                        break
                     else:
                         if tupl[0] in northsouth_pieces:
                             incheck_status = True
                             loopy_south = False
+                            break
             else:
                 if int(current_loc_square_check[1]) > 8:
                     loopy_south = False
+                    break
                 count -= 1
     
     # check east
         hor_li = ["a","b","c","d","e","f","g","h"]
         loopy_east = True
+        lindex = hor_li.index(current_loc[0])
         while loopy_east:
-            lindex = hor_li.index(current_loc[0])
             lindex += 1
             current_loc_square_check = str(hor_li[lindex]) + str(current_loc[1]) 
             query = ("select Piece, Colour from board where Location = '%s';")
@@ -446,10 +452,12 @@ class Board(Pieces):
                     tupl = i
                     if tupl[1] == use_colour:
                         loopy_east = False
+                        break
                     else:
                         if tupl[0] in northsouth_pieces:
                             incheck_status = True
                             loopy_east = False
+                            break
             else:
                 if lindex > len(hor_li):
                     loopy_east = False
@@ -457,8 +465,8 @@ class Board(Pieces):
 
     # check west
         loopy_west = True
+        lindex = hor_li.index(current_loc[0])
         while loopy_west:
-            lindex = hor_li.index(current_loc[0])
             lindex -= 1
             current_loc_square_check = str(hor_li[lindex]) + str(current_loc[1]) 
             query = ("select Piece, Colour from board where Location = '%s';")
@@ -469,15 +477,16 @@ class Board(Pieces):
                     tupl = i
                     if tupl[1] == use_colour:
                         loopy_west = False
+                        break
                     else:
                         if tupl[0] in northsouth_pieces:
                             incheck_status = True
                             loopy_west = False
+                            break
             else:
                 if lindex > len(hor_li):
                     loopy_west = False
                     break
-
 
     # check northeast
     
