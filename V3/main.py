@@ -558,9 +558,71 @@ class Board(Pieces):
                             break
             break
     #check southwest
-
+        for sqr, coor in Movement.loc_dict.items():
+            if sqr == current_loc:
+                tupl = coor
+        num0 = tupl[0]
+        num1 = tupl[1]
+        loopy_sw = True
+        while loopy_sw:
+            num0 += 1
+            num1 -= 1
+            next_co_or = tuple([num0,num1])
+            for i,j in Movement.loc_dict.items():
+                if next_co_or == j:
+                    check_loc_coor = i
+                    query = """select Piece, Colour from board where Location = '%s';"""
+                    mycursor.execute(query % check_loc_coor)
+                    result = mycursor.fetchall()
+                    if result != []:
+                        for i in result:
+                            tupl = i
+                            if tupl[1] == use_colour:
+                                loopy_sw = False
+                                break
+                            else:
+                                if tupl[0] in diagonal_pieces:
+                                    incheck_status = True
+                                    loopy_sw = False
+                                    break
+                    else:
+                        if num0 > 7 or num1 < 0:
+                            loopy_sw  = False
+                            break
+            break
     #check southeast
-    
+        for sqr, coor in Movement.loc_dict.items():
+            if sqr == current_loc:
+                tupl = coor
+        num0 = tupl[0]
+        num1 = tupl[1]
+        loopy_se = True
+        while loopy_se:
+            num0 += 1
+            num1 += 1
+            next_co_or = tuple([num0,num1])
+            for i,j in Movement.loc_dict.items():
+                if next_co_or == j:
+                    check_loc_coor = i
+                    query = """select Piece, Colour from board where Location = '%s';"""
+                    mycursor.execute(query % check_loc_coor)
+                    result = mycursor.fetchall()
+                    if result != []:
+                        for i in result:
+                            tupl = i
+                            if tupl[1] == use_colour:
+                                loopy_se = False
+                                break
+                            else:
+                                if tupl[0] in diagonal_pieces:
+                                    incheck_status = True
+                                    loopy_se = False
+                                    break
+                    else:
+                        if num0 > 7 or num1 > 7:
+                            loopy_se  = False
+                            break
+            break
 
         if incheck_status:
             print(f"[{use_colour}]'s king is in check")
