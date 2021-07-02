@@ -1,7 +1,9 @@
+# Import statements
 import time
 import mysql.connector
 import logging
 
+# Global variables
 global turn
 turn = 1
 
@@ -29,6 +31,8 @@ restore_stck = []
 # logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info("--- INITIALIZED ---")
 
+
+# Program start
 with open("sql.txt","r") as fobj:
     content = fobj.readlines()
     x = content[0].strip()
@@ -364,7 +368,6 @@ class Board(Pieces):
         B = Board()
         B.show_updated_board()
 
-###[FATAL] global is updated after one turn
     def incheck(self):
         global incheck_status
         incheck_status = False
@@ -489,12 +492,76 @@ class Board(Pieces):
                     break
 
     # check northeast
+        for sqr, coor in Movement.loc_dict.items():
+            if sqr == current_loc:
+                tupl = coor
+        num0 = tupl[0]
+        num1 = tupl[1]
+        loopy_ne = True
+        while loopy_ne:
+            num0 -= 1
+            num1 += 1
+            next_co_or = tuple([num0,num1])
+            for i,j in Movement.loc_dict.items():
+                if next_co_or == j:
+                    check_loc_coor = i
+                    query = """select Piece, Colour from board where Location = '%s';"""
+                    mycursor.execute(query % check_loc_coor)
+                    result = mycursor.fetchall()
+                    if result != []:
+                        for i in result:
+                            tupl = i
+                            if tupl[1] == use_colour:
+                                loopy_ne = False
+                                break
+                            else:
+                                if tupl[0] in diagonal_pieces:
+                                    incheck_status = True
+                                    loopy_ne = False
+                                    break
+                    else:
+                        if num0 < 0 or num1 >7:
+                            loopy_ne  = False
+                            break
+            break
+    #check northwest
+        for sqr, coor in Movement.loc_dict.items():
+            if sqr == current_loc:
+                tupl = coor
+        num0 = tupl[0]
+        num1 = tupl[1]
+        loopy_nw = True
+        while loopy_nw:
+            num0 -= 1
+            num1 -= 1
+            next_co_or = tuple([num0,num1])
+            for i,j in Movement.loc_dict.items():
+                if next_co_or == j:
+                    check_loc_coor = i
+                    query = """select Piece, Colour from board where Location = '%s';"""
+                    mycursor.execute(query % check_loc_coor)
+                    result = mycursor.fetchall()
+                    if result != []:
+                        for i in result:
+                            tupl = i
+                            if tupl[1] == use_colour:
+                                loopy_nw = False
+                                break
+                            else:
+                                if tupl[0] in diagonal_pieces:
+                                    incheck_status = True
+                                    loopy_nw = False
+                                    break
+                    else:
+                        if num0 < 0 or num1 < 0:
+                            loopy_nw  = False
+                            break
+            break
+    #check southwest
+
+    #check southeast
     
-    # check northwest
-    
-    # check southeast
-    
-    # check southwest
+
         if incheck_status:
             print(f"[{use_colour}]'s king is in check")
             if use_colour == "White":

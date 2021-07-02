@@ -39,7 +39,6 @@ As of now you will need to manual change the following attributes : user, passwd
 * Sometimes you can capture your own piece(s)
 * There is no stalemate only draw by insufficient material
 * There is no checkmate the game ends when either one of the King is captured
-* Ke2 follwed by Qd7 gets stuck in an infinite loop
 
 ## Future goals : 
   1. Prettify the output to the terminal
