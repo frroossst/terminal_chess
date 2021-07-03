@@ -442,6 +442,10 @@ class Board(Pieces):
                             incheck_status = True
                             loopy_south = False
                             break
+                    if tupl[0] not in northsouth_pieces and tupl[1] != use_colour:
+                        loopy_south = False
+                        break
+
             else:
                 if int(current_loc_square_check[1]) > 8:
                     loopy_south = False
@@ -469,6 +473,10 @@ class Board(Pieces):
                             incheck_status = True
                             loopy_east = False
                             break
+                    if tupl[0] not in northsouth_pieces and tupl[1] != use_colour:
+                        loopy_east = False
+                        break
+
             else:
                 if lindex > len(hor_li):
                     loopy_east = False
@@ -494,6 +502,10 @@ class Board(Pieces):
                             incheck_status = True
                             loopy_west = False
                             break
+                    if tupl[0] not in northsouth_pieces and tupl[1] != use_colour:
+                        loopy_west = False
+                        break
+
             else:
                 if lindex > len(hor_li):
                     loopy_west = False
@@ -527,6 +539,10 @@ class Board(Pieces):
                                     incheck_status = True
                                     loopy_ne = False
                                     break
+                            if tupl[0] not in diagonal_pieces and tupl[1] != use_colour:
+                                loopy_ne = False
+                                break
+
                     else:
                         if num0 < 0 or num1 >7:
                             loopy_ne  = False
@@ -560,6 +576,10 @@ class Board(Pieces):
                                     incheck_status = True
                                     loopy_nw = False
                                     break
+                            if tupl[0] not in diagonal_pieces and tupl[1] != use_colour:
+                                loopy_nw = False
+                                break
+
                     else:
                         if num0 < 0 or num1 < 0:
                             loopy_nw  = False
@@ -593,6 +613,10 @@ class Board(Pieces):
                                     incheck_status = True
                                     loopy_sw = False
                                     break
+                            if tupl[0] not in diagonal_pieces and tupl[1] != use_colour:
+                                loopy_sw = False
+                                break
+
                     else:
                         if num0 > 7 or num1 < 0:
                             loopy_sw  = False
@@ -626,6 +650,10 @@ class Board(Pieces):
                                     incheck_status = True
                                     loopy_se = False
                                     break
+                            if tupl[0] not in diagonal_pieces and tupl[1] != use_colour:
+                                loopy_se = False
+                                break
+
                     else:
                         if num0 > 7 or num1 > 7:
                             loopy_se  = False
