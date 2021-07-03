@@ -1154,6 +1154,73 @@ class Movement():
             self.move = move
             self.turn = turn
             self.which = which
+            
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+
+            query = "select Piece, Colour from board where Location = '%s';"
+            mycursor.execute(query % (self.which))
+            result = mycursor.fetchall()
+            self.move = move[1] + move[2]
+            if result != []: 
+                for i in result:
+                    requ = i
+                if requ[0] == "Knight" and requ[1] == turn_colour:
+                    
+                    kX = [1,-1,1,-1,2,2,-2,-2]
+                    kY = [2,2,-2,-2,1,-1,1,-1]
+                    knightLegalmoves = []
+                    current_loc = self.which
+                    for sqr, coor in Movement.loc_dict.items():
+                        if sqr == current_loc:
+                            co_or = coor
+                    permaCoord = co_or
+                    lindex = 0
+                    legitX = True
+                    legitY = True
+                    while True:
+                        if lindex > 7:
+                            break
+                        else:
+                            co_or_x = permaCoord[0]
+                            co_or_y = permaCoord[1]
+                            co_or_x += kX[lindex]
+                            co_or_y += kY[lindex]
+                        
+                            if co_or_x > 7 or co_or_x < 0:
+                                legitX = False
+                            elif co_or_y > 7 or co_or_y < 0:
+                                legitY = False
+                            else: 
+                                legitX = True
+                                legitY = True
+                                
+                            if legitX == True and legitY == True:
+                                co_orKnight = tuple([co_or_x,co_or_y])
+                                for a,b in Movement.loc_dict.items():
+                                    if b == co_orKnight:
+                                        knightLegalmoves.append(a)
+                        lindex += 1
+
+                    for i in knightLegalmoves:
+                        if i == self.move:
+                            move_stck.append(self.move)
+                            print(self.move, self.which)
+                            #insert a method for moving the knight, capturing pieces and updating the board!
+                    else:
+                        print(which_stck)
+                        which_stck.pop()
+                        
+                            
+                else:
+                    print("[ILLEGAL MOVE]")    
+            else:
+                print("[ILLEGAL MOVE]")
+                quit()
+
+
 
 
 class Interaction(Movement):
