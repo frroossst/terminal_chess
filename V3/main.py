@@ -346,6 +346,7 @@ class Board(Pieces):
             print("Black King has been captured")        
             print(w_win_msg)
             print(move_stck)
+            print(turn_stck)
             quit()
         elif draw == True:
             print(draw_msg)
@@ -378,10 +379,12 @@ class Board(Pieces):
             turn_colour = "White"
             mod_colour = "WHITE"
             use_colour = "Black"
+            check_use_colour = "BLACK"
         else:
             turn_colour = "Black"
             mod_colour = "BLACK"
             use_colour = "White"
+            check_use_colour = "WHITE"
 
         query = "select * from board where Piece = 'King' and Colour = '%s';"
         mycursor.execute(query % (use_colour))
@@ -409,6 +412,11 @@ class Board(Pieces):
                             incheck_status = True
                             loopy_north = False
                             break
+                    if tupl[0] not in northsouth_pieces and tupl[1] != use_colour:
+                        loopy_north = False
+                        break
+
+
             else:
                 if int(current_loc_square_check[1]) > 8:
                     loopy_north = False
@@ -625,7 +633,7 @@ class Board(Pieces):
             break
 
         if incheck_status:
-            print(f"[{use_colour}]'s king is in check")
+            print(f"[{check_use_colour}]'s king is in check")
             if use_colour == "White":
                 w_inCheck = True
             elif use_colour == "Black":
@@ -653,6 +661,8 @@ class Board(Pieces):
          \__,_|_|  \__,_| \_/\_/                        
         """
             print(draw_msg)
+            print(move_stck)
+            print(turn_stck)
             quit()
         else:
 # revert? 
@@ -686,6 +696,9 @@ class Board(Pieces):
             print(b_win_msg)
         elif turn_colour == "Black":
             print(w_win_msg)
+        
+        print(move_stck)
+        print(turn_stck)
         quit()
 
 ###[FATAL] Revert_board_status to undo illegal moves.
@@ -1114,7 +1127,7 @@ class Movement():
             # print(self.move[2])
             # print(self.which[1])
             if (self.move[2] > self.which[1] and turn_colour == "White") or (self.move[2] < self.which[1] and turn_colour == "Black"):
-                if (int(self.move[2]) - 2 == 2) or (int(self.move[2]) - 2 == 5):
+                if (int(self.move[2]) - 2 == 2) or (int(self.move[2]) + 2 == 7):
                     pwn_move_legality = True
                     print("pawns are allowed to move two paces on the first step") 
                 elif (int(self.move[2]) -1 == int(self.which[1])) or (int(self.move[2]) + 1 == int(self.which[1])):
