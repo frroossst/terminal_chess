@@ -719,7 +719,7 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
-            which_pieces = ["Rook","Knight","Bishop","Pawn"]
+            which_pieces = ["Rook","Bishop","Pawn"]
             if self.piece not in which_pieces:
                 query = "select Location from board where Piece = '%s' and Colour = '%s';"
                 mycursor.execute(query % (self.piece,turn_colour))
@@ -965,6 +965,11 @@ class Movement():
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break                                
+            # elif self.piece == "Knight":
+            #     query = "select * from board where Location = '%s';"
+
+            else:
+                print("[ILLEGAL MOVE] possibly incorrect which")                                        
 
         def check_queen_move(self,move,turn):
             self.move = move
@@ -1159,67 +1164,81 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
-
-            query = "select Piece, Colour from board where Location = '%s';"
-            mycursor.execute(query % (self.which))
-            result = mycursor.fetchall()
-            self.move = move[1] + move[2]
-            if result != []: 
-                for i in result:
-                    requ = i
-                if requ[0] == "Knight" and requ[1] == turn_colour:
-                    
-                    kX = [1,-1,1,-1,2,2,-2,-2]
-                    kY = [2,2,-2,-2,1,-1,1,-1]
-                    knightLegalmoves = []
-                    current_loc = self.which
-                    for sqr, coor in Movement.loc_dict.items():
-                        if sqr == current_loc:
-                            co_or = coor
-                    permaCoord = co_or
-                    lindex = 0
-                    legitX = True
-                    legitY = True
-                    while True:
-                        if lindex > 7:
-                            break
-                        else:
-                            co_or_x = permaCoord[0]
-                            co_or_y = permaCoord[1]
-                            co_or_x += kX[lindex]
-                            co_or_y += kY[lindex]
+            if self.move[1] in self.hor and int(self.move[2]) in self.ver:
+                query = "select Piece, Colour from board where Location = '%s';"
+                mycursor.execute(query % (self.which))
+                result = mycursor.fetchall()
+                self.move = move[1] + move[2]
+                if result != []: 
+                    for i in result:
+                        requ = i
+                    if requ[0] == "Knight" and requ[1] == turn_colour:
                         
-                            if co_or_x > 7 or co_or_x < 0:
-                                legitX = False
-                            elif co_or_y > 7 or co_or_y < 0:
-                                legitY = False
-                            else: 
-                                legitX = True
-                                legitY = True
-                                
-                            if legitX == True and legitY == True:
-                                co_orKnight = tuple([co_or_x,co_or_y])
-                                for a,b in Movement.loc_dict.items():
-                                    if b == co_orKnight:
-                                        knightLegalmoves.append(a)
-                        lindex += 1
-
-                    for i in knightLegalmoves:
-                        if i == self.move:
-                            move_stck.append(self.move)
-                            print(self.move, self.which)
-                            #insert a method for moving the knight, capturing pieces and updating the board!
-                    else:
-                        print(which_stck)
-                        which_stck.pop()
-                        
+                        kX = [1,-1,1,-1,2,2,-2,-2]
+                        kY = [2,2,-2,-2,1,-1,1,-1]
+                        knightLegalmoves = []
+                        current_loc = self.which
+                        for sqr, coor in Movement.loc_dict.items():
+                            if sqr == current_loc:
+                                co_or = coor
+                        permaCoord = co_or
+                        lindex = 0
+                        legitX = True
+                        legitY = True
+                        while True:
+                            if lindex > 7:
+                                break
+                            else:
+                                co_or_x = permaCoord[0]
+                                co_or_y = permaCoord[1]
+                                co_or_x += kX[lindex]
+                                co_or_y += kY[lindex]
                             
-                else:
-                    print("[ILLEGAL MOVE]")    
-            else:
-                print("[ILLEGAL MOVE]")
-                quit()
+                                if co_or_x > 7 or co_or_x < 0:
+                                    legitX = False
+                                elif co_or_y > 7 or co_or_y < 0:
+                                    legitY = False
+                                else: 
+                                    legitX = True
+                                    legitY = True
+                                    
+                                if legitX == True and legitY == True:
+                                    co_orKnight = tuple([co_or_x,co_or_y])
+                                    for a,b in Movement.loc_dict.items():
+                                        if b == co_orKnight:
+                                            knightLegalmoves.append(a)
+                            lindex += 1
 
+                        for i in knightLegalmoves:
+                            if i == self.move:
+                                move_stck.append(self.move)
+                                print(self.move, self.which)
+                                print("legal knight move")
+                                query = "select * from board where Location = '%s';"
+                                mycursor.execute(query % self.move)
+                                result = mycursor.fetchall()
+                                if result != []:
+                                    #meaning capture
+                                    I = Interaction()
+                                    I.capture(self.which,self.move,"Knight",self.turn)
+                                else:
+                                    B = Board()
+                                    B.update_board("Knight",self.which,self.move)
+
+                                    #meaning no capture only move
+                                    pass
+                                
+                        else:
+                            print(which_stck)
+                            which_stck.pop()
+             
+                    else:
+                        print("[ILLEGAL MOVE] 0")    
+                else:
+                    print("[ILLEGAL MOVE] 1")
+            else:
+                print("[ILLEGAL MOVE] 2")
+                quit()
 
 
 
