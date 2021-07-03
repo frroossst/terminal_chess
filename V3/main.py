@@ -655,7 +655,8 @@ class Board(Pieces):
             print(draw_msg)
             quit()
         else:
-            turn = turn - 2
+# revert? 
+            # turn = turn - 2
             main()    
     
     def forfeit(self,turn):
@@ -685,6 +686,7 @@ class Board(Pieces):
             print(b_win_msg)
         elif turn_colour == "Black":
             print(w_win_msg)
+        quit()
 
 ###[FATAL] Revert_board_status to undo illegal moves.
     def revert_board_status(self):
