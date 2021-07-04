@@ -115,7 +115,8 @@ class Board(Pieces):
              [Pieces.w_rooke,Pieces.w_knight,Pieces.w_bishop,Pieces.w_queen,Pieces.w_king,Pieces.w_bishop,Pieces.w_knight,Pieces.w_rooke,"1"],
         ]
 
-    label = ["a","b","c","d","e","f","g","h"]
+    label = ["a","b","c","d","e","f","g","h"," "]
+    pipe = "|"
 
     li_ref_empty = [
         [" "," "," "," "," "," "," "," ","8"],        
@@ -162,9 +163,16 @@ class Board(Pieces):
 
     def create_board(self):     
         for i in Board.li:
-            print(i)
-        label = ["a","b","c","d","e","f","g","h"]
-        print(label)
+            print()
+            for j in i:
+                print(" ",j," ",Board.pipe,end=" ")
+            print()
+        print()
+        for a in Board.label:
+            print(" ",a," ",Board.pipe,end=" ")
+        label = ["a","b","c","d","e","f","g","h"," "]
+        pipe = "|"
+        
         logging.debug("starting position board printed")
 
     def update_board(self,piece,prev_loc,now_loc,):
@@ -256,10 +264,15 @@ class Board(Pieces):
                     else:
                         raise Exception ("Unexpected_Colour_Encountered")
 
-        Board.li = Board.li_ref_empty
         for i in Board.li:
-            print(i)
-        print(Board.label)
+            print()
+            for j in i:
+                print(" ",j," ",Board.pipe,end=" ")
+            print()
+        print()
+        for a in Board.label:
+            print(" ",a," ",Board.pipe,end=" ")
+
         Board.li = Board.li_ref_empty
 
         B = Board()  
@@ -1322,7 +1335,6 @@ class Movement():
                                 else:
                                     B = Board()
                                     B.update_board("Knight",self.which,self.move)
-
                                     #meaning no capture only move
                                     pass
                                 
@@ -1496,3 +1508,4 @@ elif choice == 3:
     quit()
 else:
     main()
+
