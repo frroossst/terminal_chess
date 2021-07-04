@@ -660,17 +660,74 @@ class Board(Pieces):
                             break
             break
 
+    #check from knights
+        kX = [1,-1,1,-1,2,2,-2,-2]
+        kY = [2,2,-2,-2,1,-1,1,-1]
+        knightLegalmoves = []
+        query = "select Location from board where Piece = 'King' and Colour = '%s';"
+        mycursor.execute(query % use_colour)
+        result = mycursor.fetchall()
+        current_loc = str(result[0])
+        current_loc = str(current_loc[2] + current_loc[3])
+
+        for sqr, coor in Movement.loc_dict.items():
+            if sqr == current_loc:
+                co_or = coor
+
+        permaCoord = co_or
+        lindex = 0
+        legitX = True
+        legitY = True
+        while True:
+            if lindex > 7:
+                break
+            else:
+                co_or_x = permaCoord[0]
+                co_or_y = permaCoord[1]
+                co_or_x += kX[lindex]
+                co_or_y += kY[lindex]
+            
+                if co_or_x > 7 or co_or_x < 0:
+                    legitX = False
+                elif co_or_y > 7 or co_or_y < 0:
+                    legitY = False
+                else: 
+                    legitX = True
+                    legitY = True
+                    
+                if legitX == True and legitY == True:
+                    co_orKnight = tuple([co_or_x,co_or_y])
+                    for a,b in Movement.loc_dict.items():
+                        if b == co_orKnight:
+                            knightLegalmoves.append(a)
+            lindex += 1
+        for i in knightLegalmoves:
+            query = "select Piece, Colour from board where Location = '%s';"
+            mycursor.execute(query % i)
+            result = mycursor.fetchall()
+            if result != []:
+                if result[0][1] == use_colour:
+                    pass
+                elif result[0][0] == "Knight" and result[0][1] != use_colour:
+                    incheck_status = True
+            else:
+                pass
+
+
+        #incheck() status declaration
         if incheck_status:
             print(f"[{check_use_colour}]'s king is in check")
             if use_colour == "White":
                 w_inCheck = True
             elif use_colour == "Black":
                 b_inCheck = True
-        #to check whether castling is allowed or not
         
         
-        # B = Board()
-        # B.check_game_over()
+        
+    #to check whether castling is allowed or not
+        
+        
+        
 
     def draw_game(self,turn):
         self.turn = turn

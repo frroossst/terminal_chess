@@ -1,8 +1,8 @@
 ##In works
-[FEATURE] Ischeck()
+
 
 ##To-Do
-[FEATURE] Knight Move
+
 [FEATURE] Castling (Simulate King open squares, check empty spaces, check rook moves and king moves in global stack)
 [FEATURE] En passant capture
 [FEATURE] Revert to previous state in cases of illegal moves (NOTE : take care of global stacks and turn counter when reverting)
