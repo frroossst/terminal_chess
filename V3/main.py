@@ -1154,8 +1154,8 @@ class Movement():
             mod_move = self.move[1] + self.move[2]
             # print(self.move[2])
             # print(self.which[1])
-            if (self.move[2] > self.which[1] and turn_colour == "White") or (self.move[2] < self.which[1] and turn_colour == "Black"):
-                if (int(self.move[2]) - 2 == 2) or (int(self.move[2]) + 2 == 7):
+            if (int(self.move[2]) > int(self.which[1]) and turn_colour == "White") or (int(self.move[2]) < int(self.which[1]) and turn_colour == "Black"):
+                if (int(self.move[2]) - 2 == 2 and turn_colour == "White") or (int(self.move[2]) + 2 == 7 and turn_colour == "Black"):
                     pwn_move_legality = True
                     print("pawns are allowed to move two paces on the first step") 
                 elif (int(self.move[2]) -1 == int(self.which[1])) or (int(self.move[2]) + 1 == int(self.which[1])):
