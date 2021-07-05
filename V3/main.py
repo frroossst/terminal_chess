@@ -55,9 +55,9 @@ mycursor.execute("create table board (Location char(5), Piece varchar(15), Colou
 logging.debug("white pieces data entry")
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
-mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
+# mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
 mycursor.execute("insert into board values ('c1','Bishop','White',NULL);")
-mycursor.execute("insert into board values ('g1','Knight','White','g1');")
+# mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
 mycursor.execute("insert into board values ('a1','Rook','White','a1');")
@@ -1358,7 +1358,7 @@ class Movement():
             
             castlePieceMoved = True # returns False if either the King or Rook was moved
             castlePieceOccupied = True # return False if the castle squares are occupied 
-
+            
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
@@ -1386,6 +1386,13 @@ class Movement():
                             break
                         else:
                             pass
+                    for j in OOsquaresWhite:
+                        query = "update board set Location = '%s' where Piece = 'King' and Colour = 'White';"
+                        mycursor.execute(query % j)
+                        db.commit()
+                        B = Board()
+                        B.incheck()       
+                    
 
                 elif turn_colour == "Black":
                     pass
