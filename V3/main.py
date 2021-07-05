@@ -57,9 +57,9 @@ mycursor.execute("create table board (Location char(5), Piece varchar(15), Colou
 logging.debug("white pieces data entry")
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
-mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
+# mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
 mycursor.execute("insert into board values ('c1','Bishop','White',NULL);")
-mycursor.execute("insert into board values ('g1','Knight','White','g1');")
+# mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
 mycursor.execute("insert into board values ('a1','Rook','White','a1');")
@@ -738,8 +738,10 @@ class Board(Pieces):
         if incheck_status:
             print(f"[{check_use_colour}]'s king is in check")
             if use_colour == "White":
+                global w_inCheck
                 w_inCheck = True
             elif use_colour == "Black":
+                global b_inCheck
                 b_inCheck = True   
         
     def draw_game(self,turn):
@@ -1355,22 +1357,28 @@ class Movement():
                 quit()
 
         def check_castle(self,move):
-                    
-    # ~Check if the squares are occupied~
-    # ~Check if the King was moved~
-    # ~Check if the Rook was moved~
-    # Simulate king movement and check if the king is in check
-    # If all conditions are satisfied then castle!
-    # If not revert to taking input from the same player
+            
             self.move = move
             castlePieceMoved = True # returns False if either the King or Rook was moved
             castlePieceOccupied = True # return False if the castle squares are occupied 
-            
+            castleINCHECK = True # returns False if the king is currently in check 
+
+            # ~Check if the squares are occupied~
+            # ~Check if the King was moved~
+            # ~Check if the Rook was moved~
+            # Simulate king movement and check if the king is in check
+            # If all conditions are satisfied then castle!
+            # If not revert to taking input from the same player
+
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
+                if w_inCheck == True:
+                    castleINCHECK = False
             else:
                 turn_colour = "Black"
-            
+                if b_inCheck == True:
+                    castleINCHECK = False
+
             if self.move == "O-O":
                 if turn_colour == "White":
                     # checking whether the King or Rook was moved before
@@ -1461,9 +1469,19 @@ class Movement():
                         else:
                             pass
 
-            if castlePieceOccupied and castlePieceMoved:
+            if castlePieceOccupied and castlePieceMoved and castleINCHECK:
                 print("[CAN CASTLE] True")
                 if self.move == "O-O":
+                    query0 = "update board set Location = 'g1' where Piece = 'King' and Colour = '%s';"
+                    mycursor.execute(query0 % turn_colour)
+                    db.commit()
+                    query1 = "update board set Location = 'f1' where Piece = 'Rook' and Colour = '%s';"
+                    mycursor.execute(query1 % turn_colour)
+                    db.commit()
+                    Board.cleanup()
+                    B = Board()
+                    B.show_updated_board()
+                elif self.move == "O-O-O":
                     query0 = "update board set Location = 'c1' where Piece = 'King' and Colour = '%s';"
                     mycursor.execute(query0 % turn_colour)
                     db.commit()
@@ -1473,9 +1491,9 @@ class Movement():
                     Board.cleanup()
                     B = Board()
                     B.show_updated_board()
-
             else:
                 print("[CAN CASTLE] False")
+                quit()
             
         
 
