@@ -1341,49 +1341,16 @@ class Movement():
                 print("[ILLEGAL MOVE] 2")
                 quit()
 
-        def check_kcastle(self):
-            Board.incheck()
-            
-            if ((turn-1) % 2) != 0:
-                turn_colour = "White"
-            else:
-                turn_colour = "Black"
-
-            wCastleSqr = ["f1","g1"]
-            bCastleSqr = ["f8","g8"]
-            wCastleable = True
-            bCastleable = True
-            castleSqrEmpty = False
-            castlePieceMove = False
-
-            if turn_colour == "White":
-                iterVar = 0
-                for i in wCastleSqr:
-                    query = "select * from board where Location = '%s';"
-                    mycursor.execute(query % i)
-                    result = mycursor.fetchall()
-                    if result != []:
-                        castleSqrEmpty = False 
-                for j in turn_stck:
-                    if j[0] == "K":
-                        wCastleable = False
-                    if which_stck[iterVar] == "h1":
-                        wCastleable = False
-
-            # elif turn_colour == "Black":
-            #     iterVar = 1
-            #     for i in wCastleSqr:
-            #         query = "select * from board where Location = '%s';"
-            #         mycursor.execute(query % i)
-            #         result = mycursor.fetchall()
-            #         if result != []:
-            #             castleSqrEmpty = False
-
-            
-
-
-        def check_qcastle(self):
+        def check_castle(self):
             pass
+
+        # Check if the squares are occupied
+        # Simulate king movement and check if the king is in check
+        # Check if the King was moved
+        # Check if the Rook was moved
+        # If all conditions are satisfied then castle!
+
+        
 
 
 
@@ -1445,6 +1412,7 @@ class Interaction(Movement):
                             db.commit()
                             break
             break
+
 def manual():
     with open("manual.txt","r") as fobj:
         content = fobj.read()
@@ -1543,4 +1511,3 @@ elif choice == 3:
     quit()
 else:
     main()
-
