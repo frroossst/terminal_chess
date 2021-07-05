@@ -1,10 +1,8 @@
 # Import statements
 import time
-from typing import cast
 import mysql.connector
 import logging
 
-from mysql.connector.cursor import MySQLCursorNamedTuple
 
 # Global variables
 global turn
@@ -57,9 +55,9 @@ mycursor.execute("create table board (Location char(5), Piece varchar(15), Colou
 logging.debug("white pieces data entry")
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
-mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
+# mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
 mycursor.execute("insert into board values ('c1','Bishop','White',NULL);")
-mycursor.execute("insert into board values ('g1','Knight','White','g1');")
+# mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
 mycursor.execute("insert into board values ('a1','Rook','White','a1');")
@@ -1367,8 +1365,10 @@ class Movement():
             bsqrS = ["f8","g8"]
             wsqrL = ["d1","c1","b1"]
             bsqrL = ["d8","c8","b8"]
-            castleable = True
-            
+            castleable0 = True
+            castleable1 = True
+            castleable2 = True
+
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
@@ -1382,7 +1382,7 @@ class Movement():
                         mycursor.execute(query0 % i)
                         result0 = mycursor.fetchall()
                         if result0 != []:
-                            castleable = False
+                            castleable0 = False
                             break
                     query1 = "select Moved from castle where Location in ('e1','h1');"
                     mycursor.execute(query1)
@@ -1391,7 +1391,7 @@ class Movement():
                         if i[0] == "n":
                             pass
                         else:
-                            castleable = False
+                            castleable1 = False
                     if incheck_status != True:
                         counter = 0
                         while True:
@@ -1403,35 +1403,32 @@ class Movement():
                                 break
                             Board.incheck(self)
                             if incheck_status == False:
-                                castleable = True
+                                castleable2 = True
                             else:
-                                castleable = False
+                                castleable2 = False
                                 break
 
-                elif turn_colour == "Black":
-                    for j in bsqrS:
-                        mycursor.execute(query0 % j)
-                        result0 = mycursor.fetchall()
-                        if result0 != []:
-                            castleable = False
-                            break
-                        query1 = "select Moved from castle where Location in ('e8','h8');"
-                        mycursor.execute(query1)
-                        result1 = mycursor.fetchall()
-                        for i in result1:
-                            if i[0] == "n":
-                                pass
-                            else:
-                                castleable = False
-                
-                
-
-            elif self.move == "O-O-O":
-                pass
-
-            print(castleable)
-                    
-
+                # elif turn_colour == "Black":
+                #     for j in bsqrS:
+                #         mycursor.execute(query0 % j)
+                #         result0 = mycursor.fetchall()
+                #         if result0 != []:
+                #             castleable = False
+                #             break
+                #         query1 = "select Moved from castle where Location in ('e8','h8');"
+                #         mycursor.execute(query1)
+                #         result1 = mycursor.fetchall()
+                #         for i in result1:
+                #             if i[0] == "n":
+                #                 pass
+                #             else:
+                #                 castleable = False
+        
+            if castleable0 and castleable1 and castleable1:
+                print("[CASTLE STATUS] True")
+            else:
+                print("[CASTLE STATUS] False")
+                  
         # ~Check if the squares are occupied~
         # ~Check if the King was moved~
         # ~Check if the Rook was moved~
