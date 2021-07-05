@@ -1,7 +1,10 @@
 # Import statements
 import time
+from typing import cast
 import mysql.connector
 import logging
+
+from mysql.connector.cursor import MySQLCursorNamedTuple
 
 # Global variables
 global turn
@@ -87,6 +90,16 @@ mycursor.execute("insert into board values ('e7','Pawn','Black','e7');")
 mycursor.execute("insert into board values ('f7','Pawn','Black','f7');")
 mycursor.execute("insert into board values ('g7','Pawn','Black','g7');")
 mycursor.execute("insert into board values ('h7','Pawn','Black','h7');")
+db.commit()
+
+mycursor.execute("drop table castle;")
+mycursor.execute("create table castle (Location char(5), Piece varchar(15), Colour char(5), Moved char(1));")
+mycursor.execute("insert into castle values ('a1','Rook','White','n');")
+mycursor.execute("insert into castle values ('h1','Rook','White','n');")
+mycursor.execute("insert into castle values ('a8','Rook','Black','n');")
+mycursor.execute("insert into castle values ('h8','Rook','Black','n');")
+mycursor.execute("insert into castle values ('e1','King','White','n');")
+mycursor.execute("insert into castle values ('e8','King','Black','n');")
 db.commit()
 
 class Pieces():
@@ -1151,6 +1164,9 @@ class Movement():
                     print("legal king move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
+                    query = """update castle set Moved = 'y' where Piece = 'King' and Colour = '%s';"""
+                    mycursor.execute(query % turn_colour)
+                    db.commit()
                     Movement.get_current_loc(self,"King",self.move,self.turn)
                     
         def check_rook_move(self,move,turn,which):
@@ -1175,6 +1191,9 @@ class Movement():
                     print("legal rook move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
+                    query = """update castle set Moved = 'y' where Piece = 'Rook' and Colour = '%s';"""
+                    mycursor.execute(query % turn_colour)
+                    db.commit()
                     Movement.get_current_loc(self,"Rook",self.move,self.turn)
 
         def check_bishop_move(self,move,turn,which):
@@ -1266,6 +1285,7 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
+
             if self.move[1] in self.hor and int(self.move[2]) in self.ver:
                 query = "select Piece, Colour from board where Location = '%s';"
                 mycursor.execute(query % (self.which))
@@ -1341,14 +1361,83 @@ class Movement():
                 print("[ILLEGAL MOVE] 2")
                 quit()
 
-        def check_castle(self):
-            pass
+        def check_castle(self,move):
+            self.move = move
+            wsqrS = ["f1","g1"]
+            bsqrS = ["f8","g8"]
+            wsqrL = ["d1","c1","b1"]
+            bsqrL = ["d8","c8","b8"]
+            castleable = True
+            
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
 
-        # Check if the squares are occupied
+            query0 = "select * from board where Location = '%s';"
+
+            if self.move == "O-O":
+                if turn_colour == "White":
+                    for i in wsqrS:
+                        mycursor.execute(query0 % i)
+                        result0 = mycursor.fetchall()
+                        if result0 != []:
+                            castleable = False
+                            break
+                    query1 = "select Moved from castle where Location in ('e1','h1');"
+                    mycursor.execute(query1)
+                    result1 = mycursor.fetchall()
+                    for i in result1:
+                        if i[0] == "n":
+                            pass
+                        else:
+                            castleable = False
+                    if incheck_status != True:
+                        counter = 0
+                        while True:
+                            query2 = "update board set Location = '%s' where Piece = 'King' and Colour = 'White';"
+                            mycursor.execute(query2 % wsqrS[counter])
+                            db.commit()
+                            counter += 1
+                            if counter > 1:
+                                break
+                            Board.incheck(self)
+                            if incheck_status == False:
+                                castleable = True
+                            else:
+                                castleable = False
+                                break
+
+                elif turn_colour == "Black":
+                    for j in bsqrS:
+                        mycursor.execute(query0 % j)
+                        result0 = mycursor.fetchall()
+                        if result0 != []:
+                            castleable = False
+                            break
+                        query1 = "select Moved from castle where Location in ('e8','h8');"
+                        mycursor.execute(query1)
+                        result1 = mycursor.fetchall()
+                        for i in result1:
+                            if i[0] == "n":
+                                pass
+                            else:
+                                castleable = False
+                
+                
+
+            elif self.move == "O-O-O":
+                pass
+
+            print(castleable)
+                    
+
+        # ~Check if the squares are occupied~
+        # ~Check if the King was moved~
+        # ~Check if the Rook was moved~
         # Simulate king movement and check if the king is in check
-        # Check if the King was moved
-        # Check if the Rook was moved
         # If all conditions are satisfied then castle!
+        # If not revert to taking input from the same player
 
         
 
@@ -1466,16 +1555,16 @@ def main():
             which_stck.append(which)
             M.check_rook_move(move,turn,which)      
 
-        elif move == "O-O":
+        elif move == "O-O" or move == "O-O-O":
             which_stck.append(" ")
-            M.check_kcastle()
-        elif move == "O-O-O":
-            which_stck.append(" ")
-            M.check_qcastle()
+            M.check_castle(move)
+
         elif move == "/draw":
             B.draw_game(turn)
+
         elif move == "/forfeit":
             B.forfeit(turn)
+
     elif revert_status == True:
         B = Board()
         B.revert_board_status()
