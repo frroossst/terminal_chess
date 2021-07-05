@@ -3,6 +3,8 @@ import time
 import mysql.connector
 import logging
 
+from mysql.connector.cursor import MySQLCursorPrepared
+
 
 # Global variables
 global turn
@@ -55,9 +57,9 @@ mycursor.execute("create table board (Location char(5), Piece varchar(15), Colou
 logging.debug("white pieces data entry")
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
-# mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
+mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
 mycursor.execute("insert into board values ('c1','Bishop','White',NULL);")
-# mycursor.execute("insert into board values ('g1','Knight','White','g1');")
+mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
 mycursor.execute("insert into board values ('a1','Rook','White','a1');")
@@ -167,10 +169,13 @@ class Board(Pieces):
 
     @classmethod
     def cleanup(self):
-        move = move_stck[-1]
-        for move in Board.li_ref_dict:
-            coordinates = Board.li_ref_dict[move]
-            Board.li[coordinates[0]][coordinates[1]] = " "
+        try:
+            move = move_stck[-1]
+            for move in Board.li_ref_dict:
+                coordinates = Board.li_ref_dict[move]
+                Board.li[coordinates[0]][coordinates[1]] = " "
+        except IndexError:
+            pass
 
     def create_board(self):     
         for i in Board.li:
@@ -1071,9 +1076,6 @@ class Movement():
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break                                
-            # elif self.piece == "Knight":
-            #     query = "select * from board where Location = '%s';"
-
             else:
                 print("[ILLEGAL MOVE] possibly incorrect which")                                        
 
@@ -1353,9 +1355,14 @@ class Movement():
                 quit()
 
         def check_castle(self,move):
-            B = Board()
-            B.incheck()
-            
+                    
+    # ~Check if the squares are occupied~
+    # ~Check if the King was moved~
+    # ~Check if the Rook was moved~
+    # Simulate king movement and check if the king is in check
+    # If all conditions are satisfied then castle!
+    # If not revert to taking input from the same player
+            self.move = move
             castlePieceMoved = True # returns False if either the King or Rook was moved
             castlePieceOccupied = True # return False if the castle squares are occupied 
             
@@ -1364,7 +1371,7 @@ class Movement():
             else:
                 turn_colour = "Black"
             
-            if move == "O-O":
+            if self.move == "O-O":
                 if turn_colour == "White":
                     # checking whether the King or Rook was moved before
                     query = "select Moved from castle where Location in ('h1','e1');"
@@ -1382,34 +1389,95 @@ class Movement():
                         mycursor.execute(query % i)
                         result = mycursor.fetchall()
                         if result != []:
-                            castlePieceOccupied = True
+                            castlePieceOccupied = False
                             break
                         else:
                             pass
-                    for j in OOsquaresWhite:
-                        query = "update board set Location = '%s' where Piece = 'King' and Colour = 'White';"
-                        mycursor.execute(query % j)
-                        db.commit()
-                        B = Board()
-                        B.incheck()       
-                    
 
                 elif turn_colour == "Black":
-                    pass
-            elif move == "O-O-O":
-                pass
+                    # checking whether the King or Rook was moved before
+                    query = "select Moved from castle where Location in ('h8','e8');"
+                    mycursor.execute(query)
+                    result = mycursor.fetchall()
+                    for i in result:
+                        if i[0] == 'n':
+                            pass
+                        else:
+                            castlePieceMoved = False
+                    # checking wheather the pieces are occupied or not for the short castle
+                    OOsquaresBlack = ["f8","g8"]
+                    for i in OOsquaresBlack:
+                        query = "select * from board where Location ='%s';"
+                        mycursor.execute(query % i)
+                        result = mycursor.fetchall()
+                        if result != []:
+                            castlePieceOccupied = False
+                            break
+                        else:
+                            pass
+
+            elif self.move == "O-O-O":
+                if turn_colour == "White":
+                    # checking whether the King or Rook was moved before
+                    query = "select Moved from castle where Location in ('a1','e1');"
+                    mycursor.execute(query)
+                    result = mycursor.fetchall()
+                    for i in result:
+                        if i[0] == 'n':
+                            pass
+                        else:
+                            castlePieceMoved = False
+                    # checking wheather the pieces are occupied or not for the long castle
+                    OOOsquaresWhite = ["b1","c1","d1"]
+                    for i in OOOsquaresWhite:
+                        query = "select * from board where Location ='%s';"
+                        mycursor.execute(query % i)
+                        result = mycursor.fetchall()
+                        if result != []:
+                            castlePieceOccupied = False
+                            break
+                        else:
+                            pass
+
+                elif turn_colour == "Black":
+                    # checking whether the King or Rook was moved before
+                    query = "select Moved from castle where Location in ('a8','e8');"
+                    mycursor.execute(query)
+                    result = mycursor.fetchall()
+                    for i in result:
+                        if i[0] == 'n':
+                            pass
+                        else:
+                            castlePieceMoved = False
+                    # checking wheather the pieces are occupied or not for the long castle
+                    OOOsquaresBlack = ["b8","c8","d8"]
+                    for i in OOOsquaresBlack:
+                        query = "select * from board where Location ='%s';"
+                        mycursor.execute(query % i)
+                        result = mycursor.fetchall()
+                        if result != []:
+                            castlePieceOccupied = False
+                            break
+                        else:
+                            pass
 
             if castlePieceOccupied and castlePieceMoved:
-                    print("[CAN CASTLE] True")
+                print("[CAN CASTLE] True")
+                if self.move == "O-O":
+                    query0 = "update board set Location = 'c1' where Piece = 'King' and Colour = '%s';"
+                    mycursor.execute(query0 % turn_colour)
+                    db.commit()
+                    query1 = "update board set Location = 'd1' where Piece = 'Rook' and Colour = '%s';"
+                    mycursor.execute(query1 % turn_colour)
+                    db.commit()
+                    Board.cleanup()
+                    B = Board()
+                    B.show_updated_board()
+
             else:
                 print("[CAN CASTLE] False")
             
-        # ~Check if the squares are occupied~
-        # ~Check if the King was moved~
-        # ~Check if the Rook was moved~
-        # Simulate king movement and check if the king is in check
-        # If all conditions are satisfied then castle!
-        # If not revert to taking input from the same player
+        
 
         
 
