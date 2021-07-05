@@ -264,16 +264,7 @@ class Board(Pieces):
                     else:
                         raise Exception ("Unexpected_Colour_Encountered")
 
-        for i in Board.li:
-            print()
-            for j in i:
-                print(" ",j," ",Board.pipe,end=" ")
-            print()
-        print()
-        for a in Board.label:
-            print(" ",a," ",Board.pipe,end=" ")
-
-        Board.li = Board.li_ref_empty
+        Board.li = Board.li_ref_empty      
 
         B = Board()  
         B.check_game_over()
@@ -1350,6 +1341,50 @@ class Movement():
                 print("[ILLEGAL MOVE] 2")
                 quit()
 
+        def check_kcastle(self):
+            Board.incheck()
+            
+            if ((turn-1) % 2) != 0:
+                turn_colour = "White"
+            else:
+                turn_colour = "Black"
+
+            wCastleSqr = ["f1","g1"]
+            bCastleSqr = ["f8","g8"]
+            wCastleable = True
+            bCastleable = True
+            castleSqrEmpty = False
+            castlePieceMove = False
+
+            if turn_colour == "White":
+                iterVar = 0
+                for i in wCastleSqr:
+                    query = "select * from board where Location = '%s';"
+                    mycursor.execute(query % i)
+                    result = mycursor.fetchall()
+                    if result != []:
+                        castleSqrEmpty = False 
+                for j in turn_stck:
+                    if j[0] == "K":
+                        wCastleable = False
+                    if which_stck[iterVar] == "h1":
+                        wCastleable = False
+
+            # elif turn_colour == "Black":
+            #     iterVar = 1
+            #     for i in wCastleSqr:
+            #         query = "select * from board where Location = '%s';"
+            #         mycursor.execute(query % i)
+            #         result = mycursor.fetchall()
+            #         if result != []:
+            #             castleSqrEmpty = False
+
+            
+
+
+        def check_qcastle(self):
+            pass
+
 
 
 class Interaction(Movement):
@@ -1465,10 +1500,10 @@ def main():
 
         elif move == "O-O":
             which_stck.append(" ")
-            pass
+            M.check_kcastle()
         elif move == "O-O-O":
             which_stck.append(" ")
-            pass
+            M.check_qcastle()
         elif move == "/draw":
             B.draw_game(turn)
         elif move == "/forfeit":
