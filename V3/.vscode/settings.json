@@ -13,5 +13,7 @@
             "username": "home",
             "password": "home"
         }
-    ]
+    ],
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": false
 }

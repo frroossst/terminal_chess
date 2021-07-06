@@ -1,9 +1,6 @@
 # Import statements
 import time
 import mysql.connector
-import logging
-
-from mysql.connector.cursor import MySQLCursorPrepared
 
 
 # Global variables
@@ -31,17 +28,14 @@ which_stck = []
 global restore_stck
 restore_stck = []
 
-# logging.basicConfig(filename='debug.log', level=logging.DEBUG,format='%(asctime)s %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
-logging.info("--- INITIALIZED ---")
-
-
-# Program start
+# Opening manual.txt with a context manager
 with open("sql.txt","r") as fobj:
     content = fobj.readlines()
     x = content[0].strip()
     y = content[1].strip()
     z = content[2].strip()
 
+# Connecting to the local mySQL server
 db = mysql.connector.connect(
     host = z,
     user = x,
@@ -49,17 +43,17 @@ db = mysql.connector.connect(
     database = "chess"
 )
 mycursor = db.cursor()
-logging.info("sql server connection established")
 
+#deleting the old table and creating a new one 
 mycursor.execute("drop table board")
 mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
 #white pieces data entry
-logging.debug("white pieces data entry")
+
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
-# mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
+mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
 mycursor.execute("insert into board values ('c1','Bishop','White',NULL);")
-# mycursor.execute("insert into board values ('g1','Knight','White','g1');")
+mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
 mycursor.execute("insert into board values ('a1','Rook','White','a1');")
@@ -73,7 +67,7 @@ mycursor.execute("insert into board values ('g2','Pawn','White','g2');")
 mycursor.execute("insert into board values ('h2','Pawn','White','h2');")
 db.commit()
 #black pieces data entry
-logging.debug("black pieces data entry")
+
 mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
 mycursor.execute("insert into board values ('e8','King','Black',NULL);")
 mycursor.execute("insert into board values ('f8','Bishop','Black',NULL);")
@@ -92,8 +86,13 @@ mycursor.execute("insert into board values ('g7','Pawn','Black','g7');")
 mycursor.execute("insert into board values ('h7','Pawn','Black','h7');")
 db.commit()
 
+#dropping and creating table castle
+
 mycursor.execute("drop table castle;")
 mycursor.execute("create table castle (Location char(5), Piece varchar(15), Colour char(5), Moved char(1));")
+
+#data entry for table castle
+
 mycursor.execute("insert into castle values ('a1','Rook','White','n');")
 mycursor.execute("insert into castle values ('h1','Rook','White','n');")
 mycursor.execute("insert into castle values ('a8','Rook','Black','n');")
@@ -102,6 +101,10 @@ mycursor.execute("insert into castle values ('e1','King','White','n');")
 mycursor.execute("insert into castle values ('e8','King','Black','n');")
 db.commit()
 
+#Class definition
+
+
+#Class Pieces contains the icon of the pieces
 class Pieces():
     b_king = "♔"
     w_king = "♚"
@@ -116,6 +119,8 @@ class Pieces():
     b_pawn = "♙"
     w_pawn = "♟" 
 
+
+#Class Board contains the function definitions relating to Board attributes
 class Board(Pieces):
 
     li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
@@ -142,17 +147,6 @@ class Board(Pieces):
         [" "," "," "," "," "," "," "," ","1"],        
     ]
 
-    li_anti_ghosting = [
-        [" "," "," "," "," "," "," "," ","8"],        
-        [" "," "," "," "," "," "," "," ","7"],
-        [" "," "," "," "," "," "," "," ","6"],
-        [" "," "," "," "," "," "," "," ","5"],
-        [" "," "," "," "," "," "," "," ","4"],
-        [" "," "," "," "," "," "," "," ","3"],
-        [" "," "," "," "," "," "," "," ","2"],
-        [" "," "," "," "," "," "," "," ","1"],        
-    ]
-
     li_ref_dict =  {
             "a1":(7,0),"a2":(6,0),"a3":(5,0),"a4":(4,0),"a5":(3,0),"a6":(2,0),"a7":(1,0),"a8":(0,0),
             "b1":(7,1),"b2":(6,1),"b3":(5,1),"b4":(4,1),"b5":(3,1),"b6":(2,1),"b7":(1,1),"b8":(0,1),
@@ -167,6 +161,7 @@ class Board(Pieces):
     def __init__(self):
         pass
 
+    #method for dealing with ghosting of pieces after they are moved
     @classmethod
     def cleanup(self):
         try:
@@ -177,6 +172,7 @@ class Board(Pieces):
         except IndexError:
             pass
 
+    #method for creating the board
     def create_board(self):     
         for i in Board.li:
             print()
@@ -189,8 +185,7 @@ class Board(Pieces):
         label = ["a","b","c","d","e","f","g","h"," "]
         pipe = "|"
         
-        logging.debug("starting position board printed")
-
+    #method for updating the board and moving the pieces
     def update_board(self,piece,prev_loc,now_loc,):
         self.piece = piece
         self.prev_loc = prev_loc
@@ -213,20 +208,12 @@ class Board(Pieces):
         else:
             raise Exception ("Unknown_Piece_Encountered")
 
-
-
-### [FATAL] RESUME WORK HERE TO REMOVE VERTICAL MOVE GHOSTING FOR BLACK QUEEN
+        #iterates through the dict to find the location of the last move
         for c_move, co_or in Board.li_ref_dict.items():
             if str(c_move) == str(self.prev_loc):
-                # print(c_move,co_or)
-                # print(Board.li_ref_empty[co_or[0]][co_or[1]]) #This piece shouldn't be there
-                # print(f"index one : {co_or[0]} index two : {co_or[1]}")
-                # print(type(co_or))
-                # print(type(co_or[0]))
                 cleanup = Board.li
                 int0 = int(co_or[0])
                 int1 = int(co_or[1])
-                # print(type(int0))
                 cleanup[int0].pop(int1)
                 cleanup[int0].insert(int1," ")
 
@@ -236,6 +223,7 @@ class Board(Pieces):
         B = Board()
         B.show_updated_board()
         
+    #iterates through the nested array to replace it with icons
     def show_updated_board(self):
         self.li = Board.li
         mycursor.execute("select * from board;")
@@ -248,7 +236,6 @@ class Board(Pieces):
             self.input_move = piece_loc
             for c_move, co_or in self.dict.items():
                 if str(c_move) == str(self.input_move):
-                    # print(f"Key = {c_move} Value = {co_or}")
                     tupl = co_or
                     if piece_colour == "White":
                         if piece_name == "Queen":
@@ -285,9 +272,8 @@ class Board(Pieces):
         B = Board()  
         B.check_game_over()
 
-    # @staticmethod
+    # checks if the game is drawn or a king has been captured
     def check_game_over(self):
-        # print(move_stck)
         draw = False
         w_king_status = False
         b_king_status = False
@@ -319,12 +305,12 @@ class Board(Pieces):
         result = mycursor.fetchall()
         for i in result:
             j = i
-            #print(i)
+            
         if j[0] == 2:
             draw = True
             print(draw_msg)
             quit()
-        # print(type(i[0]))
+        
         self.li = Board.li
         for i in self.li:
             if Pieces.w_king in i:
@@ -415,6 +401,7 @@ class Board(Pieces):
         current_loc = str(tupl[0])
         count = 1
         loopy_north = True
+    
     # check north                           
         while loopy_north:
             current_loc_square_check = current_loc[0] + str(int(current_loc[1]) + count)
@@ -568,6 +555,7 @@ class Board(Pieces):
                             loopy_ne  = False
                             break
             break
+    
     #check northwest
         for sqr, coor in Movement.loc_dict.items():
             if sqr == current_loc:
@@ -605,6 +593,7 @@ class Board(Pieces):
                             loopy_nw  = False
                             break
             break
+    
     #check southwest
         for sqr, coor in Movement.loc_dict.items():
             if sqr == current_loc:
@@ -642,6 +631,7 @@ class Board(Pieces):
                             loopy_sw  = False
                             break
             break
+  
     #check southeast
         for sqr, coor in Movement.loc_dict.items():
             if sqr == current_loc:
@@ -721,6 +711,7 @@ class Board(Pieces):
                         if b == co_orKnight:
                             knightLegalmoves.append(a)
             lindex += 1
+
         for i in knightLegalmoves:
             query = "select Piece, Colour from board where Location = '%s';"
             mycursor.execute(query % i)
@@ -734,7 +725,7 @@ class Board(Pieces):
                 pass
 
 
-        #incheck() status declaration
+        # incheck() status declaration
         if incheck_status:
             print(f"[{check_use_colour}]'s king is in check")
             if use_colour == "White":
@@ -744,6 +735,7 @@ class Board(Pieces):
                 global b_inCheck
                 b_inCheck = True   
         
+    # method for handling draws from the users 
     def draw_game(self,turn):
         self.turn = turn
         if ((self.turn-1) % 2) != 0:
@@ -765,10 +757,10 @@ class Board(Pieces):
             print(turn_stck)
             quit()
         else:
-# revert? 
-            # turn = turn - 2
+            # revert() ?
             main()    
     
+    #method for handling for forfeiture
     def forfeit(self,turn):
         self.turn = turn
         if ((self.turn-1) % 2) != 0:
@@ -801,12 +793,12 @@ class Board(Pieces):
         print(turn_stck)
         quit()
 
-###[FATAL] Revert_board_status to undo illegal moves.
+    # method to revert board status to previous move
     def revert_board_status(self):
         self.turn = turn_stck
         self.which = which_stck
 
-
+# class for dealing with movement related attributes
 class Movement():
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
@@ -824,6 +816,7 @@ class Movement():
         def __init__(self) -> None:
             pass
 
+        # method for getting the current lcoation of non-which pieces
         def get_current_loc(self,piece,pos,turn):
             self.piece = piece
             self.pos = pos
@@ -847,6 +840,7 @@ class Movement():
                 print(f"which {which}")
                 Movement.trace_route(self,which,self.piece,self.pos,self.turn)
 
+        # method to check each square and if it is occupied to avoid jumping of pieces over obstacles
         def trace_route(self,current_loc,piece,future_loc,turn):
             long = [1,2,3,4,5,6,7,8]
             diag = []
@@ -857,6 +851,7 @@ class Movement():
             self.future_loc = future_loc
             self.piece = piece
             print(f"moving {self.piece} from {self.current_loc} to {self.future_loc}")
+            
             #to check if the move is longitudnal and not diagonal
             if str(self.future_loc[0]) == str(self.current_loc[0]):
                 print("the move is vertical")
@@ -872,10 +867,8 @@ class Movement():
                             print("obstacle encountered")
                             I = Interaction()
                             I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
-                            # print(result)
                             break
                         else:
-                            # print("free square")
                             count+=1
                             if str(loc_square_check) == str(self.future_loc):
                                 print(f"reached at {self.future_loc}")
@@ -890,7 +883,6 @@ class Movement():
                         print(loc_square_check)
                         query = ("select Piece from board where Location = '%s';")
                         mycursor.execute(query % loc_square_check)
-                        # print("1.",loc_square_check)
                         result = mycursor.fetchall()
                         if result != []:
                             if self.piece == "Pawn":
@@ -900,23 +892,22 @@ class Movement():
                                 print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
-                                # print(result)
                                 break
                         else:
-                            # print("free square")
                             count+=1
                             if str(loc_square_check) == str(self.future_loc):
                                 print(f"reached at {self.future_loc}")
                                 B = Board()
                                 B.update_board(self.piece,self.current_loc,self.future_loc)
                                 break
-                # print("path clear")
+            
+            #horizontal moves
             elif (self.future_loc[1]) == (self.current_loc[1]):
                 print("the move is horizontal")
                 hor_li = ["a","b","c","d","e","f","g","h"]
                 while True:
                     if self.current_loc[0] < self.future_loc[0]:
-                        print("the move is towards east")
+                        # eastwards move
                         lindex = hor_li.index(str(self.current_loc[0]))
                         while True:
                             lindex += 1
@@ -937,7 +928,7 @@ class Movement():
                                     break
 
                     elif self.current_loc[0] > self.future_loc[0]:
-                        print("the move is towards west")
+                        # westwards move
                         lindex = hor_li.index(str(self.current_loc[0]))
                         while True:
                             lindex -= 1
@@ -956,6 +947,8 @@ class Movement():
                                     B = Board()
                                     B.update_board(self.piece,check_loc_coor,self.future_loc)
                                     break
+            
+            # diagonal moves
             elif self.piece == "Queen" or self.piece == "Bishop" or self.piece == "King":
                 move_direction = ""
                 for i in Movement.loc_dict:
@@ -982,33 +975,32 @@ class Movement():
                                 num0 -= 1
                                 num1 += 1
                                 next_co_or = tuple([num0,num1])
-                                print(f"tupleISED {next_co_or}")
+
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
-                                        print("match found")
-                                        print(i,j)
+                                        
                                         check_loc_coor = i
                                         query = """select * from board where Location = '%s';"""
                                         mycursor.execute(query % check_loc_coor)
                                         result = mycursor.fetchall()
                                         if result != []:
-                                            print("obstacle encountered")
                                             I = Interaction()
                                             I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
                                             break
+
                                         else:
                                             if str(check_loc_coor) == str(self.future_loc):
-                                                print(f"reached at {self.future_loc}")
+                                                # print(f"reached at {self.future_loc}")
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break
+
                         elif move_direction == "northwest":
                             while True:
                                 num0 -= 1
                                 num1 -= 1
                                 next_co_or = tuple([num0,num1])
-                                print(next_co_or)
-                                print(f"tupleISED {next_co_or}")
+                                s# print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
                                         print("match found")
@@ -1028,6 +1020,7 @@ class Movement():
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break    
+
                         elif move_direction == "southeast":
                             while True:
                                 num0 += 1
@@ -1036,8 +1029,7 @@ class Movement():
                                 print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
-                                        print("match found")
-                                        print(i,j)
+                                        
                                         check_loc_coor = i
                                         query = """select * from board where Location = '%s';"""
                                         mycursor.execute(query % check_loc_coor)
@@ -1052,7 +1044,8 @@ class Movement():
                                                 print(f"reached at {self.future_loc}")
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
-                                                break                
+                                                break 
+
                         elif move_direction == "southwest":
                             while True:
                                 num0 += 1
@@ -1061,8 +1054,7 @@ class Movement():
                                 print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
-                                        print("match found")
-                                        print(i,j)
+                                        
                                         check_loc_coor = i
                                         query = """select * from board where Location = '%s';"""
                                         mycursor.execute(query % check_loc_coor)
@@ -1081,6 +1073,7 @@ class Movement():
             else:
                 print("[ILLEGAL MOVE] possibly incorrect which")                                        
 
+        # checking queen moves
         def check_queen_move(self,move,turn):
             self.move = move
             self.turn = turn
@@ -1107,6 +1100,7 @@ class Movement():
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"Queen",self.move,self.turn)
 
+        #checking king moves
         def check_king_move(self,move,turn):
             self.move = move
             self.turn = turn
@@ -1151,8 +1145,7 @@ class Movement():
                     pass
             else:
                 print("King can only move one pace(s) horizontally")
-                quit()
-#add code for vertical checking for king move            
+                quit()            
 
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1164,6 +1157,7 @@ class Movement():
                     db.commit()
                     Movement.get_current_loc(self,"King",self.move,self.turn)
                     
+        # check rook move
         def check_rook_move(self,move,turn,which):
             self.move = move
             self.turn = turn
@@ -1191,6 +1185,7 @@ class Movement():
                     db.commit()
                     Movement.get_current_loc(self,"Rook",self.move,self.turn)
 
+        # check bishop moves
         def check_bishop_move(self,move,turn,which):
             self.move = move
             self.turn = turn
@@ -1207,16 +1202,15 @@ class Movement():
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
                 quit()
-            print(self.move, tupl[0])
+            
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
-                    #insert check for occupied squares
-                    #insert obstacle check
                     print("legal bishop move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"Bishop",self.move,self.turn)
 
+        # checking pawn moves
         def check_pawn_move(self,move,turn,which):
             pwn_move_legality = False
             self.move = move
@@ -1227,8 +1221,7 @@ class Movement():
             else:
                 turn_colour = "Black"
             mod_move = self.move[1] + self.move[2]
-            # print(self.move[2])
-            # print(self.which[1])
+
             if (int(self.move[2]) > int(self.which[1]) and turn_colour == "White") or (int(self.move[2]) < int(self.which[1]) and turn_colour == "Black"):
                 if (int(self.move[2]) - 2 == 2 and turn_colour == "White") or (int(self.move[2]) + 2 == 7 and turn_colour == "Black"):
                     pwn_move_legality = True
@@ -1249,7 +1242,7 @@ class Movement():
                 quit()
             which_stck_mod = which_stck
             which_stck_mod.pop()
-#[FATAL] check after multiple pawn moves wheather the program allows for the pawn to move two paces
+
             if pwn_move_legality == True:
                 if self.move[0] == "p" or self.move[0] == "x":
                     if self.move[1] == self.which[0]:
@@ -1270,7 +1263,8 @@ class Movement():
                     else:
                         print("the pawn can only move straight")
                         quit()
-        
+
+        # check knight moves
         def check_knight_move(self,move,turn,which):
             self.move = move
             self.turn = turn
@@ -1345,7 +1339,6 @@ class Movement():
                                     pass
                                 
                         else:
-                            print(which_stck)
                             which_stck.pop()
              
                     else:
@@ -1356,6 +1349,7 @@ class Movement():
                 print("[ILLEGAL MOVE] 2")
                 quit()
 
+        # checking castling move
         def check_castle(self,move):
             
             self.move = move
@@ -1469,6 +1463,7 @@ class Movement():
                         else:
                             pass
 
+            # finally checking for castle legality
             if castlePieceOccupied and castlePieceMoved and castleINCHECK:
                 print("[CAN CASTLE] True")
                 if self.move == "O-O":
@@ -1495,16 +1490,12 @@ class Movement():
                 print("[CAN CASTLE] False")
                 quit()
             
-        
-
-        
-
-
-
+# class to deal with capture and promotion related interactions
 class Interaction(Movement):
     def __init__(self) -> None:
         pass
 
+    # method to deal with piece captures
     def capture(self,prev_location,location_captured,piece_capturer,turn):
         self.prev_location = prev_location
         self.location_captured = location_captured
@@ -1520,6 +1511,8 @@ class Interaction(Movement):
         B = Board()
         B.update_board((self.piece_capturer),(self.prev_location),(self.location_captured))
 
+    # method to deal with auto-promotion to a queen
+    # a pawn only promotes to a queen if there is no same colour piece on the board
     def promote(self):
         white_promote_squares = ["a8","b8","c8","d8","e8","f8","g8","h8"]
         black_promote_sqaures = ["a1","b1","c1","d1","e1","f1","g1","h1"]
@@ -1560,11 +1553,13 @@ class Interaction(Movement):
                             break
             break
 
+# method to open the manual file
 def manual():
     with open("manual.txt","r") as fobj:
         content = fobj.read()
         print(content)
 
+# das main functions!
 def main():
     if revert_status == False:
         B = Board()
@@ -1626,8 +1621,6 @@ def main():
     elif revert_status == True:
         B = Board()
         B.revert_board_status()
-
-logging.info("main()")
 
 splash_screen_0 = """
  _                      _             _                  
