@@ -1000,7 +1000,7 @@ class Movement():
                                 num0 -= 1
                                 num1 -= 1
                                 next_co_or = tuple([num0,num1])
-                                s# print(f"tupleISED {next_co_or}")
+                                # print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
                                         print("match found")
@@ -1356,6 +1356,7 @@ class Movement():
             castlePieceMoved = True # returns False if either the King or Rook was moved
             castlePieceOccupied = True # return False if the castle squares are occupied 
             castleINCHECK = True # returns False if the king is currently in check 
+            castleTransit = True # returns False if the king is in check while in transit
 
             # ~Check if the squares are occupied~
             # ~Check if the King was moved~
@@ -1395,6 +1396,20 @@ class Movement():
                             break
                         else:
                             pass
+                    
+                    # checking if there is a check in transit
+                    for i in OOsquaresWhite:
+                        query = "update board set Location = '%s' where Piece = 'King' and Colour = 'White';"
+                        mycursor.execute(query % i)
+                        db.commit()
+                        B = Board()
+                        B.incheck()
+                        if incheck_status:
+                            castleTransit = False
+                            break
+                        
+
+
 
                 elif turn_colour == "Black":
                     # checking whether the King or Rook was moved before
@@ -1464,7 +1479,7 @@ class Movement():
                             pass
 
             # finally checking for castle legality
-            if castlePieceOccupied and castlePieceMoved and castleINCHECK:
+            if castlePieceOccupied and castlePieceMoved and castleINCHECK and castleTransit:
                 print("[CAN CASTLE] True")
                 if self.move == "O-O":
                     query0 = "update board set Location = 'g1' where Piece = 'King' and Colour = '%s';"
