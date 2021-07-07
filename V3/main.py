@@ -51,8 +51,8 @@ mycursor.execute("create table board (Location char(5), Piece varchar(15), Colou
 
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
-mycursor.execute("insert into board values ('f1','Bishop','White',NULL);")
-mycursor.execute("insert into board values ('c1','Bishop','White',NULL);")
+mycursor.execute("insert into board values ('f1','Bishop','White','f1');")
+mycursor.execute("insert into board values ('c1','Bishop','White','c1');")
 mycursor.execute("insert into board values ('g1','Knight','White','g1');")
 mycursor.execute("insert into board values ('b1','Knight','White','b1');")
 mycursor.execute("insert into board values ('h1','Rook','White','h1');")
@@ -70,8 +70,8 @@ db.commit()
 
 mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
 mycursor.execute("insert into board values ('e8','King','Black',NULL);")
-mycursor.execute("insert into board values ('f8','Bishop','Black',NULL);")
-mycursor.execute("insert into board values ('c8','Bishop','Black',NULL);")
+mycursor.execute("insert into board values ('f8','Bishop','Black','f8');")
+mycursor.execute("insert into board values ('c8','Bishop','Black','c8');")
 mycursor.execute("insert into board values ('g8','Knight','Black','g8');")
 mycursor.execute("insert into board values ('b8','Knight','Black','b8');")
 mycursor.execute("insert into board values ('h8','Rook','Black','h8');")
@@ -190,7 +190,7 @@ class Board(Pieces):
         self.piece = piece
         self.prev_loc = prev_loc
         self.now_loc = now_loc
-        which_pieces = ["Rook","Knight","Pawn"]
+        which_pieces = ["Rook","Knight","Pawn","Bishop"]
         if ((turn-1) % 2) != 0:
             turn_colour = "White"
         else:
