@@ -1,0 +1,77 @@
+Chess is a game that has been around since the 15th centrury.
+
+---The Basics---
+
+King : It is the most important piece in chess, and if your King gets captured you loose the game
+
+Queen : The most powerful piece which can move in any direction as many step as she wants
+
+Knight : A piece that moves two steps forward and one either to the left or right, It is also the only piece that can jump over obstacles
+
+Bishop : It can only move diagonally on similar coloured squares as many steps as it wansts
+
+Rook : A piece that can move as many paces as it wants but only vertically or horizontally.
+
+Pawn : From the starting position it can move either one or two steps but after that can only move one step at a time. It can capture pieces diagonally. And after reaching the other end of the board it can be exchanged for any piece.
+
+---How to play---
+
+Piece | Symbol
+
+Pawn   | p
+Queen  | Q
+King   | K
+Rook   | R
+Knight | N
+Bishop | B
+
+For some moves you will need to enter a "which" input, which is the current position of that piece on the board
+
+For Example,
+To move a pawn from d2 to d4 one would first enter the command : 
+
+pd4
+
+and then upon being asked which, you must enter the current position of the pieces as follows :
+
+d2
+
+To capture a piece you simply move your piece to that particular location and the capture is automatic. But when capturing with a pawn you must begin the move with an 'x' as follows : 
+
+xe5
+d4
+
+The above command captures a piece on e5 from d4.
+
+To castle kingside the command is : O-O 
+To casltle queenside the command is : O-O-O
+
+To resign the game : /forfeit
+To offer a draw : /draw
+
+---What's different?---
+
+1. There is no en-passant capture
+
+2. All pawns are automatically promoted to a Queen. But if there are multiple Queens on the board then the pawns simply sit there until there are no queens on board and only then auto promote to a queen.
+
+3. There are no stalemates or draws by repition. There is only a draw by insufficient material(s)
+
+4. There are also no checkmates, a game is won either by resignation or capturing the enemy's King.
+
+5. Upon a check a player will be notified but is free to move any other piece.
+   
+6. When a player offers a draw they skip a turn. This is done to ensure players do not spam each other with draw requests. Draws can only be offered on your turn and not on the enemy's turn.
+
+7. The game however will automatically result in a draw when it detects an impossible checkmate(s), such as with two Kings and a Knight or a Bishop.
+
+
+
+
+
+
+
+
+
+
+
