@@ -47,6 +47,8 @@ mycursor = db.cursor()
 #deleting the old table and creating a new one 
 mycursor.execute("drop table board")
 mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
+mycursor.execute("drop table revertBoard")
+mycursor.execute("create table revertBoard (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
 #white pieces data entry
 
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
@@ -66,6 +68,24 @@ mycursor.execute("insert into board values ('f2','Pawn','White','f2');")
 mycursor.execute("insert into board values ('g2','Pawn','White','g2');")
 mycursor.execute("insert into board values ('h2','Pawn','White','h2');")
 db.commit()
+
+mycursor.execute("insert into revertBoard values ('d1','Queen','White',NULL);")
+mycursor.execute("insert into revertBoard values ('e1','King','White',NULL);")
+mycursor.execute("insert into revertBoard values ('f1','Bishop','White','f1');")
+mycursor.execute("insert into revertBoard values ('c1','Bishop','White','c1');")
+mycursor.execute("insert into revertBoard values ('g1','Knight','White','g1');")
+mycursor.execute("insert into revertBoard values ('b1','Knight','White','b1');")
+mycursor.execute("insert into revertBoard values ('h1','Rook','White','h1');")
+mycursor.execute("insert into revertBoard values ('a1','Rook','White','a1');")
+mycursor.execute("insert into revertBoard values ('a2','Pawn','White','a2');")
+mycursor.execute("insert into revertBoard values ('b2','Pawn','White','b2');")
+mycursor.execute("insert into revertBoard values ('c2','Pawn','White','c2');")
+mycursor.execute("insert into revertBoard values ('d2','Pawn','White','d2');")
+mycursor.execute("insert into revertBoard values ('e2','Pawn','White','e2');")
+mycursor.execute("insert into revertBoard values ('f2','Pawn','White','f2');")
+mycursor.execute("insert into revertBoard values ('g2','Pawn','White','g2');")
+mycursor.execute("insert into revertBoard values ('h2','Pawn','White','h2');")
+db.commit()
 #black pieces data entry
 
 mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
@@ -84,6 +104,24 @@ mycursor.execute("insert into board values ('e7','Pawn','Black','e7');")
 mycursor.execute("insert into board values ('f7','Pawn','Black','f7');")
 mycursor.execute("insert into board values ('g7','Pawn','Black','g7');")
 mycursor.execute("insert into board values ('h7','Pawn','Black','h7');")
+db.commit()
+
+mycursor.execute("insert into revertBoard values ('d8','Queen','Black',NULL);")
+mycursor.execute("insert into revertBoard values ('e8','King','Black',NULL);")
+mycursor.execute("insert into revertBoard values ('f8','Bishop','Black','f8');")
+mycursor.execute("insert into revertBoard values ('c8','Bishop','Black','c8');")
+mycursor.execute("insert into revertBoard values ('g8','Knight','Black','g8');")
+mycursor.execute("insert into revertBoard values ('b8','Knight','Black','b8');")
+mycursor.execute("insert into revertBoard values ('h8','Rook','Black','h8');")
+mycursor.execute("insert into revertBoard values ('a8','Rook','Black','a8');")
+mycursor.execute("insert into revertBoard values ('a7','Pawn','Black','a7');")
+mycursor.execute("insert into revertBoard values ('b7','Pawn','Black','b7');")
+mycursor.execute("insert into revertBoard values ('c7','Pawn','Black','c7');")
+mycursor.execute("insert into revertBoard values ('d7','Pawn','Black','d7');")
+mycursor.execute("insert into revertBoard values ('e7','Pawn','Black','e7');")
+mycursor.execute("insert into revertBoard values ('f7','Pawn','Black','f7');")
+mycursor.execute("insert into revertBoard values ('g7','Pawn','Black','g7');")
+mycursor.execute("insert into revertBoard values ('h7','Pawn','Black','h7');")
 db.commit()
 
 #dropping and creating table castle
@@ -205,6 +243,7 @@ class Board(Pieces):
             # print(tupl)
             mycursor.execute(query % tupl)
             db.commit()
+
         else:
             raise Exception ("Unknown_Piece_Encountered")
 
@@ -370,8 +409,9 @@ class Board(Pieces):
         print(Board.li[tupl[0]][tupl[1]])
 
     def restore_pawn_status(self):
-        print("pawn cannot capture vartically")
-        query = """update board set Location = '%s' where Piece = 'Pawn', """
+        print("pawn cannot capture vertically")
+        query = """update board set Location = '%s' where Piece = 'Pawn';"""
+# I do not know why I added this query here TBH
         B = Board()
         B.show_updated_board()
 
@@ -795,8 +835,11 @@ class Board(Pieces):
 
     # method to revert board status to previous move
     def revert_board_status(self):
-        self.turn = turn_stck
-        self.which = which_stck
+        query = "drop table board;"
+        mycursor.execute(query)
+        db.commit()
+        query = "insert into board"
+        
 
 # class for dealing with movement related attributes
 class Movement():
