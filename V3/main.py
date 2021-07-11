@@ -435,9 +435,12 @@ class Board(Pieces):
         query = "select * from board where Piece = 'King' and Colour = '%s';"
         mycursor.execute(query % (use_colour))
         result = mycursor.fetchall()
+        
+        tupl = ""
 
         for i in result:
             tupl = i 
+
         current_loc = str(tupl[0])
         count = 1
         loopy_north = True
@@ -835,11 +838,18 @@ class Board(Pieces):
 
     # method to revert board status to previous move
     def revert_board_status(self):
-        query = "drop table board;"
-        mycursor.execute(query)
+        query0 = "drop table board;"
+        mycursor.execute(query0)
         db.commit()
-        query = "insert into board"
-        
+        mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
+        db.commit()
+        # query1 = ("insert into board"
+        # "select * from revertBoard;")
+        # mycursor.execute(query1, multi=True)
+        # db.commit()
+        with open("revert.sql","r") as fobj:
+            result_iterator = mycursor.execute(fobj.read(), multi=True)
+            db.commit()
 
 # class for dealing with movement related attributes
 class Movement():
@@ -1676,9 +1686,14 @@ def main():
         elif move == "/forfeit":
             B.forfeit(turn)
 
+        elif move == "/revert":
+            B.revert_board_status()
+            B.show_updated_board()
+
     elif revert_status == True:
         B = Board()
         B.revert_board_status()
+        
 
 splash_screen_0 = """
  _                      _             _                  
