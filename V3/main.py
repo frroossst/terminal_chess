@@ -843,13 +843,12 @@ class Board(Pieces):
         db.commit()
         mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
         db.commit()
-        # query1 = ("insert into board"
-        # "select * from revertBoard;")
-        # mycursor.execute(query1, multi=True)
-        # db.commit()
-        with open("revert.sql","r") as fobj:
-            result_iterator = mycursor.execute(fobj.read(), multi=True)
-            db.commit()
+        query1 = ("INSERT INTO board (SELECT * FROM revertBoard);")
+        mycursor.execute(query1)
+        db.commit()
+        # with open("revert.sql","r") as fobj:
+        #     result_iterator = mycursor.execute(fobj.read(), multi=True)
+        #     db.commit()
 
 # class for dealing with movement related attributes
 class Movement():

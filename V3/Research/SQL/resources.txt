@@ -1,0 +1,7 @@
+https://stackoverflow.com/questions/13237623/copy-data-into-another-table
+
+https://stackoverflow.com/questions/53872471/python-mysql-connector-multiple-statements
+
+https://www.tutorialspoint.com/mysql-statement-to-copy-data-from-one-table-and-insert-into-another-table
+
+https://instructobit.com/tutorial/130/Python-MySQL-executing-multi-query-.sql-files
