@@ -264,6 +264,7 @@ class Board(Pieces):
         
     #iterates through the nested array to replace it with icons
     def show_updated_board(self):
+        Board.cleanup() # added to remove ghosting while calling the revert function
         self.li = Board.li
         mycursor.execute("select * from board;")
         result = mycursor.fetchall()
