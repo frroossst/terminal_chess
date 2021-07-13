@@ -7,6 +7,9 @@ import mysql.connector
 global turn
 turn = 1
 
+global turnColour
+turnColour = 1
+
 global w_inCheck
 w_inCheck = False
 
@@ -234,10 +237,15 @@ class Board(Pieces):
             query = "update board set Location = '%s' where Location = '%s';"
             mycursor.execute(query % (self.now_loc,which))
             db.commit()
+            query = "update revertBoard set Location = '%s' where Location = '%s';"
+            mycursor.execute(query % (self.now_loc,which))
+            db.commit()
         elif self.piece not in which_pieces:
             query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
             tupl = (self.now_loc,self.piece,turn_colour)
-            # print(tupl)
+            mycursor.execute(query % tupl)
+            db.commit()
+            query = """update revertBoard set Location = '%s' where Piece = '%s' and Colour = '%s';"""
             mycursor.execute(query % tupl)
             db.commit()
 
@@ -842,6 +850,13 @@ class Board(Pieces):
     # method to revert board status to previous move
     def revert_board_status(self):
         self.revertColour = revertColour
+        if ((turn-1) % 2) != 0:
+            turn_colour = "White"
+            turnColour = 1
+        else:
+            turn_colour = "Black"
+            turnColour = 2
+            
         query0 = "drop table board;"
         mycursor.execute(query0)
         db.commit()
@@ -850,9 +865,8 @@ class Board(Pieces):
         query1 = ("INSERT INTO board (SELECT * FROM revertBoard);")
         mycursor.execute(query1)
         db.commit()
-        
-
-
+        B = Board()
+        B.show_updated_board()
 
 # class for dealing with movement related attributes
 class Movement():
@@ -1129,6 +1143,8 @@ class Movement():
             else:
                 print("[ILLEGAL MOVE] possibly incorrect which")                                        
 
+#Check function(s) for all piece moves
+
         # checking queen moves
         def check_queen_move(self,move,turn):
             self.move = move
@@ -1174,8 +1190,6 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                # B = Board()
-                # B.revert_board_status()
 
             if self.move[1] == "a":
                 if tupl[0][1] == "b":
@@ -1203,7 +1217,6 @@ class Movement():
                     pass
             else:
                 print("King can only move one pace(s) horizontally")
-                quit()            
 
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1231,7 +1244,8 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                quit()
+                B = Board()
+                B.revert_board_status()
             print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1465,10 +1479,7 @@ class Movement():
                         if incheck_status:
                             castleTransit = False
                             break
-                        
-
-
-
+        
                 elif turn_colour == "Black":
                     # checking whether the King or Rook was moved before
                     query = "select Moved from castle where Location in ('h8','e8');"
@@ -1637,18 +1648,33 @@ def main():
     B = Board()
     B.create_board()
     M = Movement()
+    
     global turn
+    global turnColour
+    global revertColour
+
+    if turnColour != turn:
+        turn = turnColour
+
     if ((turn) % 2) != 0:
         turn_colour = "WHITE"
     else:
         turn_colour = "BLACK"
+
+    if (turn - 1)  % 2 == 0:
+        revertColour = "White"
+    else:
+        revertColour = "Black"    
+
     print()
     B.incheck()
     print(f"[{turn_colour}] to move")
     move = input("enter move : ")
     turn_stck.append(move)
-    # print(f"turn = {turn}")
+
     turn += 1
+    turnColour += 1
+
     global which
     which = "" #current position for the piece to be moved
     if move[0] == "K":
@@ -1682,7 +1708,6 @@ def main():
     elif move == "/forfeit":
         B.forfeit(turn)
     elif move == "/revert":
-        global revertColour
         if (turn - 1)  % 2 == 0:
             revertColour = "White"
         else:
