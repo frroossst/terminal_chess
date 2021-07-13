@@ -64,14 +64,3 @@ To offer a draw : /draw
 6. When a player offers a draw they skip a turn. This is done to ensure players do not spam each other with draw requests. Draws can only be offered on your turn and not on the enemy's turn.
 
 7. The game however will automatically result in a draw when it detects an impossible checkmate(s), such as with two Kings and a Knight or a Bishop.
-
-
-
-
-
-
-
-
-
-
-

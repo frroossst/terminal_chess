@@ -1174,8 +1174,9 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                B = Board()
-                B.revert_board_status()
+                # B = Board()
+                # B.revert_board_status()
+
             if self.move[1] == "a":
                 if tupl[0][1] == "b":
                     pass
