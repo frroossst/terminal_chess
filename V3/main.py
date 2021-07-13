@@ -781,9 +781,12 @@ class Board(Pieces):
         self.turn = turn
         if ((self.turn-1) % 2) != 0:
             turn_colour = "White"
+            turnColourPrint = "WHITE"
         else:
             turn_colour = "Black"
-        print(f"[{turn_colour}] offers a draw")
+            turnColourPrint = "BLACK"
+
+        print(f"[{turnColourPrint}] offers a draw")
         draw_in = input("do you accept? y/n ")
         if draw_in.lower() == "y":
             draw_msg = """
@@ -806,9 +809,11 @@ class Board(Pieces):
         self.turn = turn
         if ((self.turn-1) % 2) != 0:
             turn_colour = "White"
+            turnColourPrint = "WHITE"
         else:
             turn_colour = "Black"
-        print(f"[{turn_colour}] forfeits")
+            turnColourPrint = "BLACK"
+        print(f"[{turnColourPrint}] forfeits")
         b_win_msg = """
          ____  _            _     __        ___             _ 
         | __ )| | __ _  ___| | __ \ \      / (_)_ __  ___  | |
@@ -830,14 +835,13 @@ class Board(Pieces):
         elif turn_colour == "Black":
             print(w_win_msg)
         
-        print(move_stck)
+        # print(move_stck)
         print(turn_stck)
         quit()
 
     # method to revert board status to previous move
     def revert_board_status(self):
         self.revertColour = revertColour
-            
         query0 = "drop table board;"
         mycursor.execute(query0)
         db.commit()
