@@ -7,9 +7,6 @@ import mysql.connector
 global turn
 turn = 1
 
-global revert_status
-revert_status = False
-
 global w_inCheck
 w_inCheck = False
 
@@ -839,6 +836,8 @@ class Board(Pieces):
 
     # method to revert board status to previous move
     def revert_board_status(self):
+        self.revertColour = revertColour
+            
         query0 = "drop table board;"
         mycursor.execute(query0)
         db.commit()
@@ -847,9 +846,9 @@ class Board(Pieces):
         query1 = ("INSERT INTO board (SELECT * FROM revertBoard);")
         mycursor.execute(query1)
         db.commit()
-        # with open("revert.sql","r") as fobj:
-        #     result_iterator = mycursor.execute(fobj.read(), multi=True)
-        #     db.commit()
+        
+
+
 
 # class for dealing with movement related attributes
 class Movement():
@@ -1171,7 +1170,8 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                quit()
+                B = Board()
+                B.revert_board_status()
             if self.move[1] == "a":
                 if tupl[0][1] == "b":
                     pass
@@ -1629,71 +1629,62 @@ def manual():
 
 # das main functions!
 def main():
-    if revert_status == False:
-        B = Board()
-        B.create_board()
-        M = Movement()
-        global turn
-        if ((turn) % 2) != 0:
-            turn_colour = "WHITE"
+    B = Board()
+    B.create_board()
+    M = Movement()
+    global turn
+    if ((turn) % 2) != 0:
+        turn_colour = "WHITE"
+    else:
+        turn_colour = "BLACK"
+    print()
+    B.incheck()
+    print(f"[{turn_colour}] to move")
+    move = input("enter move : ")
+    turn_stck.append(move)
+    # print(f"turn = {turn}")
+    turn += 1
+    global which
+    which = "" #current position for the piece to be moved
+    if move[0] == "K":
+        which_stck.append(" ")
+        M.check_king_move(move,turn)
+    elif move[0] == "Q":
+        which_stck.append(" ")
+        M.check_queen_move(move,turn)
+    elif move[0] == "B":
+        which = input("enter current position of the bishop to be moved : ")
+        which_stck.append(which)
+        M.check_bishop_move(move,turn,which)
+    elif move[0] == "N":
+        which = input("enter current position of the knight to be moved : ")
+        which_stck.append(which)
+        M.check_knight_move(move,turn,which)
+    elif move[0] == "p" or move[0] == "x":
+        which = input("enter current position of the pawn to be moved : ")
+        which_stck.append(which)
+        restore_stck.append(move)
+        M.check_pawn_move(move,turn,which)
+    elif move[0] == "R":
+        which = input("enter current position of the rook to be moved : ")
+        which_stck.append(which)
+        M.check_rook_move(move,turn,which)      
+    elif move == "O-O" or move == "O-O-O":
+        which_stck.append(" ")
+        M.check_castle(move)
+    elif move == "/draw":
+        B.draw_game(turn)
+    elif move == "/forfeit":
+        B.forfeit(turn)
+    elif move == "/revert":
+        global revertColour
+        if (turn - 1)  % 2 == 0:
+            revertColour = "White"
         else:
-            turn_colour = "BLACK"
-        print()
-        B.incheck()
-        print(f"[{turn_colour}] to move")
-        move = input("enter move : ")
-        turn_stck.append(move)
-        # print(f"turn = {turn}")
-        turn += 1
-        global which
-        which = "" #current position for the piece to be moved
-        if move[0] == "K":
-            which_stck.append(" ")
-            M.check_king_move(move,turn)
-
-        elif move[0] == "Q":
-            which_stck.append(" ")
-            M.check_queen_move(move,turn)
-
-        elif move[0] == "B":
-            which = input("enter current position of the bishop to be moved : ")
-            which_stck.append(which)
-            M.check_bishop_move(move,turn,which)
-
-        elif move[0] == "N":
-            which = input("enter current position of the knight to be moved : ")
-            which_stck.append(which)
-            M.check_knight_move(move,turn,which)
-
-        elif move[0] == "p" or move[0] == "x":
-            which = input("enter current position of the pawn to be moved : ")
-            which_stck.append(which)
-            restore_stck.append(move)
-            M.check_pawn_move(move,turn,which)
-
-        elif move[0] == "R":
-            which = input("enter current position of the rook to be moved : ")
-            which_stck.append(which)
-            M.check_rook_move(move,turn,which)      
-
-        elif move == "O-O" or move == "O-O-O":
-            which_stck.append(" ")
-            M.check_castle(move)
-
-        elif move == "/draw":
-            B.draw_game(turn)
-
-        elif move == "/forfeit":
-            B.forfeit(turn)
-
-        elif move == "/revert":
-            B.revert_board_status()
-            B.show_updated_board()
-
-    elif revert_status == True:
-        B = Board()
+            revertColour = "Black"
+        print(revertColour)
         B.revert_board_status()
-        
+        B.show_updated_board()
 
 splash_screen_0 = """
  _                      _             _                  
