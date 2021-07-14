@@ -1,7 +1,7 @@
 # Import statements
 import time
 import mysql.connector
-
+import json
 
 # Global variables
 global turn
@@ -210,6 +210,71 @@ class Board(Pieces):
         except IndexError:
             pass
 
+    #method for updating revertBoard table after one turn so revert => undo move 
+    @classmethod
+    def revert_update_board_dump(self,*args,isWhich = False):
+        li0 = [] # fmt => query, setLocation, lookupLocation
+        li1 = [] # fmt => query, setLocation, Piece, Colour
+
+        sqlObj0 = {"query" : "", "setLocation" : "", "whichLocation" : ""}
+        sqlObj1 = {"query" : "", "setLocation" : "", "Piece" : "", "Colour" : ""}
+        
+        if isWhich:
+            for i in args:
+                li0.append(i)
+            
+            sqlObj0["query"] = li0[0]
+            sqlObj0["setLocation"] = li0[1]
+            sqlObj0["whichLocation"] = li0[2]
+
+            with open("revertQuery.json","w") as fobj:
+                json.dump(sqlObj0,fobj)
+        else:
+            for j in args:
+                li1.append(j)
+
+            sqlObj1["query"] = li1[0]
+            sqlObj1["setLocation"] = li1[1]
+            sqlObj1["Piece"] = li1[2]
+            sqlObj1["Colour"] = li1[3]
+
+            with open("revertQuery.json","w") as fobj:
+                json.dump(sqlObj1,fobj)
+
+    @classmethod
+    def revert_update_board_load(self):
+ 
+        li = []
+
+        with open("revertQuery.json","r") as fobj:
+            content = json.load(fobj)
+            for k in content:
+                li.append(content[k])
+        if li != []:
+            
+            if len(li) == 3:
+                # it is a which query
+                query = li[0]
+                setLocation = li[1]
+                lookupLocation = li[2]
+                mycursor.execute(query % (setLocation, lookupLocation))
+                db.commit()
+
+            elif len(li) == 4:
+                # it is NOT a which query
+                query = li[0]
+                setLocation = li[1]
+                piece = li[2]
+                colour = li[3]
+                mycursor.execute(query % (setLocation, piece, colour))
+                db.commit()
+            
+            else:
+                raise Exception ("Unexpected List Length Encountered")
+        
+        else: 
+            pass
+
     #method for creating the board
     def create_board(self):     
         for i in Board.li:
@@ -237,7 +302,8 @@ class Board(Pieces):
             query = "update board set Location = '%s' where Location = '%s';"
             mycursor.execute(query % (self.now_loc,which))
             db.commit()
-            # query = "update revertBoard set Location = '%s' where Location = '%s';"
+            queryR = "update revertBoard set Location = '%s' where Location = '%s';"
+            Board.revert_update_board_dump(queryR,self.now_loc,which,isWhich = True)
             # mycursor.execute(query % (self.now_loc,which))
             # db.commit()
         elif self.piece not in which_pieces:
@@ -245,7 +311,8 @@ class Board(Pieces):
             tupl = (self.now_loc,self.piece,turn_colour)
             mycursor.execute(query % tupl)
             db.commit()
-            # query = """update revertBoard set Location = '%s' where Piece = '%s' and Colour = '%s';"""
+            queryR = """update revertBoard set Location = '%s' where Piece = '%s' and Colour = '%s';"""
+            Board.revert_update_board_dump(queryR, self.now_loc, self.piece, turn_colour, isWhich = False)
             # mycursor.execute(query % tupl)
             # db.commit()
 
@@ -1650,11 +1717,13 @@ def main():
     M = Movement()
     
     global turn
-    global turnColour
     global revertTurn
 
-    if revertTurn != turn:
-        turn = revertTurn
+    # if turn != revertTurn:
+    #     if revertTurn > turn:
+    #         pass
+    #     else:
+    #         turn = revertTurn
 
     if ((turn) % 2) != 0:
         turn_colour = "WHITE"
@@ -1676,6 +1745,9 @@ def main():
 
     global which
     which = "" #current position for the piece to be moved
+    
+    Board.revert_update_board_load()
+    
     if move[0] == "K":
         which_stck.append(" ")
         M.check_king_move(move,turn)
