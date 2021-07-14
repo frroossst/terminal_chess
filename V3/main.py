@@ -7,8 +7,8 @@ import mysql.connector
 global turn
 turn = 1
 
-global turnColour
-turnColour = 1
+global revertTurn
+revertTurn = 1
 
 global w_inCheck
 w_inCheck = False
@@ -237,17 +237,17 @@ class Board(Pieces):
             query = "update board set Location = '%s' where Location = '%s';"
             mycursor.execute(query % (self.now_loc,which))
             db.commit()
-            query = "update revertBoard set Location = '%s' where Location = '%s';"
-            mycursor.execute(query % (self.now_loc,which))
-            db.commit()
+            # query = "update revertBoard set Location = '%s' where Location = '%s';"
+            # mycursor.execute(query % (self.now_loc,which))
+            # db.commit()
         elif self.piece not in which_pieces:
             query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
             tupl = (self.now_loc,self.piece,turn_colour)
             mycursor.execute(query % tupl)
             db.commit()
-            query = """update revertBoard set Location = '%s' where Piece = '%s' and Colour = '%s';"""
-            mycursor.execute(query % tupl)
-            db.commit()
+            # query = """update revertBoard set Location = '%s' where Piece = '%s' and Colour = '%s';"""
+            # mycursor.execute(query % tupl)
+            # db.commit()
 
         else:
             raise Exception ("Unknown_Piece_Encountered")
@@ -849,13 +849,12 @@ class Board(Pieces):
 
     # method to revert board status to previous move
     def revert_board_status(self):
-        self.revertColour = revertColour
         if ((turn-1) % 2) != 0:
             turn_colour = "White"
-            turnColour = 1
+            revertTurn = 1
         else:
             turn_colour = "Black"
-            turnColour = 2
+            revertTurn = 2
             
         query0 = "drop table board;"
         mycursor.execute(query0)
@@ -867,6 +866,7 @@ class Board(Pieces):
         db.commit()
         B = Board()
         B.show_updated_board()
+        main()
 
 # class for dealing with movement related attributes
 class Movement():
@@ -1651,10 +1651,10 @@ def main():
     
     global turn
     global turnColour
-    global revertColour
+    global revertTurn
 
-    if turnColour != turn:
-        turn = turnColour
+    if revertTurn != turn:
+        turn = revertTurn
 
     if ((turn) % 2) != 0:
         turn_colour = "WHITE"
@@ -1673,7 +1673,6 @@ def main():
     turn_stck.append(move)
 
     turn += 1
-    turnColour += 1
 
     global which
     which = "" #current position for the piece to be moved
@@ -1714,7 +1713,7 @@ def main():
             revertColour = "Black"
         print(revertColour)
         B.revert_board_status()
-        B.show_updated_board()
+        # B.show_updated_board()
 
 splash_screen_0 = """
  _                      _             _                  
