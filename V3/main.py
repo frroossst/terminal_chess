@@ -7,8 +7,8 @@ import json
 global turn
 turn = 1
 
-global revertTurn
-revertTurn = 1
+global revertStatus
+revertStatus = False
 
 global w_inCheck
 w_inCheck = False
@@ -273,7 +273,7 @@ class Board(Pieces):
                 raise Exception ("Unexpected List Length Encountered")
         
         else: 
-            pass
+            raise Exception ("Empty List Encountered")
 
     #method for creating the board
     def create_board(self):     
@@ -338,7 +338,10 @@ class Board(Pieces):
     def show_updated_board(self):
         Board.cleanup() # added to remove ghosting while calling the revert function
         self.li = Board.li
-        mycursor.execute("select * from board;")
+        if not revertStatus:
+            mycursor.execute("select * from board;")
+        else: 
+            mycursor.execute("select * from revertBoard;")
         result = mycursor.fetchall()
         for i in result:
             piece_loc = i[0]  
@@ -916,9 +919,10 @@ class Board(Pieces):
 
     # method to revert board status to previous move
     def revert_board_status(self):
+        revertStatus = True
         if ((turn-1) % 2) != 0:
             turn_colour = "White"
-            revertTurn = 1
+            revertTurn = 1 
         else:
             turn_colour = "Black"
             revertTurn = 2
@@ -1739,6 +1743,7 @@ def main():
     B.incheck()
     print(f"[{turn_colour}] to move")
     move = input("enter move : ")
+    revertStatus = False
     turn_stck.append(move)
 
     turn += 1
