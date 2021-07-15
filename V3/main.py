@@ -2,6 +2,7 @@
 import time
 import mysql.connector
 import json
+import os
 
 # Global variables
 global turn
@@ -27,6 +28,10 @@ which_stck = []
 
 global restore_stck
 restore_stck = []
+
+# deleting the JSON file from a previous session
+if os.path.exists("revertQuery.json"):
+  os.remove("revertQuery.json")
 
 # Opening manual.txt with a context manager
 with open("sql.txt","r") as fobj:
@@ -250,6 +255,7 @@ class Board(Pieces):
             content = json.load(fobj)
             for k in content:
                 li.append(content[k])
+        
         if li != []:
             
             if len(li) == 3:
@@ -277,6 +283,7 @@ class Board(Pieces):
 
     #method for creating the board
     def create_board(self):     
+        # Board.cleanup()
         for i in Board.li:
             print()
             for j in i:
@@ -336,6 +343,7 @@ class Board(Pieces):
         
     #iterates through the nested array to replace it with icons
     def show_updated_board(self):
+        revertStatus = False
         Board.cleanup() # added to remove ghosting while calling the revert function
         self.li = Board.li
         if not revertStatus:
@@ -484,13 +492,14 @@ class Board(Pieces):
                 tupl = co_or
         print(Board.li[tupl[0]][tupl[1]])
 
+    # I do not know why I added this query here TBH
     def restore_pawn_status(self):
         print("pawn cannot capture vertically")
         query = """update board set Location = '%s' where Piece = 'Pawn';"""
-# I do not know why I added this query here TBH
         B = Board()
         B.show_updated_board()
 
+    # method for checking wheather the King is in check
     def incheck(self):
         global incheck_status
         incheck_status = False
@@ -1743,7 +1752,7 @@ def main():
     B.incheck()
     print(f"[{turn_colour}] to move")
     move = input("enter move : ")
-    revertStatus = False
+    # revertStatus = False
     turn_stck.append(move)
 
     turn += 1
@@ -1751,7 +1760,8 @@ def main():
     global which
     which = "" #current position for the piece to be moved
     
-    Board.revert_update_board_load()
+    if turn > 2:
+        Board.revert_update_board_load()
     
     if move[0] == "K":
         which_stck.append(" ")
