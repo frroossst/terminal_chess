@@ -247,8 +247,12 @@ class Board(Pieces):
                 json.dump(sqlObj1,fobj)
 
     @classmethod
-    def revert_update_board_load(self):
+    def revert_update_board_load(self): 
  
+        """I think the revert error is being caused by the load function being
+           called too early and/or inappropriately => early SQL table updation 
+           => faulty revert."""
+
         li = []
 
         with open("revertQuery.json","r") as fobj:
@@ -346,10 +350,12 @@ class Board(Pieces):
         revertStatus = False
         Board.cleanup() # added to remove ghosting while calling the revert function
         self.li = Board.li
+        
         if not revertStatus:
             mycursor.execute("select * from board;")
         else: 
             mycursor.execute("select * from revertBoard;")
+        
         result = mycursor.fetchall()
         for i in result:
             piece_loc = i[0]  
@@ -480,6 +486,7 @@ class Board(Pieces):
         elif draw == True:
             print(draw_msg)
             quit()
+                
         main()
 
     def get_move_co(self,input_move,piece):
@@ -946,7 +953,7 @@ class Board(Pieces):
         db.commit()
         B = Board()
         B.show_updated_board()
-        main()
+        # main()
 
 # class for dealing with movement related attributes
 class Movement():
@@ -1728,15 +1735,9 @@ def main():
     B = Board()
     B.create_board()
     M = Movement()
-    
-    global turn
-    global revertTurn
 
-    # if turn != revertTurn:
-    #     if revertTurn > turn:
-    #         pass
-    #     else:
-    #         turn = revertTurn
+    global turn
+    revertStatus = False
 
     if ((turn) % 2) != 0:
         turn_colour = "WHITE"
@@ -1752,16 +1753,14 @@ def main():
     B.incheck()
     print(f"[{turn_colour}] to move")
     move = input("enter move : ")
-    # revertStatus = False
     turn_stck.append(move)
-
     turn += 1
+
+    # if turn > 3:
+    #     Board.revert_update_board_load
 
     global which
     which = "" #current position for the piece to be moved
-    
-    if turn > 2:
-        Board.revert_update_board_load()
     
     if move[0] == "K":
         which_stck.append(" ")
