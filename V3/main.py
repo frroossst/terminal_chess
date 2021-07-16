@@ -1761,6 +1761,7 @@ def main():
         turn_stck.append(move)
         turn += 1
 
+        # update the revertBoard table 
         if turn > 2 and (turn % 2 == 0):
             Board.revert_update_board_load()
 
