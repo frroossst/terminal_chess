@@ -254,7 +254,7 @@ class Board(Pieces):
            => faulty revert."""
 
         li = []
-
+        
         with open("revertQuery.json","r") as fobj:
             content = json.load(fobj)
             for k in content:
@@ -1761,7 +1761,7 @@ def main():
         turn_stck.append(move)
         turn += 1
 
-        if (turn % 2 != 0 and revertColour != "Black") or (turn % 2 == 0 and revertColour != "White"):
+        if turn > 2 and (turn % 2 == 0):
             Board.revert_update_board_load()
 
         global which    
