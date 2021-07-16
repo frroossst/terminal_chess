@@ -1761,7 +1761,7 @@ def main():
         turn_stck.append(move)
         turn += 1
 
-        if turn % 2 != 0 and revertColour != "Black":
+        if (turn % 2 != 0 and revertColour != "Black") or (turn % 2 == 0 and revertColour != "White"):
             Board.revert_update_board_load()
 
         global which    
