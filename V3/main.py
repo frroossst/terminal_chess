@@ -1754,60 +1754,63 @@ def main():
 
     print()
 
-    B.incheck()
-    print(f"[{turn_colour}] to move")
-    move = input("enter move : ")
-    turn_stck.append(move)
-    turn += 1
+    try:
+        B.incheck()
+        print(f"[{turn_colour}] to move")
+        move = input("enter move : ")
+        turn_stck.append(move)
+        turn += 1
 
-    if turn % 2 != 0:
-        Board.revert_update_board_load()
+        if turn % 2 != 0 and revertColour != "Black":
+            Board.revert_update_board_load()
 
-    global which    
-    which = "" #current position for the piece to be moved
-    
-    if move[0] == "K":
-        which_stck.append(" ")
-        M.check_king_move(move,turn)
-    elif move[0] == "Q":
-        which_stck.append(" ")
-        M.check_queen_move(move,turn)
-    elif move[0] == "B":
-        which = input("enter current position of the bishop to be moved : ")
-        which_stck.append(which)
-        M.check_bishop_move(move,turn,which)
-    elif move[0] == "N":
-        which = input("enter current position of the knight to be moved : ")
-        which_stck.append(which)
-        M.check_knight_move(move,turn,which)
-    elif move[0] == "p" or move[0] == "x":
-        which = input("enter current position of the pawn to be moved : ")
-        which_stck.append(which)
-        restore_stck.append(move)
-        M.check_pawn_move(move,turn,which)
-    elif move[0] == "R":
-        which = input("enter current position of the rook to be moved : ")
-        which_stck.append(which)
-        M.check_rook_move(move,turn,which)      
-    elif move == "O-O" or move == "O-O-O":
-        which_stck.append(" ")
-        M.check_castle(move)
-    elif move == "/draw":
-        B.draw_game(turn)
-    elif move == "/forfeit":
-        B.forfeit(turn)
-    elif move == "/revert":
-        if (turn - 1)  % 2 == 0:
-            revertColour = "White"
+        global which    
+        which = "" #current position for the piece to be moved
+
+        if move[0] == "K":
+            which_stck.append(" ")
+            M.check_king_move(move,turn)
+        elif move[0] == "Q":
+            which_stck.append(" ")
+            M.check_queen_move(move,turn)
+        elif move[0] == "B":
+            which = input("enter current position of the bishop to be moved : ")
+            which_stck.append(which)
+            M.check_bishop_move(move,turn,which)
+        elif move[0] == "N":
+            which = input("enter current position of the knight to be moved : ")
+            which_stck.append(which)
+            M.check_knight_move(move,turn,which)
+        elif move[0] == "p" or move[0] == "x":
+            which = input("enter current position of the pawn to be moved : ")
+            which_stck.append(which)
+            restore_stck.append(move)
+            M.check_pawn_move(move,turn,which)
+        elif move[0] == "R":
+            which = input("enter current position of the rook to be moved : ")
+            which_stck.append(which)
+            M.check_rook_move(move,turn,which)      
+        elif move == "O-O" or move == "O-O-O":
+            which_stck.append(" ")
+            M.check_castle(move)
+        elif move == "/draw":
+            B.draw_game(turn)
+        elif move == "/forfeit":
+            B.forfeit(turn)
+        elif move == "/revert":
+            if (turn - 1)  % 2 == 0:
+                revertColour = "White"
+            else:
+                revertColour = "Black"
+            print(revertColour)
+            B.revert_board_status()
+            # B.show_updated_board()
+        elif move == "/quit":
+            quit()
         else:
-            revertColour = "Black"
-        print(revertColour)
-        B.revert_board_status()
-        # B.show_updated_board()
-    elif move == "/quit":
+            main()
+    except KeyboardInterrupt:
         quit()
-    else:
-        main()
 
 splash_screen_0 = """
  _                      _             _                  
@@ -1825,7 +1828,7 @@ splash_screen_1 = """
 """
 
 print(splash_screen_0,splash_screen_1)
-time.sleep(2)
+time.sleep(1.25)
 print("1. /play - to play terminal chess")
 print("2. /manual - to open the manual")
 print("3. /quit - to quit")
