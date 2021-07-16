@@ -347,7 +347,7 @@ class Board(Pieces):
         
     #iterates through the nested array to replace it with icons
     def show_updated_board(self):
-        revertStatus = False
+        global revertStatus
         Board.cleanup() # added to remove ghosting while calling the revert function
         self.li = Board.li
         
@@ -355,6 +355,7 @@ class Board(Pieces):
             mycursor.execute("select * from board;")
         else: 
             mycursor.execute("select * from revertBoard;")
+            revertStatus = False
         
         result = mycursor.fetchall()
         for i in result:
@@ -1732,13 +1733,15 @@ def manual():
 
 # das main functions!
 def main():
-    B = Board()
-    B.create_board()
-    M = Movement()
 
     global turn
     revertStatus = False
 
+    B = Board()
+    M = Movement()
+
+    B.create_board()
+    
     if ((turn) % 2) != 0:
         turn_colour = "WHITE"
     else:
@@ -1750,16 +1753,17 @@ def main():
         revertColour = "Black"    
 
     print()
+
     B.incheck()
     print(f"[{turn_colour}] to move")
     move = input("enter move : ")
     turn_stck.append(move)
     turn += 1
 
-    # if turn > 3:
-    #     Board.revert_update_board_load
+    if turn % 2 != 0:
+        Board.revert_update_board_load()
 
-    global which
+    global which    
     which = "" #current position for the piece to be moved
     
     if move[0] == "K":
@@ -1800,6 +1804,10 @@ def main():
         print(revertColour)
         B.revert_board_status()
         # B.show_updated_board()
+    elif move == "/quit":
+        quit()
+    else:
+        main()
 
 splash_screen_0 = """
  _                      _             _                  
