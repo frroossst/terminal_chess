@@ -1332,8 +1332,7 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                B = Board()
-                B.revert_board_status()
+                quit()
             print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1747,7 +1746,7 @@ def main():
     else:
         turn_colour = "BLACK"
 
-    if (turn - 1)  % 2 != 0:
+    if (turn - 1)  % 2 == 0:
         revertColour = "White"
     else:
         revertColour = "Black"    
