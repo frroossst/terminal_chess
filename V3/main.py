@@ -1731,7 +1731,7 @@ def manual():
         content = fobj.read()
         print(content)
 
-# das main functions!
+# das main function!
 def main():
 
     global turn
@@ -1747,7 +1747,7 @@ def main():
     else:
         turn_colour = "BLACK"
 
-    if (turn - 1)  % 2 == 0:
+    if (turn - 1)  % 2 != 0:
         revertColour = "White"
     else:
         revertColour = "Black"    
