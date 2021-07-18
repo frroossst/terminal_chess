@@ -1,1 +1,3 @@
 Ensure that rook or other similar pieces exist at the which location before executing the move
+
+Same location error for which pieces

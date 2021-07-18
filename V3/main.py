@@ -1229,7 +1229,7 @@ class Movement():
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break                                
             else:
-                print("[ILLEGAL MOVE] possibly incorrect which")                                        
+                Interaction.illegal_move()            
 
 #Check function(s) for all piece moves
 
@@ -1241,6 +1241,7 @@ class Movement():
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
+
             query = "select * from board where Piece = 'Queen' and Colour = '%s';"
             mycursor.execute(query % (turn_colour))
             result = mycursor.fetchall()
@@ -1249,7 +1250,8 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                quit()
+                Interaction.illegal_move()
+
             print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1278,6 +1280,7 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
+                Interaction.illegal_move()
 
             if self.move[1] == "a":
                 if tupl[0][1] == "b":
@@ -1305,6 +1308,7 @@ class Movement():
                     pass
             else:
                 print("King can only move one pace(s) horizontally")
+                Interaction.illegal_move()
 
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1332,11 +1336,12 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                quit()
-            print(self.move, tupl[0])
+                Interaction.illegal_move()
+
+            # print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
-                    print("legal rook move")
+                    # print("legal rook move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
                     query = """update castle set Moved = 'y' where Piece = 'Rook' and Colour = '%s';"""
@@ -1348,10 +1353,12 @@ class Movement():
         def check_bishop_move(self,move,turn,which):
             self.move = move
             self.turn = turn
+            
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
+
             query = "select * from board where Piece = 'Bishop' and Colour = '%s';"
             mycursor.execute(query % (turn_colour))
             result = mycursor.fetchall()
@@ -1360,7 +1367,7 @@ class Movement():
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
                 print("cannot move to the same location")
-                quit()
+                Interaction.illegal_move()
             
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
@@ -1390,15 +1397,16 @@ class Movement():
                     print("all other pawns can move one step")
                 else:
                     pwn_move_legality = False
-                    quit()
+                    Interaction.illegal_move()
                 if str(which_stck[-1]) == str(mod_move):
                     print("cannot move to the same location")
                     pwn_move_legality = False
-                    quit()
+                    Interaction.illegal_move()
             else:
                 print("pawns cannot go backwards")
                 pwn_move_legality = False
-                quit()
+                Interaction.illegal_move()
+
             which_stck_mod = which_stck
             which_stck_mod.pop()
 
@@ -1418,10 +1426,11 @@ class Movement():
                             I = Interaction()
                             I.capture(self.which,mod_move,"Pawn",self.turn)
                         else:
-                            raise Exception("cannot capture a blank square")
+                            print("cannot capture a blank square")
+                            Interaction.illegal_move()
                     else:
                         print("the pawn can only move straight")
-                        quit()
+                        Interaction.illegal_move()
 
         # check knight moves
         def check_knight_move(self,move,turn,which):
@@ -1501,12 +1510,11 @@ class Movement():
                             which_stck.pop()
              
                     else:
-                        print("[ILLEGAL MOVE] 0")    
+                        Interaction.illegal_move()    
                 else:
-                    print("[ILLEGAL MOVE] 1")
+                    Interaction.illegal_move()
             else:
-                print("[ILLEGAL MOVE] 2")
-                quit()
+                Interaction.illegal_move()
 
         # checking castling move
         def check_castle(self,move):
@@ -1658,8 +1666,7 @@ class Movement():
                     B = Board()
                     B.show_updated_board()
             else:
-                print("[CAN CASTLE] False")
-                quit()
+                Interaction.illegal_move()
             
 # class to deal with capture and promotion related interactions
 class Interaction(Movement):
@@ -1723,6 +1730,25 @@ class Interaction(Movement):
                             db.commit()
                             break
             break
+
+    # method for dealing with illegal move(s)
+    @classmethod
+    def illegal_move(self):
+        global turn
+
+        print()
+        print("[ILLEGAL MOVE] Enter another move")
+        print()
+
+        time.sleep(1)
+
+        if ((turn-1) % 2) != 0:
+            turn = 1
+        else:
+            turn = 2
+        
+        B = Board()
+        B.revert_board_status()
 
 # method to open the manual file
 def manual():
@@ -1809,6 +1835,7 @@ def main():
             quit()
         else:
             main()
+
     except KeyboardInterrupt:
         quit()
 
@@ -1833,6 +1860,7 @@ print("1. /play - to play terminal chess")
 print("2. /manual - to open the manual")
 print("3. /quit - to quit")
 choice = int(input("enter choice : "))
+
 if choice == 1:
     main()
 elif choice == 2:

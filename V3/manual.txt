@@ -18,12 +18,14 @@ Pawn : From the starting position it can move either one or two steps but after 
 
 Piece | Symbol
 
-Pawn   | p
+Pawn   | p 
 Queen  | Q
 King   | K
 Rook   | R
 Knight | N
 Bishop | B
+
+NOTE : 'p' is in lowecase while all else are in uppercase
 
 For some moves you will need to enter a "which" input, which is the current position of that piece on the board
 
@@ -36,7 +38,7 @@ and then upon being asked which, you must enter the current position of the piec
 
 d2
 
-To capture a piece you simply move your piece to that particular location and the capture is automatic. But when capturing with a pawn you must begin the move with an 'x' as follows : 
+To capture a piece you simply move your piece to that particular location and the capture is automatic. But when capturing with a pawn you must begin the move with an 'x' (lowercase) as follows : 
 
 xe5
 d4
@@ -59,7 +61,7 @@ To offer a draw : /draw
 
 4. There are also no checkmates, a game is won either by resignation or capturing the enemy's King.
 
-5. Upon a check a player will be notified but is free to move any other piece.
+5. Upon a check a player will be notified but is free to move any other piece even if that results in the player loosing the game.
    
 6. When a player offers a draw they skip a turn. This is done to ensure players do not spam each other with draw requests. Draws can only be offered on your turn and not on the enemy's turn.
 
