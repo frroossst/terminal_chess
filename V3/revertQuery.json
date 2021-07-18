@@ -1,1 +1,1 @@
-{"query": "update revertBoard set Location = '%s' where Location = '%s';", "setLocation": "e4", "whichLocation": "e2"}
+{"query": "update revertBoard set Location = '%s' where Location = '%s';", "setLocation": "e5", "whichLocation": "e7"}

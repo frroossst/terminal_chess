@@ -1762,7 +1762,7 @@ def main():
         turn += 1
 
         # update the revertBoard table 
-        if turn > 2 and (turn % 2 == 0):
+        if turn > 2 and move != "/revert":
             Board.revert_update_board_load()
 
         global which    
@@ -1799,7 +1799,7 @@ def main():
         elif move == "/forfeit":
             B.forfeit(turn)
         elif move == "/revert":
-            if (turn - 1)  % 2 == 0:
+            if (turn - 1)  % 2 != 0:
                 revertColour = "White"
             else:
                 revertColour = "Black"
@@ -1829,7 +1829,7 @@ splash_screen_1 = """
 """
 
 print(splash_screen_0,splash_screen_1)
-time.sleep(1.25)
+time.sleep(0.75)
 print("1. /play - to play terminal chess")
 print("2. /manual - to open the manual")
 print("3. /quit - to quit")
