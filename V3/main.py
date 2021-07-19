@@ -1775,7 +1775,10 @@ class Opening():
         O.kingsGambit()
         O = Opening()
         O.sicilianDefence()
-
+        O = Opening()
+        O.frenchDefence()
+        O = Opening()
+        O.carokannDefence()
 
     def ruyLopez(self):
         isRuyLopez = False
@@ -1853,48 +1856,356 @@ class Opening():
             print("[C30] King's Gambit")
 
     def sicilianDefence(self):
-        pass
+        issicilianDefence = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c5';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        issicilianDefence = True
+                    else:
+                        issicilianDefence = False
+                    self.iterVar += 1
+                else:
+                    issicilianDefence = False
+
+        if issicilianDefence:
+            print("[B20] Sicilian Defence")
 
     def frenchDefence(self):
-        pass
+        isfrenchDefence = False
 
-    def carkannDefence(self):
-        pass
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'e6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isfrenchDefence = True
+                    else:
+                        isfrenchDefence = False
+                    self.iterVar += 1
+                else:
+                    isfrenchDefence = False
+
+        if isfrenchDefence:
+            print("[C00] French Defence")
+
+    def carokannDefence(self):
+        iscarokann = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iscarokann = True
+                    else:
+                        iscarokann = False
+                    self.iterVar += 1
+                else:
+                    iscarokann = False
+
+        if iscarokann:
+            print("[B10] Carro Kann Defence")
 
     def scandinavianDefence(self):
-        pass
+        isscandinavianDefence = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'd5';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isscandinavianDefence = True
+                    else:
+                        isscandinavianDefence = False
+                    self.iterVar += 1
+                else:
+                    isscandinavianDefence = False
+
+        if isscandinavianDefence:
+            print("[B01] Scandinavian Defence")
 
     def modernDefence(self):
-        pass
+        iscarokann = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'g6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iscarokann = True
+                    else:
+                        iscarokann = False
+                    self.iterVar += 1
+                else:
+                    iscarokann = False
+
+        if iscarokann:
+            print("[C00] Modern Defence")
 
     def queensGambit(self):
-        pass
+        isqueensGambit = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'd4';","select Piece from board where Location = 'd5';",
+            "select Piece from board where Location = 'c4';"]
+            pieceList = ["Pawn","Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isqueensGambit = True
+                    else:
+                        isqueensGambit = False
+                    self.iterVar += 1
+                else:
+                    isqueensGambit = False
+
+        if isqueensGambit:
+            print("[D06] Queen's Gambit")
 
     def QGA(self):
-        pass
+        isQGA = False
+
+        if self.rowCount == 31:
+            queryList = ["select Piece from board where Location = 'd4';","select Piece from board where Location = 'c4';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isQGA = True
+                    else:
+                        isQGA = False
+                    self.iterVar += 1
+                else:
+                    isQGA = False
+
+        if isQGA:
+            print("[D20] Queen's Gambit Accepted")
 
     def QGD(self):
-        pass
+        isQGD = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'd4';","select Piece from board where Location = 'd5';",
+            "select Piece from board where Location = 'c4';","select Piece from board where Location = 'e6';"]
+            pieceList = ["Pawn","Pawn","Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isQGD = True
+                    else:
+                        isQGD = False
+                    self.iterVar += 1
+                else:
+                    isQGD = False
+
+        if isQGD:
+            print("[D30] Queen's Gambit Declined")
 
     def slavDefence(self):
-        pass
+        isSlav = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isSlav = True
+                    else:
+                        isSlav = False
+                    self.iterVar += 1
+                else:
+                    isSlav = False
+
+        if isSlav:
+            print("[D10] Slav Defence")
 
     def nimzoIndian(self):
-        pass
+        isnimzoIndian = False
 
-    # Queen's Indian
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'd4';","select Piece from board where Location = 'Nf6';",
+            "select Piece from board where Location = 'c4';","select Piece from board where Location = 'e6';",
+            "select Piece from board where Location = 'Nc3';","select Piece from board where Location = 'Bb4';"]
+            pieceList = ["Pawn","Knight","Pawn","Pawn","Knight","Bishop"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
 
-    # Catalan
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isnimzoIndian = True
+                    else:
+                        isnimzoIndian = False
+                    self.iterVar += 1
+                else:
+                    isnimzoIndian = False
 
-    # King's Indian
+        if isnimzoIndian:
+            print("[E20] Nimzo-Indian Defence")
 
-    # English Opening
+    def queensIndian(self):
+        isqueensIndian = False
 
-    # Nimzowitch Defnece
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'd4';","select Piece from board where Location = 'f6';",
+            "select Piece from board where Location = 'c4';","select Piece from board where Location = 'e6';",
+            "select Piece from board where Location = 'f3';","select Piece from board where Location = 'b6';"]
+            pieceList = ["Pawn","Knight","Pawn","Pawn","Knight","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
 
-    # Italian Game
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isqueensIndian = True
+                    else:
+                        isqueensIndian = False
+                    self.iterVar += 1
+                else:
+                    isqueensIndian = False
 
+        if isqueensIndian:
+            print("[E12] Queen's Indian Defence")
 
+    def kingsIndian(self):
+        iscarokann = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iscarokann = True
+                    else:
+                        iscarokann = False
+                    self.iterVar += 1
+                else:
+                    iscarokann = False
+
+        if iscarokann:
+            print("[C00] French Defence")
+
+    def englishOpening(self):
+        iscarokann = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iscarokann = True
+                    else:
+                        iscarokann = False
+                    self.iterVar += 1
+                else:
+                    iscarokann = False
+
+        if iscarokann:
+            print("[C00] French Defence")
+
+    def nimzowitchDefnece(self):
+        iscarokann = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iscarokann = True
+                    else:
+                        iscarokann = False
+                    self.iterVar += 1
+                else:
+                    iscarokann = False
+
+        if iscarokann:
+            print("[C00] French Defence")
+
+    def italianGame(self):
+        iscarokann = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
+            pieceList = ["Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iscarokann = True
+                    else:
+                        iscarokann = False
+                    self.iterVar += 1
+                else:
+                    iscarokann = False
+
+        if iscarokann:
+            print("[C00] French Defence")
+    
 
 # method to open the manual file
 def manual():
