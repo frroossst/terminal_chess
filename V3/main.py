@@ -2138,11 +2138,11 @@ class Opening():
             print("[C00] French Defence")
 
     def englishOpening(self):
-        iscarokann = False
+        isenglish = False
 
         if self.rowCount == 32:
-            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
-            pieceList = ["Pawn","Pawn"]
+            queryList = ["select Piece from board where Location = 'c4';"]
+            pieceList = ["Pawn"]
             
             for i in queryList:
                 mycursor.execute(i)
@@ -2150,22 +2150,22 @@ class Opening():
 
                 if result!= []:
                     if str(result[0][0]) == pieceList[self.iterVar]:
-                        iscarokann = True
+                        isenglish = True
                     else:
-                        iscarokann = False
+                        isenglish = False
                     self.iterVar += 1
                 else:
-                    iscarokann = False
+                    isenglish = False
 
-        if iscarokann:
-            print("[C00] French Defence")
+        if isenglish:
+            print("[A10] English Opening")
 
     def nimzowitchDefnece(self):
-        iscarokann = False
+        isNimzo = False
 
         if self.rowCount == 32:
             queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
-            pieceList = ["Pawn","Pawn"]
+            pieceList = ["Pawn","Knight"]
             
             for i in queryList:
                 mycursor.execute(i)
@@ -2173,22 +2173,24 @@ class Opening():
 
                 if result!= []:
                     if str(result[0][0]) == pieceList[self.iterVar]:
-                        iscarokann = True
+                        isNimzo = True
                     else:
-                        iscarokann = False
+                        isNimzo = False
                     self.iterVar += 1
                 else:
-                    iscarokann = False
+                    isNimzo = False
 
-        if iscarokann:
-            print("[C00] French Defence")
+        if isNimzo:
+            print("[B00] Nimzowitch Defence")
 
     def italianGame(self):
-        iscarokann = False
+        isItalian = False
 
         if self.rowCount == 32:
-            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'c6';"]
-            pieceList = ["Pawn","Pawn"]
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'e5';",
+            "select Piece from board where Location = 'f3';","select Piece from board where Location = 'c6';",
+            "select Piece from board where Location = 'c4';"]
+            pieceList = ["Pawn","Pawn","Knight","Knight","Bishop"]
             
             for i in queryList:
                 mycursor.execute(i)
@@ -2196,15 +2198,15 @@ class Opening():
 
                 if result!= []:
                     if str(result[0][0]) == pieceList[self.iterVar]:
-                        iscarokann = True
+                        isItalian = True
                     else:
-                        iscarokann = False
+                        isItalian = False
                     self.iterVar += 1
                 else:
-                    iscarokann = False
+                    isItalian = False
 
-        if iscarokann:
-            print("[C00] French Defence")
+        if isItalian:
+            print("[C50] Italian Game")
     
 
 # method to open the manual file
