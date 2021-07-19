@@ -54,8 +54,8 @@ mycursor.execute("drop table board")
 mycursor.execute("create table board (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
 mycursor.execute("drop table revertBoard")
 mycursor.execute("create table revertBoard (Location char(5), Piece varchar(15), Colour char(5), Which char(5));")
-#white pieces data entry
 
+#white pieces data entry
 mycursor.execute("insert into board values ('d1','Queen','White',NULL);")
 mycursor.execute("insert into board values ('e1','King','White',NULL);")
 mycursor.execute("insert into board values ('f1','Bishop','White','f1');")
@@ -91,8 +91,8 @@ mycursor.execute("insert into revertBoard values ('f2','Pawn','White','f2');")
 mycursor.execute("insert into revertBoard values ('g2','Pawn','White','g2');")
 mycursor.execute("insert into revertBoard values ('h2','Pawn','White','h2');")
 db.commit()
-#black pieces data entry
 
+#black pieces data entry
 mycursor.execute("insert into board values ('d8','Queen','Black',NULL);")
 mycursor.execute("insert into board values ('e8','King','Black',NULL);")
 mycursor.execute("insert into board values ('f8','Bishop','Black','f8');")
@@ -130,12 +130,10 @@ mycursor.execute("insert into revertBoard values ('h7','Pawn','Black','h7');")
 db.commit()
 
 #dropping and creating table castle
-
 mycursor.execute("drop table castle;")
 mycursor.execute("create table castle (Location char(5), Piece varchar(15), Colour char(5), Moved char(1));")
 
 #data entry for table castle
-
 mycursor.execute("insert into castle values ('a1','Rook','White','n');")
 mycursor.execute("insert into castle values ('h1','Rook','White','n');")
 mycursor.execute("insert into castle values ('a8','Rook','Black','n');")
@@ -144,8 +142,8 @@ mycursor.execute("insert into castle values ('e1','King','White','n');")
 mycursor.execute("insert into castle values ('e8','King','Black','n');")
 db.commit()
 
-#Class definition
 
+#Class definition(s)
 
 #Class Pieces contains the icon of the pieces
 class Pieces():
@@ -430,6 +428,8 @@ class Board(Pieces):
            \_/\_/  |_| |_|_|\__\___|    \_/\_/  |_|_| |_|___/ (_)
 
         """
+        
+        #method for detecting draw(s)
         query = "select count(*) from board;"
         mycursor.execute(query)
         result = mycursor.fetchall()
@@ -441,6 +441,7 @@ class Board(Pieces):
             print(draw_msg)
             quit()
         
+        #method to check for the presence of King(s)
         self.li = Board.li
         for i in self.li:
             if Pieces.w_king in i:
@@ -452,6 +453,7 @@ class Board(Pieces):
             else:    
                 pass
 
+        #checking for impossible mates
         var0 = [("Bishop",),("King",),("King",)]
         var1 = [("King",),("King",),("Knight",)]
         compare_li = []
@@ -473,6 +475,9 @@ class Board(Pieces):
             if compare_li == var0 or compare_li == var1:
                 draw = True
         
+        #checking for common board openings
+### insert the function calls here!        
+
         if w_king_status != True:
             print("White King has been captured")
             print(b_win_msg)
@@ -500,7 +505,7 @@ class Board(Pieces):
                 tupl = co_or
         print(Board.li[tupl[0]][tupl[1]])
 
-    # I do not know why I added this query here TBH
+    # I do not know why I added this method here TBH
     def restore_pawn_status(self):
         print("pawn cannot capture vertically")
         query = """update board set Location = '%s' where Piece = 'Pawn';"""
@@ -1750,6 +1755,86 @@ class Interaction(Movement):
         B = Board()
         B.revert_board_status()
 
+# class for identifying common chess opening
+class Opening():
+
+    def __init__(self):
+        mycursor.execute("select count(*) from board;")
+        result = mycursor.fetchall()
+        for i in result:
+            rowCount = i
+        self.rowCount = int(rowCount[0])
+        self.iterVar = 0
+
+    def checkOpening(self):
+        O = Opening()
+        O.ruyLopez()
+
+    def ruyLopez(self):
+        isRuyLopez = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'e5';",
+                "select Piece from board where Location = 'f3';","select Piece from board where Location = 'c6';",
+                "select Piece from board where Location = 'b5';"]
+            pieceList = ["Pawn","Pawn","Knight","Knight","Bishop"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    # print(f"result = {result[0][0]}, pieceList = {pieceList[self.iterVar]}")
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isRuyLopez = True
+                    else:
+                        isRuyLopez = False
+                    self.iterVar += 1
+                else:
+                    isRuyLopez = False
+
+        if isRuyLopez:
+            print("[C60] Ruy Lopez")
+
+    def fourKnights(self):
+        pass
+
+    def kingsGambit(self):
+        pass
+
+    def centerGame(self):
+        pass
+
+    def sicilianDefence(self):
+        pass
+
+    def frenchDefence(self):
+        pass
+
+    def carkannDefence(self):
+        pass
+
+    def scandinavianDefence(self):
+        pass
+
+    def modernDefence(self):
+        pass
+
+    def queensGambit(self):
+        pass
+
+    def QGA(self):
+        pass
+
+    def QGD(self):
+        pass
+
+    def slavDefence(self):
+        pass
+
+    def 
+
+
 # method to open the manual file
 def manual():
     with open("manual.txt","r") as fobj:
@@ -1764,6 +1849,7 @@ def main():
 
     B = Board()
     M = Movement()
+    O = Opening()
 
     B.create_board()
     
@@ -1781,6 +1867,7 @@ def main():
 
     try:
         B.incheck()
+        O.checkOpening()
         print(f"[{turn_colour}] to move")
         move = input("enter move : ")
         turn_stck.append(move)
