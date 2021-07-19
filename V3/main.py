@@ -1769,6 +1769,13 @@ class Opening():
     def checkOpening(self):
         O = Opening()
         O.ruyLopez()
+        O = Opening()
+        O.fourKnights()
+        O = Opening()
+        O.kingsGambit()
+        O = Opening()
+        O.sicilianDefence()
+
 
     def ruyLopez(self):
         isRuyLopez = False
@@ -1797,13 +1804,53 @@ class Opening():
             print("[C60] Ruy Lopez")
 
     def fourKnights(self):
-        pass
+        isFourKnights = False
+
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'e5';",
+                "select Piece from board where Location = 'f3';","select Piece from board where Location = 'c6';",
+                "select Piece from board where Location = 'c3';","select Piece from board where Location = 'f6';"]
+            pieceList = ["Pawn","Pawn","Knight","Knight","Knight","Knight"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        isFourKnights = True
+                    else:
+                        isFourKnights = False
+                    self.iterVar += 1
+                else:
+                    isFourKnights = False
+
+        if isFourKnights:
+            print("[C46] Four Knights Game")
 
     def kingsGambit(self):
-        pass
+        iskingsGambit = False
 
-    def centerGame(self):
-        pass
+        if self.rowCount == 32:
+            queryList = ["select Piece from board where Location = 'e4';","select Piece from board where Location = 'e5';",
+                "select Piece from board where Location = 'f4';"]
+            pieceList = ["Pawn","Pawn","Pawn"]
+            
+            for i in queryList:
+                mycursor.execute(i)
+                result = mycursor.fetchall()
+
+                if result!= []:
+                    if str(result[0][0]) == pieceList[self.iterVar]:
+                        iskingsGambit = True
+                    else:
+                        iskingsGambit = False
+                    self.iterVar += 1
+                else:
+                    iskingsGambit = False
+
+        if iskingsGambit:
+            print("[C30] King's Gambit")
 
     def sicilianDefence(self):
         pass
@@ -1832,7 +1879,21 @@ class Opening():
     def slavDefence(self):
         pass
 
-    def 
+    def nimzoIndian(self):
+        pass
+
+    # Queen's Indian
+
+    # Catalan
+
+    # King's Indian
+
+    # English Opening
+
+    # Nimzowitch Defnece
+
+    # Italian Game
+
 
 
 # method to open the manual file
