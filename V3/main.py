@@ -1684,7 +1684,9 @@ class Interaction(Movement):
         self.location_captured = location_captured
         self.piece_capturer = piece_capturer
         self.turn = turn
-        # print(Movement.loc_dict)
+        
+        Interaction.canCapture(self.prev_location, self.location_captured)
+
         print(f"{self.piece_capturer} captures a piece at {self.location_captured}")
         # print(self.location_captured)
         query = "delete from board where Location = '%s';"
@@ -1754,6 +1756,24 @@ class Interaction(Movement):
         
         B = Board()
         B.revert_board_status()
+
+    @classmethod
+    def canCapture(self,prevLoc, nowLoc):
+        self.prevLoc = prevLoc
+        self.nowLoc = nowLoc
+        if ((turn-1) % 2) != 0:
+            turn_colour = "White"
+        else:
+            turn_colour = "Black"
+
+        query = "select Colour from board where Location = '%s';"
+        mycursor.execute(query % self.nowLoc)
+        result = mycursor.fetchall()
+        if result[0][0] == turn_colour:
+            print("[ILLEGAL MOVE] Cannot capture own piece(s)")
+            Interaction.illegal_move()
+        else:
+            pass
 
 # class for identifying common chess opening
 class Opening():
