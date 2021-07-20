@@ -2234,6 +2234,7 @@ def manual():
     with open("manual.txt","r") as fobj:
         content = fobj.read()
         print(content)
+    main()
 
 # das main function!
 def main():
@@ -2315,7 +2316,7 @@ def main():
         elif move == "/quit":
             quit()
         else:
-            main()
+            Interaction.illegal_move()
 
     except KeyboardInterrupt:
         quit()
