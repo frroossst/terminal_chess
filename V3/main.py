@@ -257,11 +257,14 @@ class Board(Pieces):
 
         li = []
         
-        with open("revertQuery.json","r") as fobj:
-            content = json.load(fobj)
-            for k in content:
-                li.append(content[k])
-        
+        try:
+            with open("revertQuery.json","r") as fobj:
+                content = json.load(fobj)
+                for k in content:
+                    li.append(content[k])
+        except FileNotFoundError:
+            pass
+
         if li != []:
             
             if len(li) == 3:
@@ -282,10 +285,15 @@ class Board(Pieces):
                 db.commit()
             
             else:
-                raise Exception ("Unexpected List Length Encountered")
-        
-        else: 
-            raise Exception ("Empty List Encountered")
+                try:
+                    raise ValueError
+                except ValueError:
+                    print("[ERROR] Unexpected List Length Encountered")
+        else:
+            try: 
+                raise ValueError
+            except ValueError:
+                print("[ERROR] Empty List Encountered")
 
     #method for creating the board
     def create_board(self):     
@@ -327,7 +335,10 @@ class Board(Pieces):
             Board.revert_update_board_dump(queryR, self.now_loc, self.piece, turn_colour, isWhich = False)
 
         else:
-            raise Exception ("Unknown_Piece_Encountered")
+            try:
+                raise Exception ("Unknown_Piece_Encountered")
+            except Exception:
+                print("[FATAL] Unknown_Piece_Encountered")
 
         #iterates through the dict to find the location of the last move
         for c_move, co_or in Board.li_ref_dict.items():
@@ -393,7 +404,10 @@ class Board(Pieces):
                         elif piece_name == "Pawn":
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_pawn
                     else:
-                        raise Exception ("Unexpected_Colour_Encountered")
+                        try:
+                            raise Exception ("Unexpected_Colour_Encountered")
+                        except Exception:
+                            print("[FATAL] Unexpected_Colour_Encountered")
 
         Board.li = Board.li_ref_empty      
 
