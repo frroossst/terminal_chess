@@ -143,6 +143,7 @@ mycursor.execute("insert into castle values ('e8','King','Black','n');")
 db.commit()
 
 
+
 #Class definition(s)
 
 #Class Pieces contains the icon of the pieces
@@ -161,9 +162,11 @@ class Pieces():
     w_pawn = "♟" 
 
 
+
 #Class Board contains the function definitions relating to Board attributes
 class Board(Pieces):
 
+    #Class variables
     li= [[Pieces.b_rooke,Pieces.b_knight,Pieces.b_bishop,Pieces.b_queen,Pieces.b_king,Pieces.b_bishop,Pieces.b_knight,Pieces.b_rooke,"8"],
              [Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,Pieces.b_pawn,"7"],
              [" "," "," "," "," "," "," "," ","6"],
@@ -244,6 +247,7 @@ class Board(Pieces):
             with open("revertQuery.json","w") as fobj:
                 json.dump(sqlObj1,fobj)
 
+    #method to update the revertBoard mySQL table
     @classmethod
     def revert_update_board_load(self): 
  
@@ -313,8 +317,7 @@ class Board(Pieces):
             db.commit()
             queryR = "update revertBoard set Location = '%s' where Location = '%s';"
             Board.revert_update_board_dump(queryR,self.now_loc,which,isWhich = True)
-            # mycursor.execute(query % (self.now_loc,which))
-            # db.commit()
+            
         elif self.piece not in which_pieces:
             query = """update board set Location = '%s' where Piece = '%s' and Colour = '%s';"""
             tupl = (self.now_loc,self.piece,turn_colour)
@@ -322,8 +325,6 @@ class Board(Pieces):
             db.commit()
             queryR = """update revertBoard set Location = '%s' where Piece = '%s' and Colour = '%s';"""
             Board.revert_update_board_dump(queryR, self.now_loc, self.piece, turn_colour, isWhich = False)
-            # mycursor.execute(query % tupl)
-            # db.commit()
 
         else:
             raise Exception ("Unknown_Piece_Encountered")
@@ -380,7 +381,6 @@ class Board(Pieces):
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.w_pawn
                     elif piece_colour == "Black":
                         if piece_name == "Queen":
-                            # print("yes!")
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_queen
                         elif piece_name == "King":
                             Board.li_ref_empty[tupl[0]][tupl[1]] = Pieces.b_king
@@ -445,10 +445,10 @@ class Board(Pieces):
         self.li = Board.li
         for i in self.li:
             if Pieces.w_king in i:
-                print(f"White King has been found at {i}")
+                # print(f"White King has been found at {i}")
                 w_king_status = True
             elif Pieces.b_king in i:
-                print(f"Black King has been found at {i}")    
+                # print(f"Black King has been found at {i}")    
                 b_king_status = True
             else:    
                 pass
@@ -473,10 +473,7 @@ class Board(Pieces):
                 compare_li.append(i)
             compare_li.sort()
             if compare_li == var0 or compare_li == var1:
-                draw = True
-        
-        #checking for common board openings
-### insert the function calls here!        
+                draw = True        
 
         if w_king_status != True:
             print("White King has been captured")
@@ -495,17 +492,18 @@ class Board(Pieces):
                 
         main()
 
+    #method to get the numeric co-ordinate from algebraic notation
     def get_move_co(self,input_move,piece):
         self.dict = Board.li_ref_dict
         self.piece = piece
         self.input_move = input_move
         for c_move, co_or in self.dict.items():
             if str(c_move) == str(input_move):
-                print(f"Key = {c_move} Value = {co_or}")
+                # print(f"Key = {c_move} Value = {co_or}")
                 tupl = co_or
-        print(Board.li[tupl[0]][tupl[1]])
+        # print(Board.li[tupl[0]][tupl[1]])
 
-    # I do not know why I added this method here TBH
+    ### I do not know why I added this method here TBH
     def restore_pawn_status(self):
         print("pawn cannot capture vertically")
         query = """update board set Location = '%s' where Piece = 'Pawn';"""
@@ -901,7 +899,6 @@ class Board(Pieces):
             print(turn_stck)
             quit()
         else:
-            # revert() ?
             main()    
     
     #method for handling for forfeiture
@@ -934,8 +931,7 @@ class Board(Pieces):
             print(b_win_msg)
         elif turn_colour == "Black":
             print(w_win_msg)
-        
-        # print(move_stck)
+
         print(turn_stck)
         quit()
 
@@ -959,10 +955,14 @@ class Board(Pieces):
         db.commit()
         B = Board()
         B.show_updated_board()
-        # main()
+
+
 
 # class for dealing with movement related attributes
 class Movement():
+
+        #Class variables
+
         hor = ["a","b","c","d","e","f","g","h"]
         ver = [1,2,3,4,5,6,7,8]
         loc_dict = {
@@ -1008,7 +1008,7 @@ class Movement():
             long = [1,2,3,4,5,6,7,8]
             diag = []
             count = 1
-            print("tracing route")
+            # print("tracing route")
             self.current_loc = current_loc
             self.turn = turn
             self.future_loc = future_loc
@@ -1017,24 +1017,24 @@ class Movement():
             
             #to check if the move is longitudnal and not diagonal
             if str(self.future_loc[0]) == str(self.current_loc[0]):
-                print("the move is vertical")
+                # print("the move is vertical")
                 if self.current_loc[1] > self.future_loc[1]:
                     while True:
                         loc_num_check = int(self.current_loc[1]) - count
                         loc_square_check = str(self.current_loc[0]) + str(loc_num_check)
-                        print(loc_square_check)
+                        # print(loc_square_check)
                         query = ("select Piece from board where Location = '%s';")
                         mycursor.execute(query % loc_square_check)
                         result = mycursor.fetchall()
                         if result != []:
-                            print("obstacle encountered")
+                            # print("obstacle encountered")
                             I = Interaction()
                             I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
                             break
                         else:
                             count+=1
                             if str(loc_square_check) == str(self.future_loc):
-                                print(f"reached at {self.future_loc}")
+                                # print(f"reached at {self.future_loc}")
                                 B = Board()
                                 B.update_board(self.piece,self.current_loc,self.future_loc)
                                 break
@@ -1043,7 +1043,7 @@ class Movement():
                     while True:
                         loc_num_check = int(self.current_loc[1]) + count
                         loc_square_check = str(self.current_loc[0]) + str(loc_num_check)
-                        print(loc_square_check)
+                        # print(loc_square_check)
                         query = ("select Piece from board where Location = '%s';")
                         mycursor.execute(query % loc_square_check)
                         result = mycursor.fetchall()
@@ -1052,21 +1052,21 @@ class Movement():
                                 B = Board()
                                 B.restore_pawn_status()
                             else:
-                                print("obstacle encountered")
+                                # print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,loc_square_check,self.piece,self.turn)
                                 break
                         else:
                             count+=1
                             if str(loc_square_check) == str(self.future_loc):
-                                print(f"reached at {self.future_loc}")
+                                # print(f"reached at {self.future_loc}")
                                 B = Board()
                                 B.update_board(self.piece,self.current_loc,self.future_loc)
                                 break
             
             #horizontal moves
             elif (self.future_loc[1]) == (self.current_loc[1]):
-                print("the move is horizontal")
+                # print("the move is horizontal")
                 hor_li = ["a","b","c","d","e","f","g","h"]
                 while True:
                     if self.current_loc[0] < self.future_loc[0]:
@@ -1079,13 +1079,13 @@ class Movement():
                             mycursor.execute(query % check_loc_coor)
                             result = mycursor.fetchall()
                             if result != []:
-                                print("obstacle encountered")
+                                # print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
                                 break
                             else:
                                 if str(check_loc_coor) == str(self.future_loc):
-                                    print(f"reached at {self.future_loc}")
+                                    # print(f"reached at {self.future_loc}")
                                     B = Board()
                                     B.update_board(self.piece,check_loc_coor,self.future_loc)
                                     break
@@ -1100,13 +1100,13 @@ class Movement():
                             mycursor.execute(query % check_loc_coor)
                             result = mycursor.fetchall()
                             if result != []:
-                                print("obstacle encountered")
+                                # print("obstacle encountered")
                                 I = Interaction()
                                 I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
                                 break
                             else:
                                 if str(check_loc_coor) == str(self.future_loc):
-                                    print(f"reached at {self.future_loc}")
+                                    # print(f"reached at {self.future_loc}")
                                     B = Board()
                                     B.update_board(self.piece,check_loc_coor,self.future_loc)
                                     break
@@ -1117,7 +1117,7 @@ class Movement():
                 for i in Movement.loc_dict:
                     if i == self.current_loc:
                         co_or_num = Movement.loc_dict[i]
-                        print(f"co-ordinate of {self.current_loc} is {co_or_num}")
+                        # print(f"co-ordinate of {self.current_loc} is {co_or_num}")
                         num0 = int(co_or_num[0])
                         num1 = int(co_or_num[1])
                         if self.current_loc[1] < self.future_loc[1]:
@@ -1166,20 +1166,20 @@ class Movement():
                                 # print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
-                                        print("match found")
-                                        print(i,j)
+                                        # print("match found")
+                                        # print(i,j)
                                         check_loc_coor = i
                                         query = """select * from board where Location = '%s';"""
                                         mycursor.execute(query % check_loc_coor)
                                         result = mycursor.fetchall()
                                         if result != []:
-                                            print("obstacle encountered")
+                                            # print("obstacle encountered")
                                             I = Interaction()
                                             I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
                                             break
                                         else:
                                             if str(check_loc_coor) == str(self.future_loc):
-                                                print(f"reached at {self.future_loc}")
+                                                # print(f"reached at {self.future_loc}")
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break    
@@ -1189,7 +1189,7 @@ class Movement():
                                 num0 += 1
                                 num1 += 1
                                 next_co_or = tuple([num0,num1])
-                                print(f"tupleISED {next_co_or}")
+                                # print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
                                         
@@ -1198,13 +1198,13 @@ class Movement():
                                         mycursor.execute(query % check_loc_coor)
                                         result = mycursor.fetchall()
                                         if result != []:
-                                            print("obstacle encountered")
+                                             #print("obstacle encountered")
                                             I = Interaction()
                                             I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
                                             break
                                         else:
                                             if str(check_loc_coor) == str(self.future_loc):
-                                                print(f"reached at {self.future_loc}")
+                                                # print(f"reached at {self.future_loc}")
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
                                                 break 
@@ -1214,27 +1214,27 @@ class Movement():
                                 num0 += 1
                                 num1 -= 1
                                 next_co_or = tuple([num0,num1])
-                                print(f"tupleISED {next_co_or}")
+                                # print(f"tupleISED {next_co_or}")
                                 for i,j in Movement.loc_dict.items():
                                     if next_co_or == j:
-                                        
                                         check_loc_coor = i
                                         query = """select * from board where Location = '%s';"""
                                         mycursor.execute(query % check_loc_coor)
                                         result = mycursor.fetchall()
                                         if result != []:
-                                            print("obstacle encountered")
+                                            # print("obstacle encountered")
                                             I = Interaction()
                                             I.capture(self.current_loc,check_loc_coor,self.piece,self.turn)
                                             break
                                         else:
                                             if str(check_loc_coor) == str(self.future_loc):
-                                                print(f"reached at {self.future_loc}")
+                                                # print(f"reached at {self.future_loc}")
                                                 B = Board()
                                                 B.update_board(self.piece,check_loc_coor,self.future_loc)
-                                                break                                
+                                                break      
+
             else:
-                Interaction.illegal_move()            
+                Interaction.illegal_move(0)            
 
 #Check function(s) for all piece moves
 
@@ -1254,15 +1254,14 @@ class Movement():
                 tupl = i
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
-                print("cannot move to the same location")
-                Interaction.illegal_move()
+                Interaction.illegal_move(1)
 
-            print(self.move, tupl[0])
+            # print(self.move, tupl[0])
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
                     #insert check for occupied squares
                     #insert obstacle check
-                    print("legal queen move")
+                    # print("legal queen move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"Queen",self.move,self.turn)
@@ -1273,10 +1272,12 @@ class Movement():
             self.turn = turn
             hor_li = ["a","b","c","d","e","f","g","h"]
             ver_li = [1,2,3,4,5,6,7,8]
+
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
                 turn_colour = "Black"
+
             query = "select * from board where Piece = 'King' and Colour = '%s';"
             mycursor.execute(query % (turn_colour))
             result = mycursor.fetchall()
@@ -1284,8 +1285,7 @@ class Movement():
                 tupl = i
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
-                print("cannot move to the same location")
-                Interaction.illegal_move()
+                Interaction.illegal_move(1)
 
             if self.move[1] == "a":
                 if tupl[0][1] == "b":
@@ -1312,12 +1312,11 @@ class Movement():
                 if tupl[0][1] == "g":
                     pass
             else:
-                print("King can only move one pace(s) horizontally")
-                Interaction.illegal_move()
+                Interaction.illegal_move(2)
 
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
-                    print("legal king move")
+                    # print("legal king move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
                     query = """update castle set Moved = 'y' where Piece = 'King' and Colour = '%s';"""
@@ -1340,8 +1339,7 @@ class Movement():
                 tupl = i
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
-                print("cannot move to the same location")
-                Interaction.illegal_move()
+                Interaction.illegal_move(1)
 
             # print(self.move, tupl[0])
             if self.move[1] in self.hor:
@@ -1369,14 +1367,14 @@ class Movement():
             result = mycursor.fetchall()
             for i in result:
                 tupl = i
+
             move_manip = str(self.move[1]) + str(self.move[2])
             if str(tupl[0]) == str(move_manip):
-                print("cannot move to the same location")
-                Interaction.illegal_move()
+                Interaction.illegal_move(1)
             
             if self.move[1] in self.hor:
                 if int(self.move[2]) in self.ver:
-                    print("legal bishop move")
+                    # print("legal bishop move")
                     self.move = self.move[1] + self.move[2]
                     move_stck.append(self.move)
                     Movement.get_current_loc(self,"Bishop",self.move,self.turn)
@@ -1387,6 +1385,7 @@ class Movement():
             self.move = move
             self.turn = turn
             self.which = which
+
             if ((turn-1) % 2) != 0:
                 turn_colour = "White"
             else:
@@ -1396,21 +1395,19 @@ class Movement():
             if (int(self.move[2]) > int(self.which[1]) and turn_colour == "White") or (int(self.move[2]) < int(self.which[1]) and turn_colour == "Black"):
                 if (int(self.move[2]) - 2 == 2 and turn_colour == "White") or (int(self.move[2]) + 2 == 7 and turn_colour == "Black"):
                     pwn_move_legality = True
-                    print("pawns are allowed to move two paces on the first step") 
+                    # print("pawns are allowed to move two paces on the first step") 
                 elif (int(self.move[2]) -1 == int(self.which[1])) or (int(self.move[2]) + 1 == int(self.which[1])):
                     pwn_move_legality = True
-                    print("all other pawns can move one step")
+                    # print("all other pawns can move one step")
                 else:
                     pwn_move_legality = False
-                    Interaction.illegal_move()
+                    Interaction.illegal_move(0)
                 if str(which_stck[-1]) == str(mod_move):
-                    print("cannot move to the same location")
                     pwn_move_legality = False
-                    Interaction.illegal_move()
+                    Interaction.illegal_move(1)
             else:
-                print("pawns cannot go backwards")
                 pwn_move_legality = False
-                Interaction.illegal_move()
+                Interaction.illegal_move(3)
 
             which_stck_mod = which_stck
             which_stck_mod.pop()
@@ -1419,7 +1416,7 @@ class Movement():
                 if self.move[0] == "p" or self.move[0] == "x":
                     if self.move[1] == self.which[0]:
                         move_stck.append(mod_move)
-                        print("legal pawn move")
+                        # print("legal pawn move")
                         if self.move[0] == "p":
                             Movement.get_current_loc(self,"Pawn",mod_move,self.turn)
                     elif self.move[0] == "x":
@@ -1431,11 +1428,9 @@ class Movement():
                             I = Interaction()
                             I.capture(self.which,mod_move,"Pawn",self.turn)
                         else:
-                            print("cannot capture a blank square")
-                            Interaction.illegal_move()
+                            Interaction.illegal_move(4)
                     else:
-                        print("the pawn can only move straight")
-                        Interaction.illegal_move()
+                        Interaction.illegal_move(5)
 
         # check knight moves
         def check_knight_move(self,move,turn,which):
@@ -1515,11 +1510,11 @@ class Movement():
                             which_stck.pop()
              
                     else:
-                        Interaction.illegal_move()    
+                        Interaction.illegal_move(0)    
                 else:
-                    Interaction.illegal_move()
+                    Interaction.illegal_move(0)
             else:
-                Interaction.illegal_move()
+                Interaction.illegal_move(0)
 
         # checking castling move
         def check_castle(self,move):
@@ -1671,7 +1666,7 @@ class Movement():
                     B = Board()
                     B.show_updated_board()
             else:
-                Interaction.illegal_move()
+                Interaction.illegal_move(0)
             
 # class to deal with capture and promotion related interactions
 class Interaction(Movement):
@@ -1705,7 +1700,7 @@ class Interaction(Movement):
         b_q_present = False
 
         if ((turn-1) % 2) != 0:
-                turn_colour = "White"
+            turn_colour = "White"
         else:
             turn_colour = "Black"
 
@@ -1740,11 +1735,29 @@ class Interaction(Movement):
 
     # method for dealing with illegal move(s)
     @classmethod
-    def illegal_move(self):
+    def illegal_move(self,errorType):
         global turn
+        self.errorType = errorType
 
         print()
-        print("[ILLEGAL MOVE] Enter another move")
+        
+        if self.errorType == 0:
+            print("[ILLEGAL MOVE] Enter another move")
+        elif self.errorType == 1:
+            print("[ILLEGAL MOVE] Cannot move to the same location")
+        elif self.errorType == 2:
+            print("[ILLEGAL MOVE] King moves only one pace")
+        elif self.errorType == 3:
+            print("[ILLEGAL MOVE] Pawns cannot move backwards")
+        elif self.errorType == 4:
+            print("[ILLEGAL MOVE] Cannot capture a blank square")
+        elif self.errorType == 5:
+            print("[ILLEGAL MOVE] Pawns can only move straight and capture diagonally")
+        elif self.errorType == 6:
+            print("[ILLEGAL MOVE] Cannot capture your own piece(s)")
+        else:
+            print("[ILLEGAL MOVE] Enter another move")
+        
         print()
 
         time.sleep(1)
@@ -1757,6 +1770,7 @@ class Interaction(Movement):
         B = Board()
         B.revert_board_status()
 
+    #method for determining if a capture is legal or not
     @classmethod
     def canCapture(self,prevLoc, nowLoc):
         self.prevLoc = prevLoc
@@ -1770,10 +1784,11 @@ class Interaction(Movement):
         mycursor.execute(query % self.nowLoc)
         result = mycursor.fetchall()
         if result[0][0] == turn_colour:
-            print("[ILLEGAL MOVE] Cannot capture own piece(s)")
-            Interaction.illegal_move()
+            Interaction.illegal_move(6)
         else:
             pass
+
+
 
 # class for identifying common chess opening
 class Opening():
@@ -2316,7 +2331,7 @@ def main():
         elif move == "/quit":
             quit()
         else:
-            Interaction.illegal_move()
+            Interaction.illegal_move(0)
 
     except KeyboardInterrupt:
         quit()
