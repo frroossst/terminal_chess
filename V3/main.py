@@ -490,14 +490,13 @@ class Board(Pieces):
                 draw = True        
 
         if w_king_status != True:
-            print("White King has been captured")
+            print("White King has been captured!")
             print(b_win_msg)
-            print(move_stck)
+            print(turn_stck)
             quit()
         elif b_king_status != True:
-            print("Black King has been captured")        
+            print("Black King has been captured!")        
             print(w_win_msg)
-            print(move_stck)
             print(turn_stck)
             quit()
         elif draw == True:
@@ -899,7 +898,7 @@ class Board(Pieces):
             turnColourPrint = "BLACK"
 
         print(f"[{turnColourPrint}] offers a draw")
-        draw_in = input("do you accept? y/n ")
+        draw_in = input("do you accept? y/n :")
         if draw_in.lower() == "y":
             draw_msg = """
              _                    
@@ -909,7 +908,6 @@ class Board(Pieces):
          \__,_|_|  \__,_| \_/\_/                        
         """
             print(draw_msg)
-            print(move_stck)
             print(turn_stck)
             quit()
         else:
@@ -1009,12 +1007,10 @@ class Movement():
                 result = mycursor.fetchall()
                 for i in result:
                     for j in i:
-                        print(j)
-                # print("at get current loc!")
-                self.current_loc = j
+                        self.current_loc = j
                 Movement.trace_route(self,self.current_loc,self.piece,self.pos,self.turn)
             else:
-                print(f"which {which}")
+                # print(f"which {which}")
                 Movement.trace_route(self,which,self.piece,self.pos,self.turn)
 
         # method to check each square and if it is occupied to avoid jumping of pieces over obstacles
@@ -1027,7 +1023,7 @@ class Movement():
             self.turn = turn
             self.future_loc = future_loc
             self.piece = piece
-            print(f"moving {self.piece} from {self.current_loc} to {self.future_loc}")
+            print(f"Moving {self.piece} from {self.current_loc} to {self.future_loc}")
             
             #to check if the move is longitudnal and not diagonal
             if str(self.future_loc[0]) == str(self.current_loc[0]):
